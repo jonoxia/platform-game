@@ -177,7 +177,12 @@ RunningHuman.prototype = {
 
   get bottom() {
     return this.y + this.height;
-  }
+  },
+
+  intersecting: function(rect) {
+      return (this.left <= rect.right && this.right >= rect.left
+	      && this.top <= rect.bottom && this.bottom >= rect.top );
+   }
 };
 
 function adjustToScreen() {
@@ -241,7 +246,7 @@ $(document).ready(function() {
 	    }
 	});
 
-    window.setInterval(function() {
+    var heartbeat = window.setInterval(function() {
 	    if (leftArrowDown && !rightArrowDown) {
 		player.goLeft();
 	    } else if (rightArrowDown && !leftArrowDown) {
@@ -252,6 +257,10 @@ $(document).ready(function() {
 	    player.update();
 	    updateTimer(Date.now() - startTime);
 	    TheWorld.draw(context);
+	    if (player.intersecting(TheWorld.goalArea)) {
+		$("#output").html("A WINRAR IS YOU!");
+		window.clearInterval(heartbeat);
+	    }
 	}, 100);
       });
 
