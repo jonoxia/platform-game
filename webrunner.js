@@ -186,12 +186,25 @@ RunningHuman.prototype = {
 };
 
 var TheWorld = {
-  xOffset: 0,  // how far to the right has the view scrolled from its starting location
-  groundLevel: 600,
-  canvasWidth: 1400,
-  canvasHeight: 800,
-  leftScrollMargin: 200, // if you go left of 200 pixels the screen scrolls left
-  rightScrollMargin: 1200,  // if you go right of 400 pixels the screen scrolls right
+  xOffset: 0,  // how far to the right has the view scrolled from its starting location,
+  yOffset: 0,
+  canvasWidth: 800,
+  canvasHeight: 600,
+  get leftScrollMargin() {
+	return 200;
+	// if you go left of 200 pixels the screen scrolls left
+    },
+  get rightScrollMargin() {
+      return this.canvasWidth - 200;
+  },
+
+  get topScrollMargin() {
+      return 200;
+  },
+
+  get bottomScrollMargin() {
+      return this.canvasHeight - 200;
+  },
 
   // keep a list of background objects and a list of foreground objects --
   // all of these will get drawn
@@ -210,30 +223,52 @@ var TheWorld = {
     return worldX - this.xOffset;
   },
 
+  worldYToScreenY: function(worldY) {
+      return worldY - this.yOffset;
+  },
+
   scrollIfNeeded: function(player) {
     // get screen coordinates of player's left and right edges
     var screenLeft = this.worldXToScreenX(player.left);
     var screenRight = this.worldXToScreenX(player.right);
+    var screenTop = this.worldYToScreenY(player.top);
+    var screenBottom = this.worldYToScreenY(player.bottom);
 
     // if player's left is left of left scroll margin, scroll left
     if (screenLeft < this.leftScrollMargin) {
-        // scroll by just enough to get player's left lined up with left scroll margin
+        // scroll by just enough to get player's left lined up with
+        // left scroll margin
 	this.xOffset -= this.leftScrollMargin - screenLeft;
     }
     // if player's right is right of right scroll margin, scroll right
-    if (player.right - this.xOffset > this.rightScrollMargin) {
-        // scroll by just enough to get player's right lined up with right scroll margin
+    if (screenRight > this.rightScrollMargin) {
+        // scroll by just enough to get player's right lined up with
+        // right scroll margin
 	this.xOffset += screenRight - this.rightScrollMargin;
+    }
+    // Same for up and down:
+    if (screenTop < this.topScrollMargin) {
+	this.yOffset -= this.topScrollMargin - screenTop;
+    }
+    if (screenBottom > this.bottomScrollMargin) {
+	this.yOffset += screenBottom - this.bottomScrollMargin;
     }
   },
 
   drawIfOnScreen: function(obj, ctx) {
-    // save time: don't bother drawing things that are off the screen.  This calls the
-    // given object's draw() method if it's on screen, or does nothing if it's not.
+    /* save time: don't bother drawing things that are off the screen.
+     * This calls the given object's draw() method if it's on screen,
+     * or does nothing if it's not. */
     if (this.worldXToScreenX(obj.right) < 0 ) {
       return;
     }
     if (this.worldXToScreenX(obj.left) > this.canvasWidth ) {
+      return;
+    }
+    if (this.worldYToScreenY(obj.bottom) < 0 ) {
+      return;
+    }
+    if (this.worldYToScreenY(obj.top) > this.canvasHeight ) {
       return;
     }
     obj.draw(ctx);
@@ -246,7 +281,7 @@ var TheWorld = {
 
     // Now apply the translate transform to scroll the world
     ctx.save();
-    ctx.translate( 0 - this.xOffset, this.groundLevel);
+    ctx.translate( 0 - this.xOffset, 0 - this.yOffset);
     // draw all background objects in their scrolled location
     var i, obj;
     for (i = 0; i < this.backgroundObjects.length; i++) {
@@ -346,14 +381,14 @@ Platform.prototype = {
   },
 
   detectIntercept: function(mob) {
-    // Will mob's velocity cause it to cross one of the edges of this platform?
-    // returns object with edge name ("top" "left" "right" or "bottom") and x,y of
-    // interception point.
+    /* Will mob's velocity cause it to cross one of the edges of this
+     * platform?  returns object with edge name ("top" "left" "right"
+     * or "bottom") and x,y of interception point. */
     var x_intercept, y_intercept;
-    // assumes that mob.vx, mob.vy, mob.left, mob.right, mob.top, and mob.bottom are all defined
-    // in addition to this.left, this.top, this.right, and this.bottom.
-
-    // Could x-velocity carry mob across the line of the left edge of this platform?
+    /* assumes that mob.vx, mob.vy, mob.left, mob.right, mob.top, and
+     * mob.bottom are all defined in addition to this.left, this.top,
+     * this.right, and this.bottom.  Could x-velocity carry mob across
+     * the line of the left edge of this platform? */
     if (mob.right < this.left && mob.right + mob.vx >= this.left) {
       // At what y-value would the line of motion cross the line of the left edge?
       y_intercept = mob.y + mob.vy * (this.left - mob.right)/mob.vx;
@@ -394,7 +429,19 @@ Platform.prototype = {
   }
 };
 
+function adjustToScreen() {
+    var screenWidth = window.innerWidth;
+    var screenHeight = window.innerHeight;
+
+    TheWorld.canvasWidth = screenWidth * 0.9;
+    TheWorld.canvasHeight = screenHeight * 0.9;
+
+    $("#game-canvas").attr("width", TheWorld.canvasWidth);
+    $("#game-canvas").attr("height", TheWorld.canvasHeight);
+}
+
 $(document).ready(function() {
+  adjustToScreen();
   var context = $("#game-canvas")[0].getContext("2d");
 
   // Create player, put it in the world:
@@ -450,4 +497,13 @@ $(document).ready(function() {
 
     TheWorld.draw(context);
   }, 100);
+
+  // Call adjustToScreen if screen size changes
+  var resizeTimer = null;
+  $(window).resize(function() {
+      if (resizeTimer) {
+          clearTimeout(resizeTimer);
+      }
+      resizeTimer = setTimeout(adjustToScreen, 500);
+  });
 });
