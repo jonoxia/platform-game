@@ -92,6 +92,8 @@ var StartTool = {
     },
 
     onMouseUp: function(x, y) {
+	g_startLocation.left = x;
+	g_startLocation.top = y;
     }
 };
 
@@ -103,10 +105,50 @@ var GoalTool = {
     },
 
     onMouseUp: function(x, y) {
+	g_goalLocation.left = x;
+	g_goalLocation.top = y;
     }
 };
 
-var selectedTool = PlatformTool;
+var g_goalLocation = {
+    left: 540,
+    top: 340,
+    get right() {
+	return this.left + 64;
+    },
+    get bottom() {
+	return this.top + 64;
+    },
+    draw: function(ctx) {
+	ctx.strokeStyle = "black";
+	ctx.strokeRect(this.left, this.top, 64, 64);
+	ctx.strokeText("GOAL", this.left + 5, this.top +32);
+    },
+    detectIntercept: function(mob) {
+	return null;
+    }
+};
+
+var g_startLocation = {
+    left: 0,
+    top: 0,
+    get right() {
+	return this.left + 64;
+    },
+    get bottom() {
+	return this.top + 64;
+    },
+    draw: function(ctx) {
+	ctx.strokeStyle = "black";
+	ctx.strokeRect(this.left, this.top, 64, 64);
+	ctx.strokeText("START", this.left + 5, this.top +32);
+    },
+    detectIntercept: function(mob) {
+	return null;
+    }
+};
+
+var g_selectedTool = PlatformTool;
 
 function canvasCoords(evt) {
     var xOffset = $("#design-canvas").offset().left;
@@ -118,19 +160,23 @@ function canvasCoords(evt) {
 $(document).ready(function() {
 	adjustToScreen();
 	var context = $("#design-canvas")[0].getContext("2d");
+
+	TheWorld.addForegroundObject(g_goalLocation);
+	TheWorld.addForegroundObject(g_startLocation);
+
 	TheWorld.draw(context);
 
 	$("#design-canvas").bind("mousedown", function(evt) {
 		pos = canvasCoords(evt);
-		selectedTool.onMouseDown(pos.x, pos.y);
+		g_selectedTool.onMouseDown(pos.x, pos.y);
 	    });
 	$("#design-canvas").bind("mousemove", function(evt) {
 		pos = canvasCoords(evt);
-		selectedTool.onMouseMove(pos.x, pos.y);
+		g_selectedTool.onMouseMove(pos.x, pos.y);
 	    });
 	$("#design-canvas").bind("mouseup", function(evt) {
 		pos = canvasCoords(evt);
-		selectedTool.onMouseUp(pos.x, pos.y);
+		g_selectedTool.onMouseUp(pos.x, pos.y);
 		TheWorld.draw(context);
 	    });
 
@@ -138,19 +184,19 @@ $(document).ready(function() {
 		var id = $("input[@name=testGroup]:checked").attr('id');
 		switch (id) {
 		case "platform-tool":
-		    selectedTool = PlatformTool;
+		    g_selectedTool = PlatformTool;
 		    break;
 		case "eraser-tool":
-		    selectedTool = EraserTool;
+		    g_selectedTool = EraserTool;
 		    break;
 		case "scroll-tool":
-		    selectedTool = ScrollTool;
+		    g_selectedTool = ScrollTool;
 		    break;
 		case "start-tool":
-		    selectedTool = StartTool;
+		    g_selectedTool = StartTool;
 		    break;
 		case "goal-tool":
-		    selectedTool = GoalTool;
+		    g_selectedTool = GoalTool;
 		    break;
 		}
 	    });
