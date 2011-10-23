@@ -180,6 +180,21 @@ RunningHuman.prototype = {
   }
 };
 
+function loadWorldData(callback) {
+    var url = "load-level.py";
+    $.get(url, {}, function(data, textStatus, jqXHR) {
+	    var worldData = JSON.parse(data);
+	    for (var i = 0; i < worldData.length; i++) {
+		var plat = new Platform(worldData[i].x,
+					worldData[i].y,
+					worldData[i].width,
+					worldData[i].height);
+		TheWorld.addForegroundObject(plat);
+	    }
+	    callback();
+	}, "html");
+}
+
 function adjustToScreen() {
     var screenWidth = window.innerWidth;
     var screenHeight = window.innerHeight;
@@ -199,55 +214,45 @@ $(document).ready(function() {
   var player = new RunningHuman("running_human_frames.png", 200, 0, 64, 64, true, 122);
   TheWorld.addForegroundObject(player);
 
-  // the ground is just a really big platform
-  TheWorld.addForegroundObject(new Platform(-10000, 0, 20000, 100));
-
-  // Create some platform/ obstacles:
-  TheWorld.addForegroundObject(new Platform(200, -140, 400, 32));
-  TheWorld.addForegroundObject(new Platform(0, -500, 64, 500));
-  TheWorld.addForegroundObject(new Platform(1200, -500, 64, 500));
-  TheWorld.addForegroundObject(new Platform(700, -64, 64, 32));
-  TheWorld.addForegroundObject(new Platform(64, -232, 64, 32));
-  TheWorld.addForegroundObject(new Platform(200, -332, 400, 32));
-  TheWorld.addForegroundObject(new Platform(864, -400, 128, 32));
-
-  TheWorld.draw(context);
-
-  var leftArrowDown = false;
-  var rightArrowDown = false;
-
-  $(document).bind("keydown", function(evt) {
-    if (evt.which == LEFT_ARROW) {
-      leftArrowDown = true;
-    }
-    if (evt.which == RIGHT_ARROW) {
-      rightArrowDown = true;
-    }
-    if (evt.which == SPACEBAR) {
-      player.jump();
-    }
-  });
-  $(document).bind("keyup", function(evt) {
-    if (evt.which == LEFT_ARROW) {
-      leftArrowDown = false;
-    }
-    if (evt.which == RIGHT_ARROW) {
-      rightArrowDown = false;
-    }
-  });
-
-  window.setInterval(function() {
-    if (leftArrowDown && !rightArrowDown) {
-      player.goLeft();
-    } else if (rightArrowDown && !leftArrowDown) {
-      player.goRight();
-    } else {
-      player.idle();
-    }
-    player.update();
-
+  loadWorldData( function() {
     TheWorld.draw(context);
-  }, 100);
+
+    var leftArrowDown = false;
+    var rightArrowDown = false;
+
+    $(document).bind("keydown", function(evt) {
+	    if (evt.which == LEFT_ARROW) {
+		leftArrowDown = true;
+	    }
+	    if (evt.which == RIGHT_ARROW) {
+		rightArrowDown = true;
+	    }
+	    if (evt.which == SPACEBAR) {
+		player.jump();
+	    }
+	});
+    $(document).bind("keyup", function(evt) {
+	    if (evt.which == LEFT_ARROW) {
+		leftArrowDown = false;
+	    }
+	    if (evt.which == RIGHT_ARROW) {
+		rightArrowDown = false;
+	    }
+	});
+
+    window.setInterval(function() {
+	    if (leftArrowDown && !rightArrowDown) {
+		player.goLeft();
+	    } else if (rightArrowDown && !leftArrowDown) {
+		player.goRight();
+	    } else {
+		player.idle();
+	    }
+	    player.update();
+	    
+	    TheWorld.draw(context);
+	}, 100);
+      });
 
   // Call adjustToScreen if screen size changes
   var resizeTimer = null;

@@ -192,11 +192,31 @@ function redraw() {
     TheWorld.draw(context);
 }
 
+function saveChanges() {
+    // AJAX Post json data to save-level.py
+    var URL = "save-level.py";
+    
+    var objs = TheWorld.foregroundObjects;
+    // TODO LATER background objects, special data like start location and goal
+    var worldData = [];
+    for (var i = 0; i < objs.length; i++) {
+	worldData.push({ x: objs[i].left,
+		    y: objs[i].top,
+		    width: objs[i].width,
+		    height: objs[i].height,
+		    type: "platform"});
+    }
+    $.post(URL, {levelObj: worldData}, function(data, textStatus, jqXHR) {
+	    $("#debug").html(textStatus);
+	}, "json");
+    $("#debug").html(JSON.stringify(worldData));
+}
+
 $(document).ready(function() {
 	adjustToScreen();
 
-	TheWorld.addForegroundObject(g_goalLocation);
-	TheWorld.addForegroundObject(g_startLocation);
+	//TheWorld.addForegroundObject(g_goalLocation);
+	//TheWorld.addForegroundObject(g_startLocation);
 	redraw();
 
 	$("#design-canvas").bind("mousedown", function(evt) {

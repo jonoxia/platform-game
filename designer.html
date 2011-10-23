@@ -20,6 +20,11 @@
     <label for="start-tool">Start Location Tool</label><br/>
     <input type="radio" name="tools" value="goal" id="goal-tool"/>
     <label for="goal-tool">Goal Location Tool</label><br/>
+    <button onclick="saveChanges();">Save Changes</button>
+    <form method="POST" action="save-level.py">
+      <input name="levelObj" type="text"></input>
+      <input type="submit"></input>
+    </form>
   </div>
 <span id="debug"></span>
 </body>
