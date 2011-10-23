@@ -15,10 +15,11 @@ var PlatformTool = {
     startY: 0,
 
     onMouseDown: function(x, y) {
-	this.startX = x;
-	this.startY = y;
+	var pt = worldCoords(x, y);
+	this.startX = pt.x;
+	this.startY = pt.y;
 
-	this.currentPlatform = TheWorld.getPlatformAt(x, y);
+	this.currentPlatform = TheWorld.getPlatformAt(pt.x, pt.y);
 	// If x, y is inside existing platform, set currentPlatform
 	// to that one and set dragMode true.
 	// Otherwise, create a new platform, set that one current,
@@ -26,28 +27,30 @@ var PlatformTool = {
     },
 
     onMouseMove: function(x, y) {
+	var pt = worldCoords(x, y);
 	if (this.currentPlatform != null) {
-	    this.currentPlatform.left = x;
-	    this.currentPlatform.top = y;
+	    this.currentPlatform.left = pt.x;
+	    this.currentPlatform.top = pt.y;
 	}
     },
 
     onMouseUp: function(x, y) {
+	var pt = worldCoords(x, y);
 	if (!this.currentPlatform) {
 	    var left, top, width, height;
-	    if (x < this.startX) {
-		left = x;
-		width = this.startX - x;
+	    if (pt.x < this.startX) {
+		left = pt.x;
+		width = this.startX - pt.x;
 	    } else {
 		left = this.startX;
-		width = x - this.startX;
+		width = pt.x - this.startX;
 	    }
 	    if (y < this.startY) {
-		top = y;
-		height = this.startY - y
+		top = pt.y;
+		height = this.startY - pt.y
 	    } else {
 		top = this.startY;
-		height = y - this.startY;
+		height = pt.y - this.startY;
 	    }
 	    var plat = new Platform( left, top, width, height);
 	    TheWorld.addForegroundObject(plat);
@@ -92,8 +95,9 @@ var StartTool = {
     },
 
     onMouseUp: function(x, y) {
-	g_startLocation.left = x;
-	g_startLocation.top = y;
+	var pt = worldCoords(x, y);
+	g_startLocation.left = pt.x;
+	g_startLocation.top = pt.y;
     }
 };
 
@@ -105,8 +109,9 @@ var GoalTool = {
     },
 
     onMouseUp: function(x, y) {
-	g_goalLocation.left = x;
-	g_goalLocation.top = y;
+	var pt = worldCoords(x, y);
+	g_goalLocation.left = pt.x;
+	g_goalLocation.top = pt.y;
     }
 };
 
@@ -155,6 +160,11 @@ function canvasCoords(evt) {
     var yOffset = $("#design-canvas").offset().top;
     return {x: evt.pageX - xOffset,
 	    y: evt.pageY - yOffset};
+}
+
+function worldCoords(x, y) {
+    return {x: TheWorld.screenXToWorldX(x),
+	    y: TheWorld.screenYToWorldY(y)};
 }
 
 $(document).ready(function() {

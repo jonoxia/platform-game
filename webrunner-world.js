@@ -46,6 +46,14 @@ var TheWorld = {
       return worldY - this.yOffset;
   },
 
+  screenXToWorldX: function(screenX) {
+      return screenX + this.xOffset;
+  },
+
+  screenYToWorldY: function(screenY) {
+      return screenY + this.yOffset;
+  },
+
   scrollIfNeeded: function(player) {
     // get screen coordinates of player's left and right edges
     var screenLeft = this.worldXToScreenX(player.left);
