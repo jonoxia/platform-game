@@ -38,8 +38,13 @@ var TheWorld = {
     this.foregroundObjects.push(obj);
   },
 
+  removeForegroundObject: function(obj) {
+      var index = this.foregroundObjects.indexOf(obj);
+      this.foregroundObjects.splice(index, 1);
+  },
+
   worldXToScreenX: function(worldX) {
-    return worldX - this.xOffset;
+      return worldX - this.xOffset;
   },
 
   worldYToScreenY: function(worldY) {

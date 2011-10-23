@@ -87,6 +87,11 @@ var EraserTool = {
     },
 
     onMouseUp: function(x, y) {
+	var pt = worldCoords(x, y);
+	var plat = TheWorld.getPlatformAt(pt.x, pt.y);
+	if (plat) {
+	    TheWorld.removeForegroundObject(plat);
+	}
     }
 };
 
@@ -214,9 +219,16 @@ function saveChanges() {
 		    height: objs[i].height,
 		    type: "platform"});
     }
-    $.post(URL, {levelObj: worldData}, function(data, textStatus, jqXHR) {
-	    $("#debug").html(textStatus);
-	}, "json");
+    $.ajax({type: "POST", 
+		url: URL,
+		data: {levelObj: JSON.stringify(worldData)}, 
+		success: function(data, textStatus, jqXHR) {
+		  $("#debug").html(textStatus);
+	    },
+		error: function(data, textStatus, thing) {
+		$("#debug").html(thing);
+	    },
+	    dataType: "text"});
     $("#debug").html(JSON.stringify(worldData));
 }
 

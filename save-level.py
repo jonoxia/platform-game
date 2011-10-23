@@ -13,6 +13,10 @@ levelObj = q.getfirst("levelObj", "")
 # artist = verify_id() 
 
 if levelObj != "":
+    # delete all the old ones first!!
+    all = LevelObject.select()
+    for obj in all:
+        LevelObject.delete(obj.id)
     worldData = simplejson.loads(levelObj);
     for obj in worldData:
         l = LevelObject(level = None, type = obj["type"],
