@@ -193,6 +193,22 @@ var TheWorld = {
       }
     }
     return null;
+  },
+
+  loadFromServer: function (callback) {
+    var url = "load-level.py";
+    var self = this;
+    $.get(url, {}, function(data, textStatus, jqXHR) {
+	    var worldData = JSON.parse(data);
+	    for (var i = 0; i < worldData.length; i++) {
+		var plat = new Platform(worldData[i].x,
+					worldData[i].y,
+					worldData[i].width,
+					worldData[i].height);
+		self.addForegroundObject(plat);
+	    }
+	    callback();
+	}, "html");
   }
 };
 

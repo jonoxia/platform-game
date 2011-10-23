@@ -217,41 +217,43 @@ $(document).ready(function() {
 
 	//TheWorld.addForegroundObject(g_goalLocation);
 	//TheWorld.addForegroundObject(g_startLocation);
-	redraw();
-
-	$("#design-canvas").bind("mousedown", function(evt) {
-		pos = canvasCoords(evt);
-		g_selectedTool.onMouseDown(pos.x, pos.y);
-	    });
-	$("#design-canvas").bind("mousemove", function(evt) {
-		pos = canvasCoords(evt);
-		g_selectedTool.onMouseMove(pos.x, pos.y);
-	    });
-	$("#design-canvas").bind("mouseup", function(evt) {
-		pos = canvasCoords(evt);
-		g_selectedTool.onMouseUp(pos.x, pos.y);
+	TheWorld.loadFromServer(function() {
 		redraw();
-	    });
 
-        $("input").change(function() {
-		var id = $("input[@name=testGroup]:checked").attr('id');
-		switch (id) {
-		case "platform-tool":
-		    g_selectedTool = PlatformTool;
-		    break;
-		case "eraser-tool":
-		    g_selectedTool = EraserTool;
-		    break;
-		case "scroll-tool":
-		    g_selectedTool = ScrollTool;
-		    break;
-		case "start-tool":
-		    g_selectedTool = StartTool;
-		    break;
-		case "goal-tool":
-		    g_selectedTool = GoalTool;
-		    break;
-		}
+		$("#design-canvas").bind("mousedown", function(evt) {
+			pos = canvasCoords(evt);
+			g_selectedTool.onMouseDown(pos.x, pos.y);
+		    });
+		$("#design-canvas").bind("mousemove", function(evt) {
+			pos = canvasCoords(evt);
+			g_selectedTool.onMouseMove(pos.x, pos.y);
+		    });
+		$("#design-canvas").bind("mouseup", function(evt) {
+			pos = canvasCoords(evt);
+			g_selectedTool.onMouseUp(pos.x, pos.y);
+			redraw();
+		    });
+		
+		$("input").change(function() {
+			var id = $("input[@name=testGroup]:checked").attr('id');
+			switch (id) {
+			case "platform-tool":
+			    g_selectedTool = PlatformTool;
+			    break;
+			case "eraser-tool":
+			    g_selectedTool = EraserTool;
+			    break;
+			case "scroll-tool":
+			    g_selectedTool = ScrollTool;
+			    break;
+			case "start-tool":
+			    g_selectedTool = StartTool;
+			    break;
+			case "goal-tool":
+			    g_selectedTool = GoalTool;
+			    break;
+			}
+		    });
 	    });
 
     });

@@ -180,21 +180,6 @@ RunningHuman.prototype = {
   }
 };
 
-function loadWorldData(callback) {
-    var url = "load-level.py";
-    $.get(url, {}, function(data, textStatus, jqXHR) {
-	    var worldData = JSON.parse(data);
-	    for (var i = 0; i < worldData.length; i++) {
-		var plat = new Platform(worldData[i].x,
-					worldData[i].y,
-					worldData[i].width,
-					worldData[i].height);
-		TheWorld.addForegroundObject(plat);
-	    }
-	    callback();
-	}, "html");
-}
-
 function adjustToScreen() {
     var screenWidth = window.innerWidth;
     var screenHeight = window.innerHeight;
@@ -214,7 +199,7 @@ $(document).ready(function() {
   var player = new RunningHuman("running_human_frames.png", 200, 0, 64, 64, true, 122);
   TheWorld.addForegroundObject(player);
 
-  loadWorldData( function() {
+  TheWorld.loadFromServer( function() {
     TheWorld.draw(context);
 
     var leftArrowDown = false;
