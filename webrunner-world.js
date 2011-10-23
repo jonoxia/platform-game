@@ -174,6 +174,17 @@ var TheWorld = {
       }
     }
     return false;
+  },
+
+  getPlatformAt: function(x, y) {
+    for (var i = 0; i < this.foregroundObjects.length; i++) {
+      var platform = this.foregroundObjects[i];
+      if (x > platform.left && x <= platform.right 
+	  && y > platform.top && y <= platform.bottom) {
+	  return platform;
+      }
+    }
+    return null;
   }
 };
 

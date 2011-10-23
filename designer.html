@@ -6,6 +6,21 @@
   <script src="webrunner-edit.js"></script>
 </head>
 <body>
-  <canvas id="design-canvas" width="600" height="400"></canvas>
+  <canvas style="float: left" id="design-canvas" 
+	  width="600" height="400"></canvas>
+  <div id="tools" style="float:left">
+    <input type="radio" name="tools" value="platform" id="platform-tool"/>
+    <label for="platform-tool">Platform tool (drag to create or move platform)
+      </label><br/>
+    <input type="radio" name="tools" value="eraser" id="eraser-tool"/>
+    <label for="eraser-tool">Eraser tool (click platform to remove it)</label></br>
+    <input type="radio" name="tools" value="scroll" id="scroll-tool"/>
+    <label for="scroll-tool">Scroll tool (drag to scroll level)</label><br/>
+    <input type="radio" name="tools" value="start" id="start-tool"/>
+    <label for="start-tool">Start Location Tool</label><br/>
+    <input type="radio" name="tools" value="goal" id="goal-tool"/>
+    <label for="goal-tool">Goal Location Tool</label><br/>
+  </ul>
+  </div>
 </body>
 </html>
