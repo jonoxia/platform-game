@@ -200,10 +200,12 @@ var TheWorld = {
     return null;
   },
 
-  loadFromServer: function (callback) {
+  loadFromServer: function (levelName, callback) {
     var url = "load-level.py";
     var self = this;
-    $.get(url, {}, function(data, textStatus, jqXHR) {
+    $("#debug").html("LOading level");
+    $.get(url, {levelName: levelName}, function(data, textStatus, jqXHR) {
+	    $("#debug").html("In callback, parsing json: " + data );
 	    var worldData = JSON.parse(data);
 	    for (var i = 0; i < worldData.length; i++) {
 		var plat = new Platform(worldData[i].x,

@@ -199,7 +199,8 @@ $(document).ready(function() {
   var player = new RunningHuman("running_human_frames.png", 200, 0, 64, 64, true, 122);
   TheWorld.addForegroundObject(player);
 
-  TheWorld.loadFromServer( function() {
+  // TODO UI for picking what level you play
+  TheWorld.loadFromServer("TheOneLevel", function() {
     TheWorld.draw(context);
 
     var leftArrowDown = false;

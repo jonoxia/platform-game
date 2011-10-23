@@ -208,6 +208,7 @@ function redraw() {
 function saveChanges() {
     // AJAX Post json data to save-level.py
     var URL = "save-level.py";
+    var levelName = "TheOneLevel"; // TODO UI for this
     
     var objs = TheWorld.foregroundObjects;
     // TODO LATER background objects, special data like start location and goal
@@ -220,15 +221,17 @@ function saveChanges() {
 		    type: "platform"});
     }
     $.ajax({type: "POST", 
-		url: URL,
-		data: {levelObj: JSON.stringify(worldData)}, 
-		success: function(data, textStatus, jqXHR) {
-		  $("#debug").html(textStatus);
+            url: URL,
+	    data: {levelName: levelName,
+		   levelData: JSON.stringify(worldData)}, 
+	    success: function(data, textStatus, jqXHR) {
+		$("#debug").html(textStatus);
 	    },
-		error: function(data, textStatus, thing) {
+	    error: function(data, textStatus, thing) {
 		$("#debug").html(thing);
 	    },
-	    dataType: "text"});
+	    dataType: "text"
+	  });
     $("#debug").html(JSON.stringify(worldData));
 }
 
@@ -237,7 +240,7 @@ $(document).ready(function() {
 
 	//TheWorld.addForegroundObject(g_goalLocation);
 	//TheWorld.addForegroundObject(g_startLocation);
-	TheWorld.loadFromServer(function() {
+	TheWorld.loadFromServer("TheOneLevel", function() {
 		redraw();
 
 		$("#design-canvas").bind("mousedown", function(evt) {
