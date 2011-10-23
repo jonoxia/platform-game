@@ -143,27 +143,7 @@ var GoalTool = {
 
     onMouseUp: function(x, y) {
 	var pt = worldCoords(x, y);
-	g_goalLocation.left = pt.x;
-	g_goalLocation.top = pt.y;
-    }
-};
-
-var g_goalLocation = {
-    left: 540,
-    top: 340,
-    get right() {
-	return this.left + 64;
-    },
-    get bottom() {
-	return this.top + 64;
-    },
-    draw: function(ctx) {
-	ctx.strokeStyle = "black";
-	ctx.strokeRect(this.left, this.top, 64, 64);
-	ctx.strokeText("GOAL", this.left + 5, this.top +32);
-    },
-    detectIntercept: function(mob) {
-	return null;
+	TheWorld.goalArea.setBounds(x, y, 64, 64);
     }
 };
 
@@ -211,16 +191,29 @@ function saveChanges() {
     
     var title = gup("level");
     $("#debug").html("title is " + title);
-    var objs = TheWorld.foregroundObjects;
+    var i, objs;
     // TODO LATER background objects, special data like start location and goal
     var worldData = [];
-    for (var i = 0; i < objs.length; i++) {
+    objs = TheWorld.foregroundObjects;
+    for (i = 0; i < objs.length; i++) {
 	worldData.push({ x: objs[i].left,
 		    y: objs[i].top,
 		    width: objs[i].width,
 		    height: objs[i].height,
-		    type: "platform"});
+		    type: objs[i].type});
     }
+    objs = TheWorld.backgroundObjects;
+    for (i = 0; i < objs.length; i++) {
+	worldData.push({ x: objs[i].left,
+		    y: objs[i].top,
+		    width: objs[i].width,
+		    height: objs[i].height,
+		    type: objs[i].type});
+    }
+    // Add goal area:
+    var goal = TheWorld.goalArea;
+    worldData.push({ x: goal.left, y: goal.top, width: goal.width, height: goal.height,
+		type: "goal"});
     $.ajax({type: "POST", 
             url: URL,
 	    data: {levelName: title,
@@ -240,7 +233,6 @@ $(document).ready(function() {
         var title = gup("level");
 	adjustToScreen();
 
-	//TheWorld.addForegroundObject(g_goalLocation);
 	//TheWorld.addForegroundObject(g_startLocation);
 	TheWorld.loadFromServer(title, function() {
 		redraw();

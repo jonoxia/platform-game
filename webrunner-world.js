@@ -9,6 +9,25 @@ var TheWorld = {
   yOffset: 0,
   canvasWidth: 800,
   canvasHeight: 600,
+  goalArea: {
+	left: 500,
+	top: 350,
+	width: 64,
+	height: 64,
+	get right() { return this.left + this.width; },
+	get bottom() { return this.top + this.height; },
+	draw: function(ctx) {
+	    ctx.strokeStyle = "black";
+	    ctx.strokeRect(this.left, this.top, 64, 64);
+	    ctx.strokeText("GOAL", this.left + 5, this.top +32);
+	},
+	setBounds: function(l, t, w, h) {
+	    this.left = l;
+	    this.top = t;
+	    this.width = w;
+	    this.height = h;
+	}
+    },
   get leftScrollMargin() {
 	return 200;
 	// if you go left of 200 pixels the screen scrolls left
@@ -119,6 +138,10 @@ var TheWorld = {
     for (i = 0; i < this.backgroundObjects.length; i++) {
       this.drawIfOnScreen(this.backgroundObjects[i], ctx);
     }
+
+    // Draw goal area:
+    this.drawIfOnScreen(this.goalArea, ctx);
+
     // Draw foreground objects after background objects so they
     // appear in front
     for (i = 0; i < this.foregroundObjects.length; i++) {
@@ -208,11 +231,21 @@ var TheWorld = {
 	    $("#debug").html("In callback, parsing json: " + data );
 	    var worldData = JSON.parse(data);
 	    for (var i = 0; i < worldData.length; i++) {
-		var plat = new Platform(worldData[i].x,
-					worldData[i].y,
-					worldData[i].width,
-					worldData[i].height);
-		self.addForegroundObject(plat);
+		var type = worldData[i].type;
+		if (type == "platform") {
+                   var plat = new Platform(worldData[i].x,
+			                   worldData[i].y,
+					   worldData[i].width,
+					   worldData[i].height);
+                   self.addForegroundObject(plat);
+		}
+		if (type == "goal") {
+		    // Set the goal rectangle
+		    self.goalArea.setBounds(worldData[i].x,
+					    worldData[i].y,
+					    worldData[i].width,
+					    worldData[i].height);
+		}
 	    }
 	    callback();
 	}, "html");
@@ -226,6 +259,7 @@ function Platform(x, y, width, height) {
   this.height = height;
 }
 Platform.prototype = {
+  type: "platform",
   get right() {
     return this.left + this.width;
   },

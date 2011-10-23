@@ -19,7 +19,8 @@ levels = Level.selectBy(name = levelName)
 if levels.count() > 0:
     objs = LevelObject.selectBy(level = levels[0])
     for obj in objs:
-        worldData.append({"x": obj.x, "y": obj.y, "width": obj.width, "height": obj.height})
+        worldData.append({"x": obj.x, "y": obj.y, "width": obj.width, "height": obj.height,
+                          "type": obj.type})
 
 print "Content-type: text/html"
 print
