@@ -1,0 +1,3 @@
+DB_URL = "your database connection url here"
+DOMAIN = "your domain here"
+BASE_DIR = "your absolute path here"
