@@ -191,6 +191,18 @@ function adjustToScreen() {
     $("#game-canvas").attr("height", TheWorld.canvasHeight);
 }
 
+function updateTimer(ms) {
+    var s = Math.floor(ms / 1000);
+    var m = Math.floor(s / 60);
+    s = s % 60;
+    if (s < 10) {
+	s_str = "0" + s;
+    } else {
+	s_str = s;
+    }
+    $("#timer").html( m + ":" + s_str);
+}
+
 $(document).ready(function() {
   adjustToScreen();
   var context = $("#game-canvas")[0].getContext("2d");
@@ -206,6 +218,8 @@ $(document).ready(function() {
 
     var leftArrowDown = false;
     var rightArrowDown = false;
+
+    var startTime = Date.now();
 
     $(document).bind("keydown", function(evt) {
 	    if (evt.which == LEFT_ARROW) {
@@ -236,7 +250,7 @@ $(document).ready(function() {
 		player.idle();
 	    }
 	    player.update();
-	    
+	    updateTimer(Date.now() - startTime);
 	    TheWorld.draw(context);
 	}, 100);
       });
