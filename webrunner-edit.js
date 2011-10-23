@@ -11,51 +11,71 @@ function adjustToScreen() {
 
 var PlatformTool = {
     currentPlatform: null,
+    mouseIsDown: false,
     startX: 0,
     startY: 0,
 
+    defineRect: function(x, y) {
+	var left, top, width, height;
+	if (x < this.startX) {
+	    left = x;
+	    width = this.startX - x;
+	} else {
+	    left = this.startX;
+	    width = x - this.startX;
+	}
+	if (y < this.startY) {
+	    top = y;
+	    height = this.startY -y
+	} else {
+	    top = this.startY;
+	    height = y - this.startY;
+	}
+	return {l: left, t: top, w: width, h: height};
+    },
+
     onMouseDown: function(x, y) {
 	var pt = worldCoords(x, y);
-	this.startX = pt.x;
-	this.startY = pt.y;
-
 	this.currentPlatform = TheWorld.getPlatformAt(pt.x, pt.y);
-	// If x, y is inside existing platform, set currentPlatform
-	// to that one and set dragMode true.
-	// Otherwise, create a new platform, set that one current,
-	// and dragMode false.
+	if (this.currentPlatform) {
+	    // Already platform here? Start dragging it.
+	    this.startX = pt.x - this.currentPlatform.left;
+	    this.startY = pt.y - this.currentPlatform.top;
+
+	} else {
+	    // No platform here? Start creating one.
+	    this.startX = pt.x;
+	    this.startY = pt.y;
+	}
+	this.mouseIsDown = true;
     },
 
     onMouseMove: function(x, y) {
-	var pt = worldCoords(x, y);
-	if (this.currentPlatform != null) {
-	    this.currentPlatform.left = pt.x;
-	    this.currentPlatform.top = pt.y;
+	if (this.mouseIsDown) { // TODO factor this out?
+	    var pt = worldCoords(x, y);
+	    if (this.currentPlatform != null) {
+		this.currentPlatform.left = pt.x - this.startX;
+		this.currentPlatform.top = pt.y - this.startY;
+		redraw();
+	    } else {
+		redraw();
+		var rect = this.defineRect(pt.x, pt.y);
+		var context = $("#design-canvas")[0].getContext("2d");
+		context.strokeStyle = "black";
+		context.strokeRect(rect.l, rect.t, rect.w, rect.h);
+	    }
 	}
     },
 
     onMouseUp: function(x, y) {
 	var pt = worldCoords(x, y);
 	if (!this.currentPlatform) {
-	    var left, top, width, height;
-	    if (pt.x < this.startX) {
-		left = pt.x;
-		width = this.startX - pt.x;
-	    } else {
-		left = this.startX;
-		width = pt.x - this.startX;
-	    }
-	    if (y < this.startY) {
-		top = pt.y;
-		height = this.startY - pt.y
-	    } else {
-		top = this.startY;
-		height = pt.y - this.startY;
-	    }
-	    var plat = new Platform( left, top, width, height);
+	    var rect = this.defineRect(pt.x, pt.y);
+	    var plat = new Platform( rect.l, rect.t, rect.w, rect.h);
 	    TheWorld.addForegroundObject(plat);
 	}
 	this.currentPlatform = null;
+	this.mouseIsDown = false;
     }
 };
 
@@ -167,14 +187,17 @@ function worldCoords(x, y) {
 	    y: TheWorld.screenYToWorldY(y)};
 }
 
+function redraw() {
+    var context = $("#design-canvas")[0].getContext("2d");
+    TheWorld.draw(context);
+}
+
 $(document).ready(function() {
 	adjustToScreen();
-	var context = $("#design-canvas")[0].getContext("2d");
 
 	TheWorld.addForegroundObject(g_goalLocation);
 	TheWorld.addForegroundObject(g_startLocation);
-
-	TheWorld.draw(context);
+	redraw();
 
 	$("#design-canvas").bind("mousedown", function(evt) {
 		pos = canvasCoords(evt);
@@ -187,7 +210,7 @@ $(document).ready(function() {
 	$("#design-canvas").bind("mouseup", function(evt) {
 		pos = canvasCoords(evt);
 		g_selectedTool.onMouseUp(pos.x, pos.y);
-		TheWorld.draw(context);
+		redraw();
 	    });
 
         $("input").change(function() {
