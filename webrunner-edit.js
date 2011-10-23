@@ -91,19 +91,27 @@ var EraserTool = {
 };
 
 var ScrollTool = {
-    startX: 0,
-    startY: 0,
+    lastX: 0,
+    lastY: 0,
+    mouseIsDown: false,
     onMouseDown: function(x, y) {
-	this.startX = x;
-	this.startY = y;
+	this.mouseIsDown = true;
+	this.lastX = x;
+	this.lastY = y;
     },
 
     onMouseMove: function(x, y) {
+	if (this.mouseIsDown) {
+	    TheWorld.xOffset -= (x - this.lastX);
+	    TheWorld.yOffset -= (y - this.lastY);
+	    this.lastX = x;
+	    this.lastY = y;
+	    redraw();
+	}
     },
 
     onMouseUp: function(x, y) {
-	TheWorld.xOffset -= (x - this.startX);
-	TheWorld.yOffset -= (y - this.startY);
+	this.mouseIsDown = false;
     }
 };
 
