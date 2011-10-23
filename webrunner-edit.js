@@ -57,15 +57,53 @@ var PlatformTool = {
 };
 
 var EraserTool = {
+    onMouseDown: function(x, y) {
+    },
+
+    onMouseMove: function(x, y) {
+    },
+
+    onMouseUp: function(x, y) {
+    }
 };
 
 var ScrollTool = {
+    startX: 0,
+    startY: 0,
+    onMouseDown: function(x, y) {
+	this.startX = x;
+	this.startY = y;
+    },
+
+    onMouseMove: function(x, y) {
+    },
+
+    onMouseUp: function(x, y) {
+	TheWorld.xOffset -= (x - this.startX);
+	TheWorld.yOffset -= (y - this.startY);
+    }
 };
 
 var StartTool = {
+    onMouseDown: function(x, y) {
+    },
+
+    onMouseMove: function(x, y) {
+    },
+
+    onMouseUp: function(x, y) {
+    }
 };
 
 var GoalTool = {
+    onMouseDown: function(x, y) {
+    },
+
+    onMouseMove: function(x, y) {
+    },
+
+    onMouseUp: function(x, y) {
+    }
 };
 
 var selectedTool = PlatformTool;
@@ -95,4 +133,26 @@ $(document).ready(function() {
 		selectedTool.onMouseUp(pos.x, pos.y);
 		TheWorld.draw(context);
 	    });
+
+        $("input").change(function() {
+		var id = $("input[@name=testGroup]:checked").attr('id');
+		switch (id) {
+		case "platform-tool":
+		    selectedTool = PlatformTool;
+		    break;
+		case "eraser-tool":
+		    selectedTool = EraserTool;
+		    break;
+		case "scroll-tool":
+		    selectedTool = ScrollTool;
+		    break;
+		case "start-tool":
+		    selectedTool = StartTool;
+		    break;
+		case "goal-tool":
+		    selectedTool = GoalTool;
+		    break;
+		}
+	    });
+
     });
