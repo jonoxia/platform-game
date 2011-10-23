@@ -31,7 +31,10 @@ if levelData != "" and levelName != "":
     for obj in old:
         LevelObject.delete(obj.id)
     data = simplejson.loads(levelData)
-    for obj in data:
+    level.startX = data["startX"]
+    level.startY = data["startY"]
+    
+    for obj in data["worldData"]:
         l = LevelObject(level = level, type = obj["type"],
                         x = obj["x"], y = obj["y"],
                         width = obj["width"], height = obj["height"])

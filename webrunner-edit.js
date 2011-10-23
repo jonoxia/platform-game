@@ -1,3 +1,4 @@
+
 function adjustToScreen() {
     var screenWidth = window.innerWidth;
     var screenHeight = window.innerHeight;
@@ -129,8 +130,8 @@ var StartTool = {
 
     onMouseUp: function(x, y) {
 	var pt = worldCoords(x, y);
-	g_startLocation.left = pt.x;
-	g_startLocation.top = pt.y;
+	TheWorld.startX = x;
+	TheWorld.startY = y;
     }
 };
 
@@ -144,25 +145,6 @@ var GoalTool = {
     onMouseUp: function(x, y) {
 	var pt = worldCoords(x, y);
 	TheWorld.goalArea.setBounds(x, y, 64, 64);
-    }
-};
-
-var g_startLocation = {
-    left: 0,
-    top: 0,
-    get right() {
-	return this.left + 64;
-    },
-    get bottom() {
-	return this.top + 64;
-    },
-    draw: function(ctx) {
-	ctx.strokeStyle = "black";
-	ctx.strokeRect(this.left, this.top, 64, 64);
-	ctx.strokeText("START", this.left + 5, this.top +32);
-    },
-    detectIntercept: function(mob) {
-	return null;
     }
 };
 
@@ -183,6 +165,10 @@ function worldCoords(x, y) {
 function redraw() {
     var context = $("#design-canvas")[0].getContext("2d");
     TheWorld.draw(context);
+    // mark start location, since world doesn't draw it:
+    context.strokeStyle = "black";
+    context.strokeRect(TheWorld.startX, TheWorld.startY, 64, 64);
+    context.strokeText("START", TheWorld.startX + 5, TheWorld.startY +32);
 }
 
 function saveChanges() {
@@ -193,6 +179,7 @@ function saveChanges() {
     $("#debug").html("title is " + title);
     var i, objs;
     // TODO LATER background objects, special data like start location and goal
+    var allData = {};
     var worldData = [];
     objs = TheWorld.foregroundObjects;
     for (i = 0; i < objs.length; i++) {
@@ -214,10 +201,14 @@ function saveChanges() {
     var goal = TheWorld.goalArea;
     worldData.push({ x: goal.left, y: goal.top, width: goal.width, height: goal.height,
 		type: "goal"});
+    allData.worldData = worldData;
+    // Add starting point:
+    allData.startX = TheWorld.startX;
+    allData.startY = TheWorld.startY;
     $.ajax({type: "POST", 
             url: URL,
 	    data: {levelName: title,
-		   levelData: JSON.stringify(worldData)}, 
+		   levelData: JSON.stringify(allData)}, 
 	    success: function(data, textStatus, jqXHR) {
 		$("#debug").html(textStatus);
 	    },
@@ -226,7 +217,7 @@ function saveChanges() {
 	    },
 	    dataType: "text"
 	  });
-    $("#debug").html(JSON.stringify(worldData));
+    $("#debug").html(JSON.stringify(allData));
 }
 
 $(document).ready(function() {

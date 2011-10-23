@@ -12,6 +12,7 @@ q = cgi.FieldStorage()
 levelName = q.getfirst("levelName", "")
 # artist = verify_id() 
 
+data = {}
 worldData = []
 
 levelName = q.getfirst("levelName", "")
@@ -21,7 +22,10 @@ if levels.count() > 0:
     for obj in objs:
         worldData.append({"x": obj.x, "y": obj.y, "width": obj.width, "height": obj.height,
                           "type": obj.type})
+    data["worldData"] = worldData
+    data["startX"] = levels[0].startX
+    data["startY"] = levels[0].startY
 
 print "Content-type: text/html"
 print
-print simplejson.dumps(worldData)
+print simplejson.dumps(data)

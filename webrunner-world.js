@@ -9,6 +9,8 @@ var TheWorld = {
   yOffset: 0,
   canvasWidth: 800,
   canvasHeight: 600,
+  startX: 0,
+  startY: 0,
   goalArea: {
 	left: 500,
 	top: 350,
@@ -229,7 +231,10 @@ var TheWorld = {
     $("#debug").html("LOading level");
     $.get(url, {levelName: levelName}, function(data, textStatus, jqXHR) {
 	    $("#debug").html("In callback, parsing json: " + data );
-	    var worldData = JSON.parse(data);
+	    var parsedData = JSON.parse(data);
+	    self.startX = parsedData.startX;
+	    self.startY = parsedData.startY;
+	    var worldData = parsedData.worldData;
 	    for (var i = 0; i < worldData.length; i++) {
 		var type = worldData[i].type;
 		if (type == "platform") {

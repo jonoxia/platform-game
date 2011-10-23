@@ -213,12 +213,14 @@ $(document).ready(function() {
   var context = $("#game-canvas")[0].getContext("2d");
   var title = gup("level");
 
-  // Create player, put it in the world:
-  var player = new RunningHuman("running_human_frames.png", 200, 0, 64, 64, true, 122);
-  TheWorld.addForegroundObject(player);
-
-  // TODO UI for picking what level you play
   TheWorld.loadFromServer(title, function() {
+
+    // Create player, put it in the world:
+    var player = new RunningHuman("running_human_frames.png", 
+				  TheWorld.startX,
+				  TheWorld.startY,
+				  64, 64, true, 122);
+    TheWorld.addForegroundObject(player);
     TheWorld.draw(context);
 
     var leftArrowDown = false;
