@@ -60,10 +60,13 @@ var PlatformTool = {
 		redraw();
 	    } else {
 		redraw();
+		// draw preview (screen coordinates!)
 		var rect = this.defineRect(pt.x, pt.y);
 		var context = $("#design-canvas")[0].getContext("2d");
 		context.strokeStyle = "black";
-		context.strokeRect(rect.l, rect.t, rect.w, rect.h);
+		context.strokeRect(TheWorld.worldXToScreenX(rect.l), 
+				   TheWorld.worldYToScreenY(rect.t),
+				   rect.w, rect.h);
 	    }
 	}
     },
@@ -144,7 +147,7 @@ var GoalTool = {
 
     onMouseUp: function(x, y) {
 	var pt = worldCoords(x, y);
-	TheWorld.goalArea.setBounds(x, y, 64, 64);
+	TheWorld.goalArea.setBounds(pt.x, pt.y, 64, 64);
     }
 };
 
@@ -167,8 +170,10 @@ function redraw() {
     TheWorld.draw(context);
     // mark start location, since world doesn't draw it:
     context.strokeStyle = "black";
-    context.strokeRect(TheWorld.startX, TheWorld.startY, 64, 64);
-    context.strokeText("START", TheWorld.startX + 5, TheWorld.startY +32);
+    var x = TheWorld.worldXToScreenX(TheWorld.startX);
+    var y = TheWorld.worldYToScreenY(TheWorld.startY);
+    context.strokeRect(x, y, 64, 64);
+    context.strokeText("START", x + 5, y +32);
 }
 
 function saveChanges() {
