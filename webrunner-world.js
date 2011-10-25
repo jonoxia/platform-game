@@ -228,9 +228,9 @@ var TheWorld = {
   loadFromServer: function (levelName, callback) {
     var url = "load-level.py";
     var self = this;
-    $("#debug").html("LOading level");
+    $("#debug").html("Loading level...");
     $.get(url, {levelName: levelName}, function(data, textStatus, jqXHR) {
-	    $("#debug").html("In callback, parsing json: " + data );
+	    //$("#debug").html("In callback, parsing json: " + data );
 	    var parsedData = JSON.parse(data);
 	    self.startX = parsedData.startX;
 	    self.startY = parsedData.startY;
@@ -252,6 +252,7 @@ var TheWorld = {
 					    worldData[i].height);
 		}
 	    }
+	    $("#debug").html("Loaded.");
 	    callback();
 	}, "html");
   }

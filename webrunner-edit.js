@@ -181,7 +181,7 @@ function saveChanges() {
     var URL = "save-level.py";
     
     var title = gup("level");
-    $("#debug").html("title is " + title);
+    //$("#debug").html("title is " + title);
     var i, objs;
     // TODO LATER background objects, special data like start location and goal
     var allData = {};
@@ -215,14 +215,15 @@ function saveChanges() {
 	    data: {levelName: title,
 		   levelData: JSON.stringify(allData)}, 
 	    success: function(data, textStatus, jqXHR) {
-		$("#debug").html(textStatus);
+		//$("#debug").html(textStatus);
+		$("#debug").html("OK, Saved.");
 	    },
 	    error: function(data, textStatus, thing) {
 		$("#debug").html(thing);
 	    },
 	    dataType: "text"
 	  });
-    $("#debug").html(JSON.stringify(allData));
+    $("#debug").html("Saving, don't close the page...");
 }
 
 $(document).ready(function() {
