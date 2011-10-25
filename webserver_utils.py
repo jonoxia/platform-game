@@ -5,7 +5,7 @@ import os
 import sys
 import string
 from platformer_config import TEMPLATE_DIR
-# from database_tables import Artist
+from database_tables import Player
 
 def render_template_file( filename, substitutionDict ):
     file = open( os.path.join( TEMPLATE_DIR, filename ), "r")
@@ -34,7 +34,7 @@ def verify_id():
     if os.environ.has_key('HTTP_COOKIE'):
         cookie = Cookie.SimpleCookie(os.environ['HTTP_COOKIE'])
         if cookie.has_key("email") and cookie.has_key("session"):
-            matches = Artist.selectBy(email = cookie["email"].value,
+            matches = Player.selectBy(email = cookie["email"].value,
                                       session = cookie["session"].value)
             if matches.count() > 0:
                 if matches[0].session != "":

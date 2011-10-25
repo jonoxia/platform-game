@@ -1,13 +1,11 @@
 #!/usr/bin/python
 
-# This script takes a username and spits out a list of links to all
-# works drawn by that user.
 import cgi
 import cgitb
 import datetime
 
 from database_tables import Level
-from webserver_utils import render_template_file, print_redirect
+from webserver_utils import *
 
 
 def level_exists(name):
@@ -31,8 +29,9 @@ if __name__ == "__main__":
     title = q.getfirst("title", "")
     if title == "":
         title = "Untitled"
-    title = title.replace(" ", "_") # workaround for bug 9
+    title = title.replace(" ", "_") # terrible workaround for bug 9
     title = make_new_title(title)
-    newLevel = Level(name=title, creator = None, modified=datetime.datetime.now(), startX = 0, startY = 0)
+    player = verify_id()
+    newLevel = Level(name=title, creator = player, modified=datetime.datetime.now(), startX = 0, startY = 0)
 
     print_redirect("listlevels.py")

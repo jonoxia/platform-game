@@ -6,9 +6,9 @@ import cgi
 import cgitb
 
 from database_tables import Level, LevelObject
-from webserver_utils import render_template_file
+from webserver_utils import render_template_file, verify_id
 
-def printList():
+def printList(player):
     print "Content-type: text/html"
     print
 
@@ -16,22 +16,33 @@ def printList():
     work_list = ""
     for match in matches:
         title = match.name
-        url = "webrunner.html?level=%s" % title
         date = match.modified
+        edit_link = ""
+        if match.creator != None:
+            if match.creator == player:
+                creator = "You"
+                edit_link = "<a href=\"designer.html?level=%s\">Edit</a>" % title
+            else:
+                creator = match.creator.name
+        else:
+            creator = "Nobody"
         work_list += render_template_file( "list-level-row.html",
                                            {"moddate": date,
-                                            "title": title} )
+                                            "title": title,
+                                            "creator": creator,
+                                            "editlink": edit_link} )
     
-    print render_template_file( "list-levels.html", {"work_list": work_list})
+    print render_template_file( "list-levels.html", {"work_list": work_list,
+                                                     "player": player.name})
 
 if __name__ == "__main__":
     cgitb.enable()
     q = cgi.FieldStorage()
 
-    # artist = verify_id()
+    player = verify_id()
     # action = q.getfirst("action", "")
     # title = q.getfirst("title", "")
 
-    printList()
+    printList(player)
 
 
