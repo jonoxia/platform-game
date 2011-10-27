@@ -212,13 +212,13 @@ $(document).ready(function() {
   adjustToScreen();
   var context = $("#game-canvas")[0].getContext("2d");
   var title = gup("level");
-  
+  var avatarURL = $("#avatarURL").html();
   
 
   TheWorld.loadFromServer(title, function() {
 
     // Create player, put it in the world:
-    var player = new RunningHuman("running_human_frames.png", 
+    var player = new RunningHuman(avatarURL,
 				  TheWorld.startX,
 				  TheWorld.startY,
 				  64, 64, true, 122);

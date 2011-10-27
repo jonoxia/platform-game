@@ -33,7 +33,8 @@ def printList(player):
                                             "editlink": edit_link} )
     
     print render_template_file( "list-levels.html", {"work_list": work_list,
-                                                     "player": player.name})
+                                                     "player": player.name,
+                                                     "avatarURL": player.avatarURL})
 
 if __name__ == "__main__":
     cgitb.enable()

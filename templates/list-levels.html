@@ -15,5 +15,13 @@
     <form action="newlevel.py" method="post">
       New Level Name: <input type="text" name="title"></input> <input type="submit" value="Create Level"></input>
     </form>
+    <hr/>
+    <form action="set-player-data.py" method="post">
+      <h2>Your Player Data:</h2>
+      Player Name: <input type="text" name="playerName" value="${player}"/><br/>
+      Your Avatar: <input type="text" name="avatarURL" size="60" value="${avatarURL}"/><br/>
+      <img src="${avatarURL}"/>
+      <input type="submit" value="Save Changes"></input>
+    </form>
   </body>
 </html>
