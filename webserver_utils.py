@@ -43,15 +43,3 @@ def verify_id():
     # If verification fails, kick 'em back out to index.html
     print_redirect("index.html")
     sys.exit(1)
-
-def get_dir_for_artist(artist, subdir):
-    # subdir should be "tmp" for temp files and "pub" for published files
-    # creates it if it doesn't already exist.
-    dir = os.path.join(ARTIST_FILE_BASE_DIR, "%d" % artist.id)
-    if not (os.path.isdir(dir)):
-        os.mkdir(dir)
-    dir = os.path.join(dir, subdir)
-    if not (os.path.isdir(dir)):
-        os.mkdir(dir)
-    return dir
-

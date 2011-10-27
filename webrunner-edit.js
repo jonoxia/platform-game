@@ -215,8 +215,7 @@ function saveChanges() {
 	    data: {levelName: title,
 		   levelData: JSON.stringify(allData)}, 
 	    success: function(data, textStatus, jqXHR) {
-		//$("#debug").html(textStatus);
-		$("#debug").html("OK, Saved.");
+		$("#debug").html(textStatus);
 	    },
 	    error: function(data, textStatus, thing) {
 		$("#debug").html(thing);

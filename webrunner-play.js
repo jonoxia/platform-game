@@ -212,6 +212,8 @@ $(document).ready(function() {
   adjustToScreen();
   var context = $("#game-canvas")[0].getContext("2d");
   var title = gup("level");
+  
+  
 
   TheWorld.loadFromServer(title, function() {
 
