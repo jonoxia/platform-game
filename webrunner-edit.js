@@ -227,6 +227,7 @@ function saveChanges() {
 
 $(document).ready(function() {
         var title = gup("level");
+	$("#play-this").attr("href", "play.py?level=" + title);
 	adjustToScreen();
 
 	//TheWorld.addForegroundObject(g_startLocation);
