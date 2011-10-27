@@ -22,7 +22,7 @@ if levelData != "" and levelName != "":
         level.modified = datetime.datetime.now()
     else:
         level = Level(name = levelName,
-                      creator = player
+                      creator = player,
                       modified = datetime.datetime.now(),
                       startX = 0,
                       startY = 0)
@@ -43,7 +43,7 @@ if levelData != "" and levelName != "":
                             width = obj["width"], height = obj["height"])
         print "Content-type: text/html"
         print
-        print "OK, saved"
+        print "OK, saved %s" % levelName
 
     else:
         print "Content-type: text/html"
