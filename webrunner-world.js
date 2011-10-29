@@ -156,7 +156,9 @@ var TheWorld = {
     // Run through all platforms in the foregroundObjects list and
     // see whether mob is on a collision course with any of them.
     // If it is, return the intercept point.
+    // return null if you're not on a collision course with anything.
     var intercept;
+    var closestIntercept = null;
     for (var i = 0; i < this.foregroundObjects.length; i++) {
       if (this.foregroundObjects[i] === mob) {
         // don't attempt collision with self!
@@ -164,10 +166,18 @@ var TheWorld = {
       }
       intercept = this.foregroundObjects[i].detectIntercept(mob);
       if (intercept) {
-        return intercept;
+	  if (closestIntercept) {
+	      // If you intercept more than one platform, always
+	      // take the closest one!
+	      if (intercept.t < closestIntercept.t) {
+		  closestIntercept = intercept;
+	      }
+	  } else {
+	      closestIntercept = intercept;
+	  }
       }
     }
-    return null;
+    return closestIntercept;
   },
 
   touchingPlatform: function(mob, direction) {
@@ -285,43 +295,48 @@ Platform.prototype = {
     /* Will mob's velocity cause it to cross one of the edges of this
      * platform?  returns object with edge name ("top" "left" "right"
      * or "bottom") and x,y of interception point. */
-    var x_intercept, y_intercept;
+    var x_intercept, y_intercept, d_t;
     /* assumes that mob.vx, mob.vy, mob.left, mob.right, mob.top, and
      * mob.bottom are all defined in addition to this.left, this.top,
      * this.right, and this.bottom.  Could x-velocity carry mob across
      * the line of the left edge of this platform? */
     if (mob.right < this.left && mob.right + mob.vx >= this.left) {
+      // How long does it take you to reach the line of the left edge?
+      dt = (this.left - mob.right)/mob.vx;
       // At what y-value would the line of motion cross the line of the left edge?
-      y_intercept = mob.y + mob.vy * (this.left - mob.right)/mob.vx;
+      y_intercept = mob.y + mob.vy * dt;
       // Is that y-value inside the actual bounds of the left edge (hit) or outside (miss)?
       if (y_intercept + mob.height >= this.top && y_intercept <= this.bottom) {
-        return { side: "left", x: this.left, y: y_intercept };
+        return { side: "left", x: this.left, y: y_intercept, t: dt };
       }
     }
 
     // Could y-velocity carry mob across the line of the top edge of this platform?
     if (mob.bottom < this.top && mob.bottom + mob.vy >= this.top) {
       // At what x-value would line of motion cross line of top edge?
-      x_intercept = mob.x + mob.vx * (this.top - mob.bottom)/mob.vy;
+      dt = (this.top - mob.bottom)/mob.vy;
+      x_intercept = mob.x + mob.vx * dt;
       // Is that x-value inside the actual bounds of the top edge?
       if (x_intercept + mob.width >= this.left && x_intercept <= this.right) {
-        return { side: "top", x: x_intercept, y: this.top }; // todo should be this.top - mob.height?
+        return { side: "top", x: x_intercept, y: this.top, t: dt }; // todo should be this.top - mob.height?
       }
     }
 
     // Can possibly touch right edge?  (same logic)
     if (mob.left > this.right && mob.left + mob.vx <= this.right) {
-      y_intercept = mob.y + mob.vy * (this.right - mob.left)/mob.vx;
+      dt = (this.right - mob.left)/mob.vx;
+      y_intercept = mob.y + mob.vy * dt;
       if (y_intercept + mob.height >= this.top && y_intercept <= this.bottom) {
-        return { side: "right", x: this.right, y: y_intercept };
+        return { side: "right", x: this.right, y: y_intercept, t: dt };
       }
     }
 
     // Can possibly touch bottom edge? (same logic)
     if (mob.top > this.bottom && mob.top + mob.vy <= this.bottom) {
-      x_intercept = mob.x + mob.vx * (this.bottom - mob.top)/mob.vy;
+      dt = (this.bottom - mob.top)/mob.vy;
+      x_intercept = mob.x + mob.vx * dt;
       if (x_intercept + mob.width >= this.left && x_intercept <= this.right) {
-        return { side: "bottom", x: x_intercept, y: this.bottom };
+        return { side: "bottom", x: x_intercept, y: this.bottom, t: dt };
       }
     }
 
