@@ -74,18 +74,11 @@ RunningHuman.prototype = {
     return TheWorld.touchingPlatform(this, "bottom");
   },
 
-  update: function() {
-    // Gravity:
-    if (!this.onGround()) {
-      this.vy += 5;
-    }
-
-    // Collision detection
-    var intercept = TheWorld.detectPlatformIntercept(this);
-    if (intercept) {
+  stopAt: function(intercept) {
       // case where we hit a solid object before moving full velocity:
       // set location adjacent to it and cancel velocity in that
       // direction.
+
       switch (intercept.side) {
       case "top":
         this.vy = 0;
@@ -107,12 +100,22 @@ RunningHuman.prototype = {
         this.x = intercept.x;
         this.y = intercept.y;
         break;
-      }
-    } else {
-      // If no collision, move full velocity
-      this.move(this.vx, this.vy);
+      }	
+  },
+
+  update: function() {
+    // Gravity:
+    if (!this.onGround()) {
+      this.vy += 5;
     }
 
+    // Collision detection
+    var pathModified = TheWorld.detectPlatformIntercept(this);
+    
+    if (!pathModified) {
+	// If no collision, move full velocity
+	this.move(this.vx, this.vy);
+    }
   },
 
   jump: function() {

@@ -154,10 +154,10 @@ var TheWorld = {
   detectPlatformIntercept: function(mob) {
     // Run through all platforms in the foregroundObjects list and
     // see whether mob is on a collision course with any of them.
-    // If it is, return the intercept point.
-    // return null if you're not on a collision course with anything.
-    var intercept;
-    var closestIntercept = null;
+    // Call the onMobTouch methods of any objects I intercept with,
+    // in order of closest first.
+
+    var intercepts = [];// may intercept with more than one.
     for (var i = 0; i < this.foregroundObjects.length; i++) {
       if (this.foregroundObjects[i] === mob) {
         // don't attempt collision with self!
@@ -165,18 +165,28 @@ var TheWorld = {
       }
       intercept = this.foregroundObjects[i].detectIntercept(mob);
       if (intercept) {
-	  if (closestIntercept) {
-	      // If you intercept more than one platform, always
-	      // take the closest one!
-	      if (intercept.t < closestIntercept.t) {
-		  closestIntercept = intercept;
-	      }
-	  } else {
-	      closestIntercept = intercept;
-	  }
+	  intercepts.push( { box: this.foregroundObjects[i],
+                             cept: intercept } );
       }
     }
-    return closestIntercept;
+    // sort in increasing order of t (time-until intercept)
+    
+    // If only one intercept, just do it:
+    intercepts.sort(function(a, b) { return a.cept.t - b.cept.t;} );
+    var pathModified;
+    $("#debug").html("num intercepts " + intercepts.length);
+
+    for (i = 0; i < intercepts.length; i++) {
+	pathModified = intercepts[i].box.onMobTouch(mob, intercepts[i].cept);
+	// if first collision modifies mob's path, then mob MAY OR MAY NOT
+	// actually collide with any of the other items...
+	if (pathModified) {
+	    $("#debug").html("Path modified, rechecking collisions");
+	    return true;
+	}
+	// If the first one returns true, don't process any more...
+    }
+    return false;
   },
 
   touchingPlatform: function(mob, direction) {
@@ -274,73 +284,19 @@ var TheWorld = {
   }
 };
 
-function SemiPermiablePlatform(x, y, width, height) {
+function Box(x, y, width, height) {
   this.left = x;
   this.top = y;
   this.width = width;
   this.height = height;
 }
-Platform.prototype = {
-  type: "semiplatform",
+Box.prototype = {
   get right() {
     return this.left + this.width;
   },
 
   get bottom() {
     return this.top + this.height;
-  },
-
-  draw: function(ctx) {
-    ctx.fillStyle = "green";
-    ctx.strokeStyle = "black";
-    ctx.fillRect(this.left, this.top, this.width, this.height);
-    ctx.strokeRect(this.left, this.top, this.width, this.height);
-  },
-
-  detectIntercept: function(mob) {
-    /* Will mob's velocity cause it to cross one of the edges of this
-     * platform?  returns object with edge name ("top" "left" "right"
-     * or "bottom") and x,y of interception point. */
-    var x_intercept, y_intercept, d_t;
-    /* assumes that mob.vx, mob.vy, mob.left, mob.right, mob.top, and
-     * mob.bottom are all defined in addition to this.left, this.top,
-     * this.right, and this.bottom.  Could x-velocity carry mob across
-     * the line of the left edge of this platform? */
-
-    // Could y-velocity carry mob across the line of the top edge of this platform?
-    if (mob.bottom < this.top && mob.bottom + mob.vy >= this.top) {
-      // At what x-value would line of motion cross line of top edge?
-      dt = (this.top - mob.bottom)/mob.vy;
-      x_intercept = mob.x + mob.vx * dt;
-      // Is that x-value inside the actual bounds of the top edge?
-      if (x_intercept + mob.width >= this.left && x_intercept <= this.right) {
-        return { side: "top", x: x_intercept, y: this.top, t: dt }; // todo should be this.top - mob.height?
-      }
-    }
-  }
-};
-
-function Platform(x, y, width, height) {
-  this.left = x;
-  this.top = y;
-  this.width = width;
-  this.height = height;
-}
-Platform.prototype = {
-  type: "platform",
-  get right() {
-    return this.left + this.width;
-  },
-
-  get bottom() {
-    return this.top + this.height;
-  },
-
-  draw: function(ctx) {
-    ctx.fillStyle = GROUND_COLOR;
-    ctx.strokeStyle = "black";
-    ctx.fillRect(this.left, this.top, this.width, this.height);
-    ctx.strokeRect(this.left, this.top, this.width, this.height);
   },
 
   detectIntercept: function(mob) {
@@ -396,3 +352,54 @@ Platform.prototype = {
     return null;
   }
 };
+
+
+function Platform(x, y, width, height) {
+  this.left = x;
+  this.top = y;
+  this.width = width;
+  this.height = height;
+}
+Platform.prototype = {
+  type: "platform",
+
+  draw: function(ctx) {
+    ctx.fillStyle = GROUND_COLOR;
+    ctx.strokeStyle = "black";
+    ctx.fillRect(this.left, this.top, this.width, this.height);
+    ctx.strokeRect(this.left, this.top, this.width, this.height);
+  },
+
+  onMobTouch: function(mob, intercept) {
+    mob.stopAt(intercept);
+    return true;
+  }
+};
+Platform.prototype.__proto__ = new Box();
+
+
+function SemiPermiablePlatform(x, y, width, height) {
+  this.left = x;
+  this.top = y;
+  this.width = width;
+  this.height = height;
+}
+SemiPermiablePlatform.prototype = {
+  type: "semiplatform",
+
+  draw: function(ctx) {
+    ctx.fillStyle = "green";
+    ctx.strokeStyle = "black";
+    ctx.fillRect(this.left, this.top, this.width, this.height);
+    ctx.strokeRect(this.left, this.top, this.width, this.height);
+  },
+
+  onMobTouch: function(mob, intercept) {
+    if (intercept.side == "top") {
+      mob.stopAt(intercept);
+      return true;
+    }
+    return false;
+  }
+};
+SemiPermiablePlatform.prototype.__proto__ = new Box();
