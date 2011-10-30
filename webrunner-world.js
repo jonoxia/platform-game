@@ -31,19 +31,18 @@ var TheWorld = {
 	}
     },
   get leftScrollMargin() {
-	return 200;
-	// if you go left of 200 pixels the screen scrolls left
-    },
+      return Math.floor(this.canvasWidth * 1 / 3);
+  },
   get rightScrollMargin() {
-      return this.canvasWidth - 200;
+      return Math.floor(this.canvasWidth * 2 / 3);
   },
 
   get topScrollMargin() {
-      return 200;
+      return Math.floor(this.canvasHeight * 1 / 3);
   },
 
   get bottomScrollMargin() {
-      return this.canvasHeight - 200;
+      return Math.floor(this.canvasHeight * 2 / 3);
   },
 
   // keep a list of background objects and a list of foreground objects --
