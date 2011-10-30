@@ -14,16 +14,23 @@ function RunningHuman(filename, x, y, width, height, animate, topSpeed) {
   this.height = height;
   this.vx = 0;
   this.vy = 0;
-  this.topSpeed = topSpeed;
   this.isAnimated = animate;
   if (animate) {
     this.animationFrame = 0;
     this.movementDirection = STAND_STILL;
   }
   this.init(filename);
+
+  // Stats (could be modified by powerups):
+  this.topSpeed = topSpeed;
+  this.gravity = 5;
+  this.acceleration = 2; // make this 3 for a much easier to steer dude
+  this.friction = 4;
+  this.jumpPower = 30;
 }
 RunningHuman.prototype = {
   imgLoaded: false,
+  type: "player",
 
   init: function(filename) {
     var self = this;
@@ -107,7 +114,7 @@ RunningHuman.prototype = {
   update: function() {
     // Gravity:
     if (!this.onGround()) {
-      this.vy += 5;
+      this.vy += this.gravity;
     }
 
     // Collision detection
@@ -124,7 +131,7 @@ RunningHuman.prototype = {
     // my head.
     if (this.onGround() && !this.jumping &&
         ! TheWorld.touchingPlatform(this, "top")) {
-      this.vy -= 30;
+      this.vy -= this.jumpPower;
       this.jumping = true; // to make jump idempotent, fix bug 2
     }
   },
@@ -133,14 +140,14 @@ RunningHuman.prototype = {
     // Apply friction if touching ground:
     if (this.onGround()) {
       if (this.vx > 0) {
-        this.vx -= 4;
+        this.vx -= this.friction;
         if (this.vx < 0) {
           this.vx = 0;
         }
       }
 
       if (this.vx < 0) {
-        this.vx += 4;
+        this.vx += this.friction;
         if (this.vx > 0) {
           this.vx = 0;
         }
@@ -151,7 +158,7 @@ RunningHuman.prototype = {
   goLeft: function() {
     if (! TheWorld.touchingPlatform(this, "left")) {
       if (this.vx > 0 - this.topSpeed) {
-        this.vx -= 2;
+        this.vx -= this.acceleration;
       } else {
         this.vx = 0 - this.topSpeed;
       }
@@ -161,7 +168,7 @@ RunningHuman.prototype = {
   goRight: function() {
     if (! TheWorld.touchingPlatform(this, "right")) {
       if (this.vx < this.topSpeed) {
-        this.vx += 2;
+        this.vx += this.acceleration;
       } else {
         this.vx = this.topSpeed;
       }

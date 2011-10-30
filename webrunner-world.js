@@ -268,6 +268,13 @@ var TheWorld = {
 					   worldData[i].height);
                    self.addForegroundObject(plat);
 		}
+		if (type == "speedplus") {
+		    var plat = new SpeedPlus(worldData[i].x,
+			                   worldData[i].y,
+					   worldData[i].width,
+					   worldData[i].height);
+                   self.addForegroundObject(plat);
+		}
 		if (type == "goal") {
 		    // Set the goal rectangle
 		    self.goalArea.setBounds(worldData[i].x,
@@ -283,12 +290,15 @@ var TheWorld = {
 };
 
 function Box(x, y, width, height) {
-  this.left = x;
-  this.top = y;
-  this.width = width;
-  this.height = height;
+  this.boxInit(x, y, width, height);
 }
 Box.prototype = {
+  boxInit: function(x, y, width, height) {
+    this.left = x;
+    this.top = y;
+    this.width = width;
+    this.height = height;
+  },
   get right() {
     return this.left + this.width;
   },
@@ -353,10 +363,7 @@ Box.prototype = {
 
 
 function Platform(x, y, width, height) {
-  this.left = x;
-  this.top = y;
-  this.width = width;
-  this.height = height;
+  this.boxInit(x, y, width, height);
 }
 Platform.prototype = {
   type: "platform",
@@ -377,10 +384,7 @@ Platform.prototype.__proto__ = new Box();
 
 
 function SemiPermiablePlatform(x, y, width, height) {
-  this.left = x;
-  this.top = y;
-  this.width = width;
-  this.height = height;
+  this.boxInit(x, y, width, height);
 }
 SemiPermiablePlatform.prototype = {
   type: "semiplatform",
@@ -401,3 +405,45 @@ SemiPermiablePlatform.prototype = {
   }
 };
 SemiPermiablePlatform.prototype.__proto__ = new Box();
+
+
+function PowerUp(x, y, width, height) {
+  this.boxInit(x, y, width, height);
+}
+PowerUp.prototype = {
+  type: "powerup",
+  draw: function(ctx) {
+  },
+  onMobTouch: function(mob, intercept) {
+    if (mob.type == "player") {
+      // monsters don't collect powerups
+      TheWorld.removeForegroundObject(this);	
+      this.onCollect(mob);
+      // TODO play a sound here or something?
+    }
+    return false;
+  },
+  onCollect: function(player) {
+    // Default is to do nothing, but override this in subclasses...
+  }
+};
+PowerUp.prototype.__proto__ = new Box();
+
+function SpeedPlus(x, y, width, height) {
+  this.boxInit(x, y, width, height);
+}
+SpeedPlus.prototype = {
+  type: "speedplus",
+  draw: function(ctx) {
+    ctx.strokeStyle = "black";
+    ctx.strokeRect(this.left, this.top, this.width, this.height);
+    ctx.strokeText("+ SPD", this.left + 5, this.top +32);
+  },
+  onCollect: function(player) {
+    player.topSpeed += 30;
+    player.acceleration += 1;
+    // TODO this is permanent -- make it revokable?
+    $("#debug").html("SPEED UP!"); // TODO better place for these msgs?
+  }
+};
+SpeedPlus.prototype.__proto__ = new PowerUp();

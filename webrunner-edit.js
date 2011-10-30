@@ -90,6 +90,7 @@ GenericRectangleTool.prototype = {
 
 var PlatformTool = new GenericRectangleTool(Platform);
 var SemiPlatformTool = new GenericRectangleTool(SemiPermiablePlatform);
+var SpeedPlusTool = new GenericRectangleTool(SpeedPlus);
 
 var EraserTool = {
     onMouseDown: function(x, y) {
@@ -276,6 +277,9 @@ $(document).ready(function() {
 			    break;
 			case "goal-tool":
 			    g_selectedTool = GoalTool;
+			    break;
+			case "powerup-tool":
+			    g_selectedTool = SpeedPlusTool;
 			    break;
 			}
 		    });
