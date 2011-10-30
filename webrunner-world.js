@@ -154,10 +154,10 @@ var TheWorld = {
   detectPlatformIntercept: function(mob) {
     // Run through all platforms in the foregroundObjects list and
     // see whether mob is on a collision course with any of them.
-    // If it is, return the intercept point.
-    // return null if you're not on a collision course with anything.
-    var intercept;
-    var closestIntercept = null;
+    // Call the onMobTouch methods of any objects I intercept with,
+    // in order of closest first.
+
+    var intercepts = [];// may intercept with more than one.
     for (var i = 0; i < this.foregroundObjects.length; i++) {
       if (this.foregroundObjects[i] === mob) {
         // don't attempt collision with self!
@@ -165,18 +165,28 @@ var TheWorld = {
       }
       intercept = this.foregroundObjects[i].detectIntercept(mob);
       if (intercept) {
-	  if (closestIntercept) {
-	      // If you intercept more than one platform, always
-	      // take the closest one!
-	      if (intercept.t < closestIntercept.t) {
-		  closestIntercept = intercept;
-	      }
-	  } else {
-	      closestIntercept = intercept;
-	  }
+	  intercepts.push( { box: this.foregroundObjects[i],
+                             cept: intercept } );
       }
     }
-    return closestIntercept;
+    // sort in increasing order of t (time-until intercept)
+    
+    // If only one intercept, just do it:
+    intercepts.sort(function(a, b) { return a.cept.t - b.cept.t;} );
+    var pathModified;
+    $("#debug").html("num intercepts " + intercepts.length);
+
+    for (i = 0; i < intercepts.length; i++) {
+	pathModified = intercepts[i].box.onMobTouch(mob, intercepts[i].cept);
+	// if first collision modifies mob's path, then mob MAY OR MAY NOT
+	// actually collide with any of the other items...
+	if (pathModified) {
+	    $("#debug").html("Path modified, rechecking collisions");
+	    return true;
+	}
+	// If the first one returns true, don't process any more...
+    }
+    return false;
   },
 
   touchingPlatform: function(mob, direction) {
@@ -359,6 +369,11 @@ Platform.prototype = {
     ctx.fillRect(this.left, this.top, this.width, this.height);
     ctx.strokeRect(this.left, this.top, this.width, this.height);
   },
+
+  onMobTouch: function(mob, intercept) {
+    mob.stopAt(intercept);
+    return true;
+  }
 };
 Platform.prototype.__proto__ = new Box();
 
@@ -377,6 +392,14 @@ SemiPermiablePlatform.prototype = {
     ctx.strokeStyle = "black";
     ctx.fillRect(this.left, this.top, this.width, this.height);
     ctx.strokeRect(this.left, this.top, this.width, this.height);
+  },
+
+  onMobTouch: function(mob, intercept) {
+    if (intercept.side == "top") {
+      mob.stopAt(intercept);
+      return true;
+    }
+    return false;
   }
 };
 SemiPermiablePlatform.prototype.__proto__ = new Box();
