@@ -29,9 +29,16 @@ class LevelObject( SQLObject ):
     width = IntCol()
     height = IntCol()
 
-# Other tables:  Scores for level completion
+class Score( SQLObject ):
+    class sqlmeta:
+        defaultOrder = "completionTime"
+    level = ForeignKey("Level")
+    player = ForeignKey("Player")
+    completionTime = IntCol()
+    achievedOn = DateTimeCol()
 
 if __name__ == "__main__":
     Player.createTable()
     Level.createTable()
     LevelObject.createTable()
+    Score.createTable()

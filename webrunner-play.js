@@ -261,9 +261,23 @@ $(document).ready(function() {
 	    player.update();
 	    updateTimer(Date.now() - startTime);
 	    TheWorld.draw(context);
+	    // check for #WINNING:
 	    if (player.intersecting(TheWorld.goalArea)) {
 		$("#output").html("A WINRAR IS YOU!");
 		window.clearInterval(heartbeat);
+		$.ajax({type: "POST", 
+			    url: "complete-level.py",
+			    data: {levelName: title,
+				completionTime: Date.now() - startTime},
+			    success: function(data, textStatus, jqXHR) {
+			    $("#debug").html(data);
+			},
+			    error: function(data, textStatus, thing) {
+			    $("#debug").html(thing);
+			},
+			    dataType: "text"
+			    });
+		$("#debug").html("Saving score...");
 	    }
 	}, 100);
       });
