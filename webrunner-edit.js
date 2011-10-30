@@ -10,7 +10,11 @@ function adjustToScreen() {
     $("#design-canvas").attr("height", TheWorld.canvasHeight);
 }
 
-var PlatformTool = {
+function GenericRectangleTool(cons) {
+    // pass in a constructor for the class that this tool will create
+    this._cons = cons;
+}
+GenericRectangleTool.prototype = {
     currentPlatform: null,
     mouseIsDown: false,
     startX: 0,
@@ -75,13 +79,17 @@ var PlatformTool = {
 	var pt = worldCoords(x, y);
 	if (!this.currentPlatform) {
 	    var rect = this.defineRect(pt.x, pt.y);
-	    var plat = new Platform( rect.l, rect.t, rect.w, rect.h);
+	    // Construct instance, add it to TheWorld
+	    var plat = new this._cons( rect.l, rect.t, rect.w, rect.h);
 	    TheWorld.addForegroundObject(plat);
 	}
 	this.currentPlatform = null;
 	this.mouseIsDown = false;
     }
 };
+
+var PlatformTool = new GenericRectangleTool(Platform);
+var SemiPlatformTool = new GenericRectangleTool(SemiPermiablePlatform);
 
 var EraserTool = {
     onMouseDown: function(x, y) {
@@ -253,6 +261,9 @@ $(document).ready(function() {
 			switch (id) {
 			case "platform-tool":
 			    g_selectedTool = PlatformTool;
+			    break;
+			case "semi-platform-tool":
+			    g_selectedTool = SemiPlatformTool;
 			    break;
 			case "eraser-tool":
 			    g_selectedTool = EraserTool;
