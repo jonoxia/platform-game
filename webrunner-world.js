@@ -246,6 +246,12 @@ var TheWorld = {
     var url = "load-level.py";
     var self = this;
     $("#debug").html("Loading level...");
+    var constructorTable = {
+	"platform": Platform,
+	"semiplatform": SemiPermiablePlatform,
+	"speedplus": SpeedPlus,
+	"jumpplus": JumpPlus
+    };
     $.get(url, {levelName: levelName}, function(data, textStatus, jqXHR) {
 	    //$("#debug").html("In callback, parsing json: " + data );
 	    var parsedData = JSON.parse(data);
@@ -254,26 +260,14 @@ var TheWorld = {
 	    var worldData = parsedData.worldData;
 	    for (var i = 0; i < worldData.length; i++) {
 		var type = worldData[i].type;
-		if (type == "platform") {
-                   var plat = new Platform(worldData[i].x,
-			                   worldData[i].y,
-					   worldData[i].width,
-					   worldData[i].height);
-                   self.addForegroundObject(plat);
-		}
-		if (type == "semiplatform") {
-                   var plat = new SemiPermiablePlatform(worldData[i].x,
-			                   worldData[i].y,
-					   worldData[i].width,
-					   worldData[i].height);
-                   self.addForegroundObject(plat);
-		}
-		if (type == "speedplus") {
-		    var plat = new SpeedPlus(worldData[i].x,
-			                   worldData[i].y,
-					   worldData[i].width,
-					   worldData[i].height);
-                   self.addForegroundObject(plat);
+		if (constructorTable[type]) {
+                   var constructor = constructorTable[type];
+                   var obj = new constructor();
+                   obj.boxInit(worldData[i].x,
+			       worldData[i].y,
+			       worldData[i].width,
+			       worldData[i].height);
+                   self.addForegroundObject(obj);
 		}
 		if (type == "goal") {
 		    // Set the goal rectangle
@@ -289,8 +283,7 @@ var TheWorld = {
   }
 };
 
-function Box(x, y, width, height) {
-  this.boxInit(x, y, width, height);
+function Box() {
 }
 Box.prototype = {
   boxInit: function(x, y, width, height) {
@@ -362,8 +355,7 @@ Box.prototype = {
 };
 
 
-function Platform(x, y, width, height) {
-  this.boxInit(x, y, width, height);
+function Platform() {
 }
 Platform.prototype = {
   type: "platform",
@@ -383,8 +375,7 @@ Platform.prototype = {
 Platform.prototype.__proto__ = new Box();
 
 
-function SemiPermiablePlatform(x, y, width, height) {
-  this.boxInit(x, y, width, height);
+function SemiPermiablePlatform() {
 }
 SemiPermiablePlatform.prototype = {
   type: "semiplatform",
@@ -407,8 +398,7 @@ SemiPermiablePlatform.prototype = {
 SemiPermiablePlatform.prototype.__proto__ = new Box();
 
 
-function PowerUp(x, y, width, height) {
-  this.boxInit(x, y, width, height);
+function PowerUp() {
 }
 PowerUp.prototype = {
   type: "powerup",
@@ -429,21 +419,37 @@ PowerUp.prototype = {
 };
 PowerUp.prototype.__proto__ = new Box();
 
-function SpeedPlus(x, y, width, height) {
-  this.boxInit(x, y, width, height);
+function SpeedPlus() {
 }
 SpeedPlus.prototype = {
   type: "speedplus",
   draw: function(ctx) {
-    ctx.strokeStyle = "black";
+    ctx.strokeStyle = "blue";
     ctx.strokeRect(this.left, this.top, this.width, this.height);
     ctx.strokeText("+ SPD", this.left + 5, this.top +32);
   },
   onCollect: function(player) {
     player.topSpeed += 30;
     player.acceleration += 1;
-    // TODO this is permanent -- make it revokable?
+    // TODO this is permanent -- make it revokable / time-limited?
     $("#debug").html("SPEED UP!"); // TODO better place for these msgs?
   }
 };
 SpeedPlus.prototype.__proto__ = new PowerUp();
+
+function JumpPlus() {
+}
+JumpPlus.prototype = {
+  type: "jumpplus",
+  draw: function(ctx) {
+    ctx.strokeStyle = "red";
+    ctx.strokeRect(this.left, this.top, this.width, this.height);
+    ctx.strokeText("+ JMP", this.left + 5, this.top +32);
+  },
+  onCollect: function(player) {
+    player.jumpPower += 15;
+    // TODO this is permanent -- make it revokable / time-limited?
+    $("#debug").html("POWER JUMP!"); // TODO better place for these msgs?
+  }
+};
+JumpPlus.prototype.__proto__ = new PowerUp();
