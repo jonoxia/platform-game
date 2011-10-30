@@ -274,27 +274,19 @@ var TheWorld = {
   }
 };
 
-function Platform(x, y, width, height) {
+function Box(x, y, width, height) {
   this.left = x;
   this.top = y;
   this.width = width;
   this.height = height;
 }
-Platform.prototype = {
-  type: "platform",
+Box.prototype = {
   get right() {
     return this.left + this.width;
   },
 
   get bottom() {
     return this.top + this.height;
-  },
-
-  draw: function(ctx) {
-    ctx.fillStyle = GROUND_COLOR;
-    ctx.strokeStyle = "black";
-    ctx.fillRect(this.left, this.top, this.width, this.height);
-    ctx.strokeRect(this.left, this.top, this.width, this.height);
   },
 
   detectIntercept: function(mob) {
@@ -352,6 +344,25 @@ Platform.prototype = {
 };
 
 
+function Platform(x, y, width, height) {
+  this.left = x;
+  this.top = y;
+  this.width = width;
+  this.height = height;
+}
+Platform.prototype = {
+  type: "platform",
+
+  draw: function(ctx) {
+    ctx.fillStyle = GROUND_COLOR;
+    ctx.strokeStyle = "black";
+    ctx.fillRect(this.left, this.top, this.width, this.height);
+    ctx.strokeRect(this.left, this.top, this.width, this.height);
+  },
+};
+Platform.prototype.__proto__ = new Box();
+
+
 function SemiPermiablePlatform(x, y, width, height) {
   this.left = x;
   this.top = y;
@@ -360,40 +371,12 @@ function SemiPermiablePlatform(x, y, width, height) {
 }
 SemiPermiablePlatform.prototype = {
   type: "semiplatform",
-  get right() {
-    return this.left + this.width;
-  },
-
-  get bottom() {
-    return this.top + this.height;
-  },
 
   draw: function(ctx) {
     ctx.fillStyle = "green";
     ctx.strokeStyle = "black";
     ctx.fillRect(this.left, this.top, this.width, this.height);
     ctx.strokeRect(this.left, this.top, this.width, this.height);
-  },
-
-  detectIntercept: function(mob) {
-    /* Will mob's velocity cause it to cross one of the edges of this
-     * platform?  returns object with edge name ("top" "left" "right"
-     * or "bottom") and x,y of interception point. */
-    var x_intercept, y_intercept, d_t;
-    /* assumes that mob.vx, mob.vy, mob.left, mob.right, mob.top, and
-     * mob.bottom are all defined in addition to this.left, this.top,
-     * this.right, and this.bottom.  Could x-velocity carry mob across
-     * the line of the left edge of this platform? */
-
-    // Could y-velocity carry mob across the line of the top edge of this platform?
-    if (mob.bottom < this.top && mob.bottom + mob.vy >= this.top) {
-      // At what x-value would line of motion cross line of top edge?
-      dt = (this.top - mob.bottom)/mob.vy;
-      x_intercept = mob.x + mob.vx * dt;
-      // Is that x-value inside the actual bounds of the top edge?
-      if (x_intercept + mob.width >= this.left && x_intercept <= this.right) {
-        return { side: "top", x: x_intercept, y: this.top, t: dt }; // todo should be this.top - mob.height?
-      }
-    }
   }
 };
+SemiPermiablePlatform.prototype.__proto__ = new Box();
