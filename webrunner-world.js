@@ -174,14 +174,12 @@ var TheWorld = {
     // If only one intercept, just do it:
     intercepts.sort(function(a, b) { return a.cept.t - b.cept.t;} );
     var pathModified;
-    $("#debug").html("num intercepts " + intercepts.length);
 
     for (i = 0; i < intercepts.length; i++) {
 	pathModified = intercepts[i].box.onMobTouch(mob, intercepts[i].cept);
 	// if first collision modifies mob's path, then mob MAY OR MAY NOT
 	// actually collide with any of the other items...
 	if (pathModified) {
-	    $("#debug").html("Path modified, rechecking collisions");
 	    return true;
 	}
 	// If the first one returns true, don't process any more...

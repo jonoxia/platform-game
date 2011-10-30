@@ -52,6 +52,7 @@ RunningHuman.prototype = {
   },
 
   move: function(dx, dy) {
+    this.jumping = false;
     if (dx == 0 && dy == 0 ) {
       this.animationFrame = 0;
       this.movementDirection = STAND_STILL;
@@ -121,9 +122,10 @@ RunningHuman.prototype = {
   jump: function() {
     // Only jump if there is ground under me and nothing blocking
     // my head.
-    if (this.onGround() &&
+    if (this.onGround() && !this.jumping &&
         ! TheWorld.touchingPlatform(this, "top")) {
       this.vy -= 30;
+      this.jumping = true; // to make jump idempotent, fix bug 2
     }
   },
 
