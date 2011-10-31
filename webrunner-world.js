@@ -287,6 +287,40 @@ var TheWorld = {
     }
   },
 
+  getBottomLimit: function() {
+      var bottomLimit = 0;
+      for (var i = 0; i < this.foregroundObjects.length; i++) {
+	  var bottom = this.foregroundObjects[i].bottom;
+	  if (bottom > bottomLimit) {
+	      bottomLimit = bottom;
+	  }
+      }
+      return bottomLimit + 100;
+  },
+
+  cleanUpDead: function() {
+      // Remove any dead ones from foregroundObjects
+      // careful, don't splice stuff out while iterating the array itself
+      var deadies = [];
+      for (var i = 0; i < this.foregroundObjects.length; i++) {
+	  if (this.foregroundObjects[i].dead) {
+	      deadies.push(this.foregroundObjects[i]);
+	  }
+      }
+      for (i = 0; i < deadies.length; i++) {
+	  this.removeForegroundObject(deadies[i]);
+	  this.backgroundObjects.push(deadies[i]); // make it fall off screen in background
+      }
+
+      for (i = 0; i < this.backgroundObjects.length; i++) {
+	  var bobj = this.backgroundObjects[i];
+	  if (bobj.dead) {
+	      bobj.vy += 5; // and flip them upside down too!
+	      bobj.top += bobj.vy; // and flip them upside down too!
+	  }
+      }
+  },
+
   loadFromServer: function (levelName, callback) {
     var url = "load-level.py";
     var self = this;
@@ -394,7 +428,16 @@ Box.prototype = {
 
   substantial: function(edge) {
       return false;
-  }
+  }, 
+
+  intersecting: function(rect) {
+      return (this.left <= rect.right && this.right >= rect.left
+	      && this.top <= rect.bottom && this.bottom >= rect.top );
+    },
+
+  onMobTouch: function(mob, intercept) {
+	// override this if you want to do something
+    }
 };
 
 

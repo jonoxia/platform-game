@@ -36,10 +36,10 @@ $(document).ready(function() {
   TheWorld.loadFromServer(title, function() {
 
     // Create player, put it in the world:
-    var player = new Mob(avatarURL,
+    var player = new Player(avatarURL,
 			 TheWorld.startX,
 			 TheWorld.startY,
-			 64, 64, true, 122);
+			 64, 64);
     TheWorld.addForegroundObject(player);
     TheWorld.draw(context);
 
@@ -68,6 +68,8 @@ $(document).ready(function() {
 	    }
 	});
 
+    var bottomLimit = TheWorld.getBottomLimit();
+
     var heartbeat = window.setInterval(function() {
 	    if (leftArrowDown && !rightArrowDown) {
 		player.goLeft();
@@ -79,6 +81,7 @@ $(document).ready(function() {
 
 	    TheWorld.updateEveryone();
 	    TheWorld.scrollIfNeeded(player);
+	    TheWorld.cleanUpDead();
 
 	    updateTimer(Date.now() - startTime);
 	    TheWorld.draw(context);
@@ -99,6 +102,15 @@ $(document).ready(function() {
 			dataType: "text"
 			});
 		$("#debug").html("Saving score...");
+	    }
+	    // check for #LOSING:
+	    if (player.dead) {
+		$("#output").html("YOU'RE MONSTER CHOW (relod to play again)");
+		window.clearInterval(heartbeat);
+	    }
+	    if (player.top > bottomLimit) {
+		$("#output").html("GRAVITY IS A HARSH MISTRESS (reload to play again)");
+		window.clearInterval(heartbeat);
 	    }
 	}, 100);
       });

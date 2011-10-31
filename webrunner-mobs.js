@@ -10,7 +10,7 @@ function Mob(filename, x, y, width, height, animate) {
 }
 Mob.prototype = {
   imgLoaded: false,
-  type: "player",
+  dead: false,
 
   // Stats (could be modified by powerups):
   topSpeed: 122,
@@ -170,18 +170,40 @@ Mob.prototype = {
     }
   },
 
-  intersecting: function(rect) {
-	// todo move to box class?
-      return (this.left <= rect.right && this.right >= rect.left
-	      && this.top <= rect.bottom && this.bottom >= rect.top );
-    },
-
-  onMobTouch: function(mob, intercept) {
-	// override this if you want to do something
-    }
+  die: function() {
+	this.dead = true;
+  }
 };
 Mob.prototype.__proto__ = new Box();
 
+
+function Player(filename, x, y, width, height) {
+  this.mobInit(filename, true);
+  this.boxInit(x, y, width, height);
+}
+Player.prototype = {
+  type: "player",
+
+  onMobTouch: function(mob, intercept) {
+	// So this is kind of weird.
+	// When i touch a monster it might call my onMobTouch method and pass
+	// in the monster, or it might call the monster's onMobTouch method
+	// and pass in me.  I want it to do the same thing either way.
+	// So reflect it back:
+	switch (intercept.side) {
+	case "top": intercept.side = "bottom";
+	break;
+	case "bottom": intercept.side = "top";
+	break;
+	case "left": intercept.side = "right";
+	break;
+	case "right": intercept.side = "left";
+	break;
+	}
+	mob.onMobTouch(this, intercept);
+    }
+}
+Player.prototype.__proto__ = new Mob();
 
 
 function Enemy() {
@@ -202,12 +224,24 @@ Enemy.prototype = {
 	this.goLeft();
     } else if (this.direction == "right") {
 	this.goRight();
-    } 
+    }
   },
   onMobTouch: function(mob, intercept) {
-    // TODO if touch player, hurt player if touching from the
+    // If touch player, hurt player if touching from the
     // side; kill enemy if player jumps on its head.
-  }
+    if (mob.type == "player") {
+	if (intercept.side == "top") {
+	    this.die();
+	    // TODO death animation?
+	    mob.vy = -10; // bounce
+        } else {
+	    mob.die();
+	}
+    }
+  },
+  substantial: function(side) {
+	return true;
+    }
 };
 Enemy.prototype.__proto__ = new Mob();
 ConstructorRegistry.register(Enemy);
