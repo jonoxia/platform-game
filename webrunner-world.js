@@ -297,6 +297,9 @@ var TheWorld = {
 	      bottomLimit = bottom;
 	  }
       }
+      if (this.goalArea.bottom > bottomLimit) {
+	  bottomLimit = this.goalArea.bottom;
+      }
       return bottomLimit + 100;
   },
 
