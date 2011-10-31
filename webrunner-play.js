@@ -105,7 +105,7 @@ $(document).ready(function() {
 	    }
 	    // check for #LOSING:
 	    if (player.dead) {
-		$("#output").html("YOU'RE MONSTER CHOW (relod to play again)");
+		$("#output").html("YOU'RE MONSTER CHOW (reload to play again)");
 		window.clearInterval(heartbeat);
 	    }
 	    if (player.top > bottomLimit) {
