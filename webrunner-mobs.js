@@ -106,7 +106,7 @@ Mob.prototype = {
       }	
   },
 
-  update: function() {
+  update: function(ticks) {
     // Gravity:
     if (!this.onGround()) {
       this.vy += this.gravity;
@@ -238,6 +238,7 @@ Enemy.prototype = {
 	    mob.die();
 	}
     }
+    // TODO return true or false? stop mob at intercept?
   },
   substantial: function(side) {
 	return true;

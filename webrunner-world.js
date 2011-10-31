@@ -31,6 +31,7 @@ var TheWorld = {
   canvasHeight: 600,
   startX: 0,
   startY: 0,
+  ticks: 0,
   goalArea: {
 	left: 500,
 	top: 350,
@@ -273,6 +274,7 @@ var TheWorld = {
   },
 
   updateEveryone: function() {
+    this.ticks ++;
     for (var i = 0; i < this.foregroundObjects.length; i++) {
 	var obj = this.foregroundObjects[i];
 	if (!this.isOnScreen(obj)) {
@@ -282,7 +284,7 @@ var TheWorld = {
 	    obj.roam();
 	}
 	if (obj.update) {
-	    obj.update();
+	    obj.update(this.ticks);
 	}
     }
   },
@@ -572,3 +574,42 @@ PointlessTrinket.prototype = {
 };
 PointlessTrinket.prototype.__proto__ = new PowerUp();
 ConstructorRegistry.register(PointlessTrinket);
+
+function DisappearingBlock() {
+}
+DisappearingBlock.prototype = {
+  type: "disappearing_block",
+  visible: true,
+
+  draw: function(ctx) {
+    if (this.visible) {
+	ctx.fillStyle = "purple";
+	ctx.strokeStyle = "black";
+	ctx.fillRect(this.left, this.top, this.width, this.height);
+	ctx.strokeRect(this.left, this.top, this.width, this.height);
+    }
+  },
+
+  onMobTouch: function(mob, intercept) {
+    if (this.visible) {
+      mob.stopAt(intercept);
+      return true;
+    }
+    return false;
+  },
+
+  substantial: function(edge) {
+    return (this.visible);
+  },
+
+  update: function(ticks) {
+    this.visible = (Math.floor(ticks / 20) ) % 2 == 0;
+  }
+};
+DisappearingBlock.prototype.__proto__ = new Box();
+ConstructorRegistry.register(DisappearingBlock);
+
+
+// more: ladders, springboards, moving platforms, etc
+// need some uI to set parameters for these -- the movement range of
+// moving platforms, the timing of disappearing blocks, etc.
