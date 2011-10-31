@@ -226,6 +226,7 @@ var TheWorld = {
       switch (direction) {
       case "left":
         if (mob.left == platform.right &&
+	    platform.substantial("right") &&
             mob.top <= platform.bottom &&
             mob.bottom >= platform.top) {
           return true;
@@ -233,6 +234,7 @@ var TheWorld = {
         break;
       case "right":
         if (mob.right == platform.left &&
+	    platform.substantial("left") &&
             mob.top <= platform.bottom &&
             mob.bottom >= platform.top) {
           return true;
@@ -240,6 +242,7 @@ var TheWorld = {
         break;
       case "top":
         if (mob.top == platform.bottom &&
+	    platform.substantial("bottom") &&
             mob.left < platform.right &&
             mob.right > platform.left) {
           return true;
@@ -247,6 +250,7 @@ var TheWorld = {
         break;
       case "bottom":
         if (mob.bottom == platform.top &&
+	    platform.substantial("top") &&
             mob.left < platform.right &&
             mob.right > platform.left) {
           return true;
@@ -386,6 +390,10 @@ Box.prototype = {
 
     // no collision:
     return null;
+  },
+
+  substantial: function(edge) {
+      return false;
   }
 };
 
@@ -405,6 +413,10 @@ Platform.prototype = {
   onMobTouch: function(mob, intercept) {
     mob.stopAt(intercept);
     return true;
+  },
+
+  substantial: function(edge) {
+      return true;
   }
 };
 Platform.prototype.__proto__ = new Box();
@@ -428,6 +440,10 @@ SemiPermiablePlatform.prototype = {
       return true;
     }
     return false;
+    },
+
+  substantial: function(edge) {
+	return (edge == "top");
   }
 };
 SemiPermiablePlatform.prototype.__proto__ = new Box();
