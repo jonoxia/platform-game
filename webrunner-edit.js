@@ -80,17 +80,14 @@ GenericRectangleTool.prototype = {
 	if (!this.currentPlatform) {
 	    var rect = this.defineRect(pt.x, pt.y);
 	    // Construct instance, add it to TheWorld
-	    var plat = new this._cons( rect.l, rect.t, rect.w, rect.h);
+	    var plat = new this._cons();
+	    plat.boxInit(rect.l, rect.t, rect.w, rect.h);
 	    TheWorld.addForegroundObject(plat);
 	}
 	this.currentPlatform = null;
 	this.mouseIsDown = false;
     }
 };
-
-var PlatformTool = new GenericRectangleTool(Platform);
-var SemiPlatformTool = new GenericRectangleTool(SemiPermiablePlatform);
-var SpeedPlusTool = new GenericRectangleTool(SpeedPlus);
 
 var EraserTool = {
     onMouseDown: function(x, y) {
@@ -160,7 +157,7 @@ var GoalTool = {
     }
 };
 
-var g_selectedTool = PlatformTool;
+var g_selectedTool = ScrollTool;
 
 function canvasCoords(evt) {
     var xOffset = $("#design-canvas").offset().left;
@@ -235,54 +232,69 @@ function saveChanges() {
 }
 
 $(document).ready(function() {
-        var title = gup("level");
-	$("#play-this").attr("href", "play.py?level=" + title);
-	adjustToScreen();
+  var title = gup("level");
+  $("#play-this").attr("href", "play.py?level=" + title);
+  adjustToScreen();
 
-	//TheWorld.addForegroundObject(g_startLocation);
-	TheWorld.loadFromServer(title, function() {
-		redraw();
+  // Handle mouseclicks on canvas according to selected tool:
+  $("#design-canvas").bind("mousedown", function(evt) {
+    pos = canvasCoords(evt);
+    g_selectedTool.onMouseDown(pos.x, pos.y);
+  });
+  $("#design-canvas").bind("mousemove", function(evt) {
+    pos = canvasCoords(evt);
+    g_selectedTool.onMouseMove(pos.x, pos.y);
+  });
+  $("#design-canvas").bind("mouseup", function(evt) {
+    pos = canvasCoords(evt);
+    g_selectedTool.onMouseUp(pos.x, pos.y);
+    redraw();
+  });
 
-		$("#design-canvas").bind("mousedown", function(evt) {
-			pos = canvasCoords(evt);
-			g_selectedTool.onMouseDown(pos.x, pos.y);
-		    });
-		$("#design-canvas").bind("mousemove", function(evt) {
-			pos = canvasCoords(evt);
-			g_selectedTool.onMouseMove(pos.x, pos.y);
-		    });
-		$("#design-canvas").bind("mouseup", function(evt) {
-			pos = canvasCoords(evt);
-			g_selectedTool.onMouseUp(pos.x, pos.y);
-			redraw();
-		    });
-		
-		$("input").change(function() {
-			var id = $("input[@name=testGroup]:checked").attr('id');
-			switch (id) {
-			case "platform-tool":
-			    g_selectedTool = PlatformTool;
-			    break;
-			case "semi-platform-tool":
-			    g_selectedTool = SemiPlatformTool;
-			    break;
-			case "eraser-tool":
-			    g_selectedTool = EraserTool;
-			    break;
-			case "scroll-tool":
-			    g_selectedTool = ScrollTool;
-			    break;
-			case "start-tool":
-			    g_selectedTool = StartTool;
-			    break;
-			case "goal-tool":
-			    g_selectedTool = GoalTool;
-			    break;
-			case "powerup-tool":
-			    g_selectedTool = SpeedPlusTool;
-			    break;
-			}
-		    });
-	    });
 
-    });
+  // Create tools for all the object constructors we know about
+  var names = ConstructorRegistry.listNames();
+  for (var i = 0; i < names.length; i++) {
+      var button = $("<input></input>");
+      button.attr("type", "radio");
+      button.attr("name", "tools");
+      button.attr("value", names[i]);
+      button.attr("id", names[i]);
+      var label = $("<label></label>");
+      label.attr("for", names[i]);
+      label.html(names[i] + " tool");
+      $("#more-tools").append(button);
+      $("#more-tools").append(label);
+      $("#more-tools").append("<br/>");
+  }
+	
+  // When you change the selected radio button, change the tool:
+  $("input").change(function() {
+    var id = $("input[@name=testGroup]:checked").attr('id');
+    switch (id) {
+    case "eraser-tool":
+      g_selectedTool = EraserTool;
+      break;
+    case "scroll-tool":
+      g_selectedTool = ScrollTool;
+      break;
+    case "start-tool":
+      g_selectedTool = StartTool;
+      break;
+    case "goal-tool":
+      g_selectedTool = GoalTool;
+      break;
+    default:
+	// Create a tool that creates instances using the constructor
+	// matching the id of the selected radio button:
+	var constructor = ConstructorRegistry.getConstructor(id);
+	if (constructor) {
+	    g_selectedTool = new GenericRectangleTool(constructor);
+	}
+      break;
+    }
+ });
+
+ TheWorld.loadFromServer(title, redraw);
+
+});

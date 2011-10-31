@@ -10,12 +10,10 @@
   <canvas style="float: left" id="design-canvas" 
 	  width="600" height="400"></canvas>
   <div id="tools" style="float:left">
-    <input type="radio" name="tools" value="platform" id="platform-tool"/>
-    <label for="platform-tool">Platform tool (drag to create or move platform)
-      </label><br/>
-    <input type="radio" name="tools" value="semi-platform" id="semi-platform-tool"/>
-    <label for="semi-platform-tool">SemiPermiable Platform tool
-      </label><br/>
+    <span id="debug"></span>
+    <a id="play-this">Play This Level</a><br/>
+    <a href="listlevels.py">Other Levels</a><br/>
+    <hr/>
     <input type="radio" name="tools" value="eraser" id="eraser-tool"/>
     <label for="eraser-tool">Eraser tool (click platform to remove it)</label></br>
     <input type="radio" name="tools" value="scroll" id="scroll-tool"/>
@@ -24,12 +22,9 @@
     <label for="start-tool">Start Location Tool</label><br/>
     <input type="radio" name="tools" value="goal" id="goal-tool"/>
     <label for="goal-tool">Goal Location Tool</label><br/>
-    <input type="radio" name="tools" value="powerup" id="powerup-tool"/>
-    <label for="powerup-tool">Powerup Tool</label><br/>
+    <hr/>
+    <div id="more-tools"></div>
     <button onclick="saveChanges();">Save Changes</button><br/>
-    <a id="play-this">Play This Level</a><br/>
-    <a href="listlevels.py">Other Levels</a><br/>
-    <span id="debug"></span>
   </div>
 
 </body>

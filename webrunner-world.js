@@ -3,6 +3,26 @@ const GROUND_COLOR = "rgb(150, 140, 110)";
 const TRUNK_COLOR = "rgb(100, 100, 50)";
 const LEAF_COLOR = "rgba(0, 200, 0, 0.8)";
 
+var ConstructorRegistry = {
+    registry: {},
+
+    register: function(constructor) {
+	var name = constructor.prototype.type;
+	this.registry[name] = constructor;
+    },
+
+    getConstructor: function(name) {
+	return this.registry[name];
+    },
+
+    listNames: function() {
+	var list = [];
+	for (var name in this.registry) {
+	    list.push(name);
+	}
+	return list;
+    }
+};
 
 var TheWorld = {
   xOffset: 0,  // how far to the right has the view scrolled from its starting location,
@@ -246,12 +266,6 @@ var TheWorld = {
     var url = "load-level.py";
     var self = this;
     $("#debug").html("Loading level...");
-    var constructorTable = {
-	"platform": Platform,
-	"semiplatform": SemiPermiablePlatform,
-	"speedplus": SpeedPlus,
-	"jumpplus": JumpPlus
-    };
     $.get(url, {levelName: levelName}, function(data, textStatus, jqXHR) {
 	    //$("#debug").html("In callback, parsing json: " + data );
 	    var parsedData = JSON.parse(data);
@@ -260,9 +274,9 @@ var TheWorld = {
 	    var worldData = parsedData.worldData;
 	    for (var i = 0; i < worldData.length; i++) {
 		var type = worldData[i].type;
-		if (constructorTable[type]) {
-                   var constructor = constructorTable[type];
-                   var obj = new constructor();
+		var cons = ConstructorRegistry.getConstructor(type);
+		if (cons) {
+                   var obj = new cons();
                    obj.boxInit(worldData[i].x,
 			       worldData[i].y,
 			       worldData[i].width,
@@ -373,7 +387,7 @@ Platform.prototype = {
   }
 };
 Platform.prototype.__proto__ = new Box();
-
+ConstructorRegistry.register(Platform);
 
 function SemiPermiablePlatform() {
 }
@@ -396,7 +410,7 @@ SemiPermiablePlatform.prototype = {
   }
 };
 SemiPermiablePlatform.prototype.__proto__ = new Box();
-
+ConstructorRegistry.register(SemiPermiablePlatform);
 
 function PowerUp() {
 }
@@ -418,6 +432,8 @@ PowerUp.prototype = {
   }
 };
 PowerUp.prototype.__proto__ = new Box();
+// We're not registering this one because it should never be
+// instantiated.
 
 function SpeedPlus() {
 }
@@ -436,6 +452,7 @@ SpeedPlus.prototype = {
   }
 };
 SpeedPlus.prototype.__proto__ = new PowerUp();
+ConstructorRegistry.register(SpeedPlus);
 
 function JumpPlus() {
 }
@@ -453,3 +470,25 @@ JumpPlus.prototype = {
   }
 };
 JumpPlus.prototype.__proto__ = new PowerUp();
+ConstructorRegistry.register(JumpPlus);
+
+function PointlessTrinket() {
+}
+PointlessTrinket.prototype = {
+  type: "trinket",
+  draw: function(ctx) {
+    ctx.fillStyle = "yellow";
+    ctx.beginPath();
+    ctx.arc(this.left + this.width/2, this.top + this.height/2, this.height/2, 0, 2*Math.PI, false);
+    ctx.fill();
+  },
+  onCollect: function(player) {
+    if (player.numTrinkets == 0) {
+      player.numTrinkets = 1;
+    } else {
+      player.numTrinkets ++;
+    }
+  }
+};
+PointlessTrinket.prototype.__proto__ = new PowerUp();
+ConstructorRegistry.register(PointlessTrinket);
