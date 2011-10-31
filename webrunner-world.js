@@ -127,23 +127,29 @@ var TheWorld = {
     }
   },
 
+  isOnScreen: function(obj) {
+    if (this.worldXToScreenX(obj.right) < 0 ) {
+      return false;
+    }
+    if (this.worldXToScreenX(obj.left) > this.canvasWidth ) {
+      return false;
+    }
+    if (this.worldYToScreenY(obj.bottom) < 0 ) {
+      return false;
+    }
+    if (this.worldYToScreenY(obj.top) > this.canvasHeight ) {
+      return false;
+    }
+    return true;
+  },
+
   drawIfOnScreen: function(obj, ctx) {
     /* save time: don't bother drawing things that are off the screen.
      * This calls the given object's draw() method if it's on screen,
      * or does nothing if it's not. */
-    if (this.worldXToScreenX(obj.right) < 0 ) {
-      return;
+    if (this.isOnScreen(obj)) {
+	obj.draw(ctx);
     }
-    if (this.worldXToScreenX(obj.left) > this.canvasWidth ) {
-      return;
-    }
-    if (this.worldYToScreenY(obj.bottom) < 0 ) {
-      return;
-    }
-    if (this.worldYToScreenY(obj.top) > this.canvasHeight ) {
-      return;
-    }
-    obj.draw(ctx);
   },
 
   draw: function(ctx) {
@@ -262,6 +268,21 @@ var TheWorld = {
     return null;
   },
 
+  updateEveryone: function() {
+    for (var i = 0; i < this.foregroundObjects.length; i++) {
+	var obj = this.foregroundObjects[i];
+	if (!this.isOnScreen(obj)) {
+	    continue;
+	}
+	if (obj.roam) {
+	    obj.roam();
+	}
+	if (obj.update) {
+	    obj.update();
+	}
+    }
+  },
+
   loadFromServer: function (levelName, callback) {
     var url = "load-level.py";
     var self = this;
@@ -327,7 +348,7 @@ Box.prototype = {
       // How long does it take you to reach the line of the left edge?
       dt = (this.left - mob.right)/mob.vx;
       // At what y-value would the line of motion cross the line of the left edge?
-      y_intercept = mob.y + mob.vy * dt;
+      y_intercept = mob.top + mob.vy * dt;
       // Is that y-value inside the actual bounds of the left edge (hit) or outside (miss)?
       if (y_intercept + mob.height >= this.top && y_intercept <= this.bottom) {
         return { side: "left", x: this.left, y: y_intercept, t: dt };
@@ -338,7 +359,7 @@ Box.prototype = {
     if (mob.bottom < this.top && mob.bottom + mob.vy >= this.top) {
       // At what x-value would line of motion cross line of top edge?
       dt = (this.top - mob.bottom)/mob.vy;
-      x_intercept = mob.x + mob.vx * dt;
+      x_intercept = mob.left + mob.vx * dt;
       // Is that x-value inside the actual bounds of the top edge?
       if (x_intercept + mob.width >= this.left && x_intercept <= this.right) {
         return { side: "top", x: x_intercept, y: this.top, t: dt }; // todo should be this.top - mob.height?
@@ -348,7 +369,7 @@ Box.prototype = {
     // Can possibly touch right edge?  (same logic)
     if (mob.left > this.right && mob.left + mob.vx <= this.right) {
       dt = (this.right - mob.left)/mob.vx;
-      y_intercept = mob.y + mob.vy * dt;
+      y_intercept = mob.top + mob.vy * dt;
       if (y_intercept + mob.height >= this.top && y_intercept <= this.bottom) {
         return { side: "right", x: this.right, y: y_intercept, t: dt };
       }
@@ -357,7 +378,7 @@ Box.prototype = {
     // Can possibly touch bottom edge? (same logic)
     if (mob.top > this.bottom && mob.top + mob.vy <= this.bottom) {
       dt = (this.bottom - mob.top)/mob.vy;
-      x_intercept = mob.x + mob.vx * dt;
+      x_intercept = mob.left + mob.vx * dt;
       if (x_intercept + mob.width >= this.left && x_intercept <= this.right) {
         return { side: "bottom", x: x_intercept, y: this.bottom, t: dt };
       }
