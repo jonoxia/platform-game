@@ -524,6 +524,8 @@ function SpeedPlus() {
 }
 SpeedPlus.prototype = {
   type: "speedplus",
+  width: 32,
+  height: 32,
   draw: function(ctx) {
     ctx.strokeStyle = "blue";
     ctx.strokeRect(this.left, this.top, this.width, this.height);
@@ -543,6 +545,8 @@ function JumpPlus() {
 }
 JumpPlus.prototype = {
   type: "jumpplus",
+  width: 32,
+  height: 32,
   draw: function(ctx) {
     ctx.strokeStyle = "red";
     ctx.strokeRect(this.left, this.top, this.width, this.height);
@@ -561,6 +565,8 @@ function PointlessTrinket() {
 }
 PointlessTrinket.prototype = {
   type: "trinket",
+  width: 32,
+  height: 32,
   draw: function(ctx) {
     ctx.fillStyle = "yellow";
     ctx.beginPath();

@@ -47,6 +47,10 @@ Mob.prototype = {
       } else {
         ctx.drawImage(this.img, this.left, this.top);
       }
+    } else {
+	// if img not loaded yet, draw an empty box
+	ctx.strokeStyle = "black";
+	ctx.strokeRect(this.left, this.top, this.width, this.height);
     }
   },
 
@@ -212,6 +216,8 @@ function Enemy() {
 }
 Enemy.prototype = {
   type: "shrimp",
+  width: 91,
+  height: 49,
 
   roam: function() {
     if (this.direction == "left" && TheWorld.touchingPlatform(this, "left")) {

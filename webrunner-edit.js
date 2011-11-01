@@ -10,6 +10,62 @@ function adjustToScreen() {
     $("#design-canvas").attr("height", TheWorld.canvasHeight);
 }
 
+function GenericPlacementTool(cons) {
+    this._cons = cons;
+    // TODO this class duplicates a ton of code from GenericRectangleTool;
+    // factor that code out somehow.
+}
+GenericPlacementTool.prototype = {
+    currentPlatform: null,
+    mouseIsDown: false,
+    startX: 0,
+    startY: 0,
+
+    onMouseDown: function(x, y) {
+	var pt = worldCoords(x, y);
+	this.currentPlatform = TheWorld.getPlatformAt(pt.x, pt.y);
+	if (this.currentPlatform) {
+	    // Already platform here? Start dragging it.
+	    this.startX = pt.x - this.currentPlatform.left;
+	    this.startY = pt.y - this.currentPlatform.top;
+	}
+	this.mouseIsDown = true;
+    },
+
+    onMouseMove: function(x, y) {
+	if (this.mouseIsDown && this.currentPlatform != null) {
+	    // if you're dragging something, drag it:
+	    var pt = worldCoords(x, y);
+	    this.currentPlatform.left = pt.x - this.startX;
+	    this.currentPlatform.top = pt.y - this.startY;
+	    redraw();
+	} else {
+	    // Otherwise draw a box to preview where the object
+	    // will be added on a click
+	    redraw();
+	    var context = $("#design-canvas")[0].getContext("2d");
+	    context.strokeStyle = "black";
+	    context.strokeRect(TheWorld.worldXToScreenX(x), 
+			       TheWorld.worldYToScreenY(y),
+			       this._cons.prototype.width,
+			       this._cons.prototype.height);
+	}
+    },
+
+    onMouseUp: function(x, y) {
+	var pt = worldCoords(x, y);
+	if (!this.currentPlatform) {
+	    // Construct instance at this point, add it to TheWorld
+	    var obj = new this._cons();
+	    obj.boxInit(Math.floor(pt.x), Math.floor(pt.y),
+			this._cons.prototype.width, this._cons.prototype.height);
+	    TheWorld.addForegroundObject(obj);
+	}
+	this.currentPlatform = null;
+	this.mouseIsDown = false;
+    }
+};
+
 function GenericRectangleTool(cons) {
     // pass in a constructor for the class that this tool will create
     this._cons = cons;
@@ -36,7 +92,8 @@ GenericRectangleTool.prototype = {
 	    top = this.startY;
 	    height = y - this.startY;
 	}
-	return {l: left, t: top, w: width, h: height};
+	return {l: Math.floor(left), t: Math.floor(top),
+		w: Math.floor(width), h: Math.floor(height)};
     },
 
     onMouseDown: function(x, y) {
@@ -187,11 +244,10 @@ function saveChanges() {
     var URL = "save-level.py";
     
     var title = gup("level");
-    //$("#debug").html("title is " + title);
     var i, objs;
-    // TODO LATER background objects, special data like start location and goal
     var allData = {};
     var worldData = [];
+    // Add all foreground and background objects:
     objs = TheWorld.foregroundObjects;
     for (i = 0; i < objs.length; i++) {
 	worldData.push({ x: objs[i].left,
@@ -227,7 +283,7 @@ function saveChanges() {
 		$("#debug").html(thing);
 	    },
 	    dataType: "text"
-	  });
+	    });
     $("#debug").html("Saving, don't close the page...");
 }
 
@@ -250,7 +306,6 @@ $(document).ready(function() {
     g_selectedTool.onMouseUp(pos.x, pos.y);
     redraw();
   });
-
 
   // Create tools for all the object constructors we know about
   var names = ConstructorRegistry.listNames();
@@ -289,7 +344,14 @@ $(document).ready(function() {
 	// matching the id of the selected radio button:
 	var constructor = ConstructorRegistry.getConstructor(id);
 	if (constructor) {
-	    g_selectedTool = new GenericRectangleTool(constructor);
+	    // if the prototype specifies a default width and height,
+	    // then use a fixed-size placement tool; if its width and height
+	    // are variable, use a rectangle tool.
+	    if (constructor.prototype.hasOwnProperty("width")) {
+		g_selectedTool = new GenericPlacementTool(constructor);
+	    } else {
+		g_selectedTool = new GenericRectangleTool(constructor);
+	    }
 	}
       break;
     }
