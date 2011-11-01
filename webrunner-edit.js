@@ -272,6 +272,8 @@ function saveChanges() {
     // Add starting point:
     allData.startX = TheWorld.startX;
     allData.startY = TheWorld.startY;
+    // BG image:
+    allData.bgUrl = $("#level-bg-url").val();
     $.ajax({type: "POST", 
             url: URL,
 	    data: {levelName: title,
@@ -284,13 +286,15 @@ function saveChanges() {
 	    },
 	    dataType: "text"
 	    });
-    $("#debug").html("Saving, don't close the page...");
+    //$("#debug").html(JSON.stringify(allData));
+    //$("#debug").html("Saving, don't close the page...");
 }
 
 $(document).ready(function() {
   var title = gup("level");
   $("#play-this").attr("href", "play.py?level=" + title);
   adjustToScreen();
+
 
   // Handle mouseclicks on canvas according to selected tool:
   $("#design-canvas").bind("mousedown", function(evt) {
@@ -355,8 +359,11 @@ $(document).ready(function() {
 	}
       break;
     }
- });
+  });
 
- TheWorld.loadFromServer(title, redraw);
+  TheWorld.loadFromServer(title, function() {
+    $("#level-bg-url").val(TheWorld.bgUrl);
+    redraw();
+  });
 
 });

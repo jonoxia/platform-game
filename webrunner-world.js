@@ -32,6 +32,9 @@ var TheWorld = {
   startX: 0,
   startY: 0,
   ticks: 0,
+  bgUrl: "",
+  bgImg: null,
+  bgImgLoaded: false,
   goalArea: {
 	left: 500,
 	top: 350,
@@ -154,9 +157,24 @@ var TheWorld = {
   },
 
   draw: function(ctx) {
-    // blue sky
-    ctx.fillStyle = SKY_COLOR;
-    ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+    if (this.bgImgLoaded) {
+	// tile img to cover whole background
+	var w = this.bgImg.width;
+	var h = this.bgImg.height;
+	var x = 0 - (Math.floor(this.xOffset/3) % w) - w;
+	while (x < this.canvasWidth) {
+	    var y = 0 - (Math.floor(this.yOffset/3) % h) - h;
+	    while ( y < this.canvasWidth ) {
+		ctx.drawImage(this.bgImg, x, y);
+		y += this.bgImg.height;
+	    }
+	    x += this.bgImg.width;
+	}
+    } else {
+	// blue sky
+	ctx.fillStyle = SKY_COLOR;
+	ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+    }
 
     // Now apply the translate transform to scroll the world
     ctx.save();
@@ -335,6 +353,12 @@ var TheWorld = {
 	    var parsedData = JSON.parse(data);
 	    self.startX = parsedData.startX;
 	    self.startY = parsedData.startY;
+	    self.bgUrl = parsedData.bgUrl;
+	    if (self.bgUrl != "") {
+		self.bgImg = new Image();
+		self.bgImg.onload = function() { $("#debug").html("Bgimg loaded."); self.bgImgLoaded = true; };
+		self.bgImg.src = self.bgUrl;
+	    }
 	    var worldData = parsedData.worldData;
 	    for (var i = 0; i < worldData.length; i++) {
 		var type = worldData[i].type;
@@ -355,7 +379,7 @@ var TheWorld = {
 					    worldData[i].height);
 		}
 	    }
-	    $("#debug").html("Loaded.");
+	    //$("#debug").html("Loaded.");
 	    callback();
 	}, "html");
   }

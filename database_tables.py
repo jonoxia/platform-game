@@ -19,6 +19,7 @@ class Level(SQLObject):
     modified = DateTimeCol()
     startX = IntCol()
     startY = IntCol()
+    bgUrl = StringCol()
     # More stuff like tileset URL
 
 class LevelObject( SQLObject ):

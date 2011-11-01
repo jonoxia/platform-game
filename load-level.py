@@ -25,6 +25,7 @@ if levels.count() > 0:
     data["worldData"] = worldData
     data["startX"] = levels[0].startX
     data["startY"] = levels[0].startY
+    data["bgUrl"] = levels[0].bgUrl
 
 print "Content-type: text/html"
 print

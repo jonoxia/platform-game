@@ -36,6 +36,7 @@ if levelData != "" and levelName != "":
         data = simplejson.loads(levelData)
         level.startX = data["startX"]
         level.startY = data["startY"]
+        level.bgUrl = data["bgUrl"]
       
         for obj in data["worldData"]:
             l = LevelObject(level = level, type = obj["type"],
