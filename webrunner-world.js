@@ -657,6 +657,7 @@ PointlessTrinket.prototype = {
     }
   },
   onCollect: function(player) {
+    playSfx("kaching-sfx");
     if (player.numTrinkets == 0) {
       player.numTrinkets = 1;
     } else {

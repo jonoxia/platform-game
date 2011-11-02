@@ -9,3 +9,9 @@ function gup( name )
     else
 	return unescape(results[1]);
 }
+
+function playSfx(tagId) {
+    filename = $("#" + tagId).attr("src");
+    var snd = new Audio(filename);
+    snd.play();
+}
