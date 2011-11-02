@@ -499,7 +499,21 @@ Box.prototype = {
 
   onMobTouch: function(mob, intercept) {
 	// override this if you want to do something
-    }
+  },
+  fillTiled: function(ctx, img, sliceLeft, sliceTop, sliceWidth, sliceHeight) {
+      var x = 0;
+      // todo duplicates some code from TheWorld.draw()
+      while (x < this.width) {
+	  var y = 0;
+	  while ( y < this.height ) {
+	      var width = Math.min(sliceWidth, this.width - x);
+	      var height = Math.min(sliceHeight, this.height - y);
+	      ctx.drawImage(img, sliceLeft, sliceTop, width, height, this.left + x, this.top +y, width, height);
+	      y += sliceHeight;
+	    }
+	  x += sliceWidth;
+      }
+  }
 };
 
 
@@ -509,9 +523,13 @@ Platform.prototype = {
   type: "platform",
 
   draw: function(ctx) {
-    ctx.fillStyle = GROUND_COLOR;
+    if (TheWorld.tileSetLoaded) {
+	this.fillTiled(ctx, TheWorld.tileSetImg, 0, 0, 64, 64);
+    } else {
+	ctx.fillStyle = GROUND_COLOR;
+	ctx.fillRect(this.left, this.top, this.width, this.height);
+    }
     ctx.strokeStyle = "black";
-    ctx.fillRect(this.left, this.top, this.width, this.height);
     ctx.strokeRect(this.left, this.top, this.width, this.height);
   },
 
@@ -533,9 +551,13 @@ SemiPermiablePlatform.prototype = {
   type: "semiplatform",
 
   draw: function(ctx) {
-    ctx.fillStyle = "green";
+    if (TheWorld.tileSetLoaded) {
+	this.fillTiled(ctx, TheWorld.tileSetImg, 64, 0, 64, 64);
+    } else {
+	ctx.fillStyle = "green";
+	ctx.fillRect(this.left, this.top, this.width, this.height);
+    }
     ctx.strokeStyle = "black";
-    ctx.fillRect(this.left, this.top, this.width, this.height);
     ctx.strokeRect(this.left, this.top, this.width, this.height);
   },
 
@@ -625,10 +647,14 @@ PointlessTrinket.prototype = {
   width: 32,
   height: 32,
   draw: function(ctx) {
-    ctx.fillStyle = "yellow";
-    ctx.beginPath();
-    ctx.arc(this.left + this.width/2, this.top + this.height/2, this.height/2, 0, 2*Math.PI, false);
-    ctx.fill();
+    if (TheWorld.tileSetLoaded) {
+	ctx.drawImage(TheWorld.tileSetImg, 0, 64, 32, 32, this.left, this.top, 32, 32);
+    } else {
+	ctx.fillStyle = "yellow";
+	ctx.beginPath();
+	ctx.arc(this.left + this.width/2, this.top + this.height/2, this.height/2, 0, 2*Math.PI, false);
+	ctx.fill();
+    }
   },
   onCollect: function(player) {
     if (player.numTrinkets == 0) {
