@@ -56,9 +56,13 @@ var TheWorld = {
 	get right() { return this.left + this.width; },
 	get bottom() { return this.top + this.height; },
 	draw: function(ctx) {
-	    ctx.strokeStyle = "black";
-	    ctx.strokeRect(this.left, this.top, 64, 64);
-	    ctx.strokeText("GOAL", this.left + 5, this.top +32);
+	    if (TheWorld.goalImgLoaded) {
+		ctx.drawImage(TheWorld.goalImg, this.left, this.top);
+	    } else {
+		ctx.strokeStyle = "black";
+		ctx.strokeRect(this.left, this.top, 64, 64);
+		ctx.strokeText("GOAL", this.left + 5, this.top +32);
+	    }
 	},
 	setBounds: function(l, t, w, h) {
 	    this.left = l;
