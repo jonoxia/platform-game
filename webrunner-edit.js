@@ -274,6 +274,9 @@ function saveChanges() {
     allData.startY = TheWorld.startY;
     // BG image:
     allData.bgUrl = $("#level-bg-url").val();
+    allData.tilesetUrl = $("#level-tileset-url").val();
+    allData.musicUrl = $("#level-music-url").val();
+    allData.goalUrl = $("#level-goal-url").val();
     $.ajax({type: "POST", 
             url: URL,
 	    data: {levelName: title,
@@ -286,7 +289,7 @@ function saveChanges() {
 	    },
 	    dataType: "text"
 	    });
-    //$("#debug").html(JSON.stringify(allData));
+    $("#debug").html(JSON.stringify(allData));
     //$("#debug").html("Saving, don't close the page...");
 }
 
@@ -363,6 +366,9 @@ $(document).ready(function() {
 
   TheWorld.loadFromServer(title, function() {
     $("#level-bg-url").val(TheWorld.bgUrl);
+    $("#level-tileset-url").val(TheWorld.tilesetUrl);
+    $("#level-goal-url").val(TheWorld.goalUrl);
+    $("#level-music-url").val(TheWorld.musicUrl);
     redraw();
   });
 

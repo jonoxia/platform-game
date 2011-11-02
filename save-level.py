@@ -37,6 +37,9 @@ if levelData != "" and levelName != "":
         level.startX = data["startX"]
         level.startY = data["startY"]
         level.bgUrl = data["bgUrl"]
+        level.musicUrl = data["musicUrl"]
+        level.goalUrl = data["goalUrl"]
+        level.tilesetUrl = data["tilesetUrl"]
       
         for obj in data["worldData"]:
             l = LevelObject(level = level, type = obj["type"],

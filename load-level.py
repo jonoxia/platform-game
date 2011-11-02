@@ -26,6 +26,9 @@ if levels.count() > 0:
     data["startX"] = levels[0].startX
     data["startY"] = levels[0].startY
     data["bgUrl"] = levels[0].bgUrl
+    data["goalUrl"] = levels[0].goalUrl
+    data["tilesetUrl"] = levels[0].tilesetUrl
+    data["musicUrl"] = levels[0].musicUrl
 
 print "Content-type: text/html"
 print

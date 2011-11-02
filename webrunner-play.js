@@ -69,6 +69,10 @@ $(document).ready(function() {
 	});
 
     var bottomLimit = TheWorld.getBottomLimit();
+    if (TheWorld.musicUrl != "") {
+	$("#bgm").attr("src", TheWorld.musicUrl);
+	$("#bgm")[0].play();
+    }
 
     var heartbeat = window.setInterval(function() {
 	    if (leftArrowDown && !rightArrowDown) {
@@ -88,6 +92,8 @@ $(document).ready(function() {
 	    // check for #WINNING:
 	    if (player.intersecting(TheWorld.goalArea)) {
 		$("#output").html("A WINRAR IS YOU!");
+		$("#bgm")[0].pause();
+                // TODO play victory sound effects!
 		window.clearInterval(heartbeat);
 		$.ajax({type: "POST", 
 			url: "complete-level.py",
@@ -107,10 +113,14 @@ $(document).ready(function() {
 	    if (player.dead) {
 		$("#output").html("YOU'RE MONSTER CHOW (reload to play again)");
 		window.clearInterval(heartbeat);
+		$("#bgm")[0].pause();
+                // TODO play death sound effects!
 	    }
 	    if (player.top > bottomLimit) {
 		$("#output").html("GRAVITY IS A HARSH MISTRESS (reload to play again)");
 		window.clearInterval(heartbeat);
+		$("#bgm")[0].pause();
+		// TODO play death sound effects
 	    }
 	}, 100);
       });

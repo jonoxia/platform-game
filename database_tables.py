@@ -20,7 +20,9 @@ class Level(SQLObject):
     startX = IntCol()
     startY = IntCol()
     bgUrl = StringCol()
-    # More stuff like tileset URL
+    tilesetUrl = StringCol()
+    goalUrl = StringCol()
+    musicUrl = StringCol()
 
 class LevelObject( SQLObject ):
     level = ForeignKey("Level")

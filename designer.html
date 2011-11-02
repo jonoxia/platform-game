@@ -15,19 +15,22 @@
     <a id="play-this">Play This Level</a><br/>
     <a href="listlevels.py">Other Levels</a><br/>
     <hr/>
-    <label for="level-bg-url">Level BG IMG url:</label><input type="text" id="level-bg-url"/>
+    <label for="level-bg-url">Background Img URL:</label><input type="text" id="level-bg-url"/><br>
+    <label for="level-tileset-url">Tileset URL:</label><input type="text" id="level-tileset-url"/><br>
+    <label for="level-goal-url">Goal Img URL:</label><input type="text" id="level-goal-url"/><br>
+    <label for="level-music-url">Music URL:</label><input type="text" id="level-music-url"/><br>
     <hr/>
     <input type="radio" name="tools" value="eraser" id="eraser-tool"/>
-    <label for="eraser-tool">Eraser tool (click platform to remove it)</label></br>
+    <label for="eraser-tool">Eraser tool (click platform to remove it)</label><br>
     <input type="radio" name="tools" value="scroll" id="scroll-tool"/>
-    <label for="scroll-tool">Scroll tool (drag to scroll level)</label><br/>
+    <label for="scroll-tool">Scroll tool (drag to scroll level)</label><br>
     <input type="radio" name="tools" value="start" id="start-tool"/>
-    <label for="start-tool">Start Location Tool</label><br/>
+    <label for="start-tool">Start Location Tool</label><br>
     <input type="radio" name="tools" value="goal" id="goal-tool"/>
-    <label for="goal-tool">Goal Location Tool</label><br/>
+    <label for="goal-tool">Goal Location Tool</label><br>
     <hr/>
     <div id="more-tools"></div>
-    <button onclick="saveChanges();">Save Changes</button><br/>
+    <button onclick="saveChanges();">Save Changes</button><br>
   </div>
 
 </body>

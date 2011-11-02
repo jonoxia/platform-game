@@ -30,11 +30,24 @@ var TheWorld = {
   canvasWidth: 800,
   canvasHeight: 600,
   startX: 0,
-  startY: 0,
-  ticks: 0,
+  startY: 0, // player start location
+  ticks: 0,  // elapsed time cycles
+
   bgUrl: "",
   bgImg: null,
   bgImgLoaded: false,
+
+  tilesetUrl: "",
+  tileSetImg: null,
+  tileSetLoaded: false,
+
+  goalUrl: "",
+  goalImg: null,
+  goalImgLoaded: false,
+  
+  // TODO those repeated variables make me think we should have a smart-loading image class.
+  musicUrl: "",
+ 
   goalArea: {
 	left: 500,
 	top: 350,
@@ -353,12 +366,28 @@ var TheWorld = {
 	    var parsedData = JSON.parse(data);
 	    self.startX = parsedData.startX;
 	    self.startY = parsedData.startY;
+	    // background img
 	    self.bgUrl = parsedData.bgUrl;
-	    if (self.bgUrl != "") {
+	    if (self.bgUrl && self.bgUrl!= "") {
 		self.bgImg = new Image();
-		self.bgImg.onload = function() { $("#debug").html("Bgimg loaded."); self.bgImgLoaded = true; };
+		self.bgImg.onload = function() {self.bgImgLoaded = true; };
 		self.bgImg.src = self.bgUrl;
 	    }
+	    // tileset img
+	    self.tilesetUrl = parsedData.tilesetUrl;
+            if (self.tilesetUrl && self.tilesetUrl != "") {
+		self.tileSetImg = new Image();
+		self.tileSetImg.onload = function() { self.tileSetLoaded = true; };
+		self.tileSetImg.src = self.tilesetUrl;
+	    }
+	    // goal img
+	    self.goalUrl = parsedData.goalUrl;
+	    if (self.goalUrl && self.goalUrl != "") {
+		self.goalImg = new Image();
+		self.goalImg.onload = function() { self.goalImgLoaded = true; };
+              self.goalImg.src = self.goalUrl;
+	    }
+            self.musicUrl = parsedData.musicUrl;
 	    var worldData = parsedData.worldData;
 	    for (var i = 0; i < worldData.length; i++) {
 		var type = worldData[i].type;
