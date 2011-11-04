@@ -215,7 +215,7 @@ Player.prototype.__proto__ = new Mob();
 
 
 function Enemy() {
-  this.mobInit("/platformer-dev/shrimp.gif", false);
+  this.mobInit("shrimp.gif", false);
   this.direction = "left";
 }
 Enemy.prototype = {

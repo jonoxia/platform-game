@@ -363,59 +363,64 @@ var TheWorld = {
       }
   },
 
+  loadFromString: function(data, callback) {
+      var self = this;
+      //$("#debug").html("In callback, parsing json: " + data );
+      var parsedData = JSON.parse(data);
+      self.startX = parsedData.startX;
+      self.startY = parsedData.startY;
+      // background img
+      self.bgUrl = parsedData.bgUrl;
+      if (self.bgUrl && self.bgUrl!= "") {
+	  self.bgImg = new Image();
+	  self.bgImg.onload = function() {self.bgImgLoaded = true; };
+	  self.bgImg.src = self.bgUrl;
+      }
+      // tileset img
+      self.tilesetUrl = parsedData.tilesetUrl;
+      if (self.tilesetUrl && self.tilesetUrl != "") {
+	  self.tileSetImg = new Image();
+	  self.tileSetImg.onload = function() { self.tileSetLoaded = true; };
+	  self.tileSetImg.src = self.tilesetUrl;
+      }
+      // goal img
+      self.goalUrl = parsedData.goalUrl;
+      if (self.goalUrl && self.goalUrl != "") {
+	  self.goalImg = new Image();
+	  self.goalImg.onload = function() { self.goalImgLoaded = true; };
+	  self.goalImg.src = self.goalUrl;
+      }
+      self.musicUrl = parsedData.musicUrl;
+      var worldData = parsedData.worldData;
+      for (var i = 0; i < worldData.length; i++) {
+	  var type = worldData[i].type;
+	  var cons = ConstructorRegistry.getConstructor(type);
+	  if (cons) {
+	      var obj = new cons();
+	      obj.boxInit(worldData[i].x,
+			  worldData[i].y,
+			  worldData[i].width,
+			  worldData[i].height);
+	      self.addForegroundObject(obj);
+	  }
+	  if (type == "goal") {
+	      // Set the goal rectangle
+	      self.goalArea.setBounds(worldData[i].x,
+				      worldData[i].y,
+				      worldData[i].width,
+				      worldData[i].height);
+	  }
+      }
+      //$("#debug").html("Loaded.");
+      callback();
+  },
+
   loadFromServer: function (levelName, callback) {
     var url = "load-level.py";
     var self = this;
     $("#debug").html("Loading level...");
     $.get(url, {levelName: levelName}, function(data, textStatus, jqXHR) {
-	    //$("#debug").html("In callback, parsing json: " + data );
-	    var parsedData = JSON.parse(data);
-	    self.startX = parsedData.startX;
-	    self.startY = parsedData.startY;
-	    // background img
-	    self.bgUrl = parsedData.bgUrl;
-	    if (self.bgUrl && self.bgUrl!= "") {
-		self.bgImg = new Image();
-		self.bgImg.onload = function() {self.bgImgLoaded = true; };
-		self.bgImg.src = self.bgUrl;
-	    }
-	    // tileset img
-	    self.tilesetUrl = parsedData.tilesetUrl;
-            if (self.tilesetUrl && self.tilesetUrl != "") {
-		self.tileSetImg = new Image();
-		self.tileSetImg.onload = function() { self.tileSetLoaded = true; };
-		self.tileSetImg.src = self.tilesetUrl;
-	    }
-	    // goal img
-	    self.goalUrl = parsedData.goalUrl;
-	    if (self.goalUrl && self.goalUrl != "") {
-		self.goalImg = new Image();
-		self.goalImg.onload = function() { self.goalImgLoaded = true; };
-              self.goalImg.src = self.goalUrl;
-	    }
-            self.musicUrl = parsedData.musicUrl;
-	    var worldData = parsedData.worldData;
-	    for (var i = 0; i < worldData.length; i++) {
-		var type = worldData[i].type;
-		var cons = ConstructorRegistry.getConstructor(type);
-		if (cons) {
-                   var obj = new cons();
-                   obj.boxInit(worldData[i].x,
-			       worldData[i].y,
-			       worldData[i].width,
-			       worldData[i].height);
-                   self.addForegroundObject(obj);
-		}
-		if (type == "goal") {
-		    // Set the goal rectangle
-		    self.goalArea.setBounds(worldData[i].x,
-					    worldData[i].y,
-					    worldData[i].width,
-					    worldData[i].height);
-		}
-	    }
-	    //$("#debug").html("Loaded.");
-	    callback();
+	    self.loadFromString(data, callback);
 	}, "html");
   }
 };
