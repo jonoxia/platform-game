@@ -57,7 +57,9 @@ var TheWorld = {
 	get bottom() { return this.top + this.height; },
 	draw: function(ctx) {
 	    if (TheWorld.goalImgLoaded) {
-		ctx.drawImage(TheWorld.goalImg, this.left, this.top);
+		// scale image to fit size of goal area
+		ctx.drawImage(TheWorld.goalImg, 0, 0, TheWorld.goalImg.width, TheWorld.goalImg.height,
+			      this.left, this.top, this.width, this.height);
 	    } else {
 		ctx.strokeStyle = "black";
 		ctx.strokeRect(this.left, this.top, 64, 64);

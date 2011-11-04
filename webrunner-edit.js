@@ -45,8 +45,7 @@ GenericPlacementTool.prototype = {
 	    redraw();
 	    var context = $("#design-canvas")[0].getContext("2d");
 	    context.strokeStyle = "black";
-	    context.strokeRect(TheWorld.worldXToScreenX(x), 
-			       TheWorld.worldYToScreenY(y),
+	    context.strokeRect(x, y,
 			       this._cons.prototype.width,
 			       this._cons.prototype.height);
 	}
