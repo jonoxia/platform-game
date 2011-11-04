@@ -660,11 +660,12 @@ PointlessTrinket.prototype = {
   },
   onCollect: function(player) {
     playSfx("kaching-sfx");
-    if (player.numTrinkets == 0) {
+    if (!player.numTrinkets) {
       player.numTrinkets = 1;
     } else {
       player.numTrinkets ++;
     }
+    $("#trinkets").html(player.numTrinkets);
   }
 };
 PointlessTrinket.prototype.__proto__ = new PowerUp();
