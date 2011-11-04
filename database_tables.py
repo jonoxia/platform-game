@@ -17,12 +17,12 @@ class Level(SQLObject):
     name = StringCol()
     creator = ForeignKey("Player")
     modified = DateTimeCol()
-    startX = IntCol()
-    startY = IntCol()
-    bgUrl = StringCol()
-    tilesetUrl = StringCol()
-    goalUrl = StringCol()
-    musicUrl = StringCol()
+    startX = IntCol(default = 0)
+    startY = IntCol(default = 0)
+    bgUrl = StringCol(default = "")
+    tilesetUrl = StringCol(default = "")
+    goalUrl = StringCol(default = "")
+    musicUrl = StringCol(default = "")
 
 class LevelObject( SQLObject ):
     level = ForeignKey("Level")
