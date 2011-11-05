@@ -26,6 +26,7 @@ function updateTimer(ms) {
     $("#timer").html( m + ":" + s_str);
 }
 
+
 $(document).ready(function() {
   adjustToScreen();
   var context = $("#game-canvas")[0].getContext("2d");
@@ -74,57 +75,59 @@ $(document).ready(function() {
 	$("#bgm")[0].play();
     }
 
-    var heartbeat = window.setInterval(function() {
-	    if (leftArrowDown && !rightArrowDown) {
-		player.goLeft();
-	    } else if (rightArrowDown && !leftArrowDown) {
-		player.goRight();
-	    } else {
-		player.idle();
-	    }
+    var mainLoop = function() {
+	if (leftArrowDown && !rightArrowDown) {
+	    player.goLeft();
+	} else if (rightArrowDown && !leftArrowDown) {
+	    player.goRight();
+	} else {
+	    player.idle();
+	}
 
-	    TheWorld.updateEveryone();
-	    TheWorld.scrollIfNeeded(player);
-	    TheWorld.cleanUpDead();
+	TheWorld.updateEveryone();
+	TheWorld.scrollIfNeeded(player);
+	TheWorld.cleanUpDead();
 
-	    updateTimer(Date.now() - startTime);
-	    TheWorld.draw(context);
-	    // check for #WINNING:
-	    if (player.intersecting(TheWorld.goalArea)) {
-		$("#output").html("A WINRAR IS YOU!");
-		$("#bgm")[0].pause();
-                playSfx("victory-sfx");
-                // TODO play victory sound effects!
-		window.clearInterval(heartbeat);
-		$.ajax({type: "POST", 
+	updateTimer(Date.now() - startTime);
+	TheWorld.draw(context);
+	// check for #WINNING:
+	if (player.intersecting(TheWorld.goalArea)) {
+	    $("#output").html("A WINRAR IS YOU!");
+	    $("#bgm")[0].pause();
+	    playSfx("victory-sfx");
+	    // TODO play victory sound effects!
+	    $.ajax({type: "POST", 
 			url: "complete-level.py",
 			data: {levelName: title,
-				completionTime: Date.now() - startTime},
+			    completionTime: Date.now() - startTime},
 			success: function(data, textStatus, jqXHR) {
-			  $("#debug").html(data);
-			},
+			$("#debug").html(data);
+		    },
 			error: function(data, textStatus, thing) {
-			  $("#debug").html(thing);
-			},
+			$("#debug").html(thing);
+		    },
 			dataType: "text"
 			});
-		$("#debug").html("Saving score...");
-	    }
-	    // check for #LOSING:
-	    if (player.dead) {
-		$("#output").html("YOU'RE MONSTER CHOW (reload to play again)");
-		window.clearInterval(heartbeat);
-		$("#bgm")[0].pause();
-                playSfx("death-sfx");
-	    }
-	    if (player.top > bottomLimit) {
-		$("#output").html("GRAVITY IS A HARSH MISTRESS (reload to play again)");
-		window.clearInterval(heartbeat);
-		$("#bgm")[0].pause();
-                playSfx("death-sfx");
-	    }
-	}, 100);
-      });
+	    $("#debug").html("Saving score...");
+	}
+	// check for #LOSING:
+	else if (player.dead) {
+	    $("#output").html("YOU'RE MONSTER CHOW (reload to play again)");
+	    $("#bgm")[0].pause();
+	    playSfx("death-sfx");
+	} else if (player.top > bottomLimit) {
+	    $("#output").html("GRAVITY IS A HARSH MISTRESS (reload to play again)");
+	    $("#bgm")[0].pause();
+	    playSfx("death-sfx");
+	} else {
+	    requestAnimationFrame(mainLoop);
+	}
+
+    }
+
+
+    mainLoop();
+  });
 
   // Call adjustToScreen if screen size changes
   var resizeTimer = null;

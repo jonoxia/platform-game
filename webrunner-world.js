@@ -31,7 +31,6 @@ var TheWorld = {
   canvasHeight: 600,
   startX: 0,
   startY: 0, // player start location
-  ticks: 0,  // elapsed time cycles
 
   bgUrl: "",
   bgImg: null,
@@ -215,7 +214,7 @@ var TheWorld = {
     ctx.restore();
   },
 
-  detectPlatformIntercept: function(mob) {
+  detectPlatformIntercept: function(mob, xDist, yDist) {
     // Run through all platforms in the foregroundObjects list and
     // see whether mob is on a collision course with any of them.
     // Call the onMobTouch methods of any objects I intercept with,
@@ -227,7 +226,7 @@ var TheWorld = {
         // don't attempt collision with self!
         continue;
       }
-      intercept = this.foregroundObjects[i].detectIntercept(mob);
+      intercept = this.foregroundObjects[i].detectIntercept(mob, xDist, yDist);
       if (intercept) {
 	  intercepts.push( { box: this.foregroundObjects[i],
                              cept: intercept } );
@@ -310,8 +309,7 @@ var TheWorld = {
     return null;
   },
 
-  updateEveryone: function() {
-    this.ticks ++;
+  updateEveryone: function(elapsedTime) {
     for (var i = 0; i < this.foregroundObjects.length; i++) {
 	var obj = this.foregroundObjects[i];
 	if (!this.isOnScreen(obj)) {
@@ -321,7 +319,7 @@ var TheWorld = {
 	    obj.roam();
 	}
 	if (obj.update) {
-	    obj.update(this.ticks);
+	    obj.update(elapsedTime);
 	}
     }
   },
@@ -442,20 +440,22 @@ Box.prototype = {
     return this.top + this.height;
   },
 
-  detectIntercept: function(mob) {
+  detectIntercept: function(mob, xDist, yDist) {
     /* Will mob's velocity cause it to cross one of the edges of this
      * platform?  returns object with edge name ("top" "left" "right"
      * or "bottom") and x,y of interception point. */
     var x_intercept, y_intercept, d_t;
-    /* assumes that mob.vx, mob.vy, mob.left, mob.right, mob.top, and
+    /* assumes that  mob.left, mob.right, mob.top, and
      * mob.bottom are all defined in addition to this.left, this.top,
-     * this.right, and this.bottom.  Could x-velocity carry mob across
+     * this.right, and this.bottom. */
+
+     /* Could x-velocity carry mob across
      * the line of the left edge of this platform? */
-    if (mob.right < this.left && mob.right + mob.vx >= this.left) {
+    if (mob.right < this.left && mob.right + xDist >= this.left) {
       // How long does it take you to reach the line of the left edge?
-      dt = (this.left - mob.right)/mob.vx;
+      dt = (this.left - mob.right)/xDist;
       // At what y-value would the line of motion cross the line of the left edge?
-      y_intercept = mob.top + mob.vy * dt;
+      y_intercept = mob.top + yDist * dt;
       // Is that y-value inside the actual bounds of the left edge (hit) or outside (miss)?
       if (y_intercept + mob.height >= this.top && y_intercept <= this.bottom) {
         return { side: "left", x: this.left, y: y_intercept, t: dt };
@@ -463,10 +463,10 @@ Box.prototype = {
     }
 
     // Could y-velocity carry mob across the line of the top edge of this platform?
-    if (mob.bottom < this.top && mob.bottom + mob.vy >= this.top) {
+    if (mob.bottom < this.top && mob.bottom + yDist >= this.top) {
       // At what x-value would line of motion cross line of top edge?
-      dt = (this.top - mob.bottom)/mob.vy;
-      x_intercept = mob.left + mob.vx * dt;
+      dt = (this.top - mob.bottom)/yDist;
+      x_intercept = mob.left + xDist * dt;
       // Is that x-value inside the actual bounds of the top edge?
       if (x_intercept + mob.width >= this.left && x_intercept <= this.right) {
         return { side: "top", x: x_intercept, y: this.top, t: dt }; // todo should be this.top - mob.height?
@@ -474,18 +474,18 @@ Box.prototype = {
     }
 
     // Can possibly touch right edge?  (same logic)
-    if (mob.left > this.right && mob.left + mob.vx <= this.right) {
-      dt = (this.right - mob.left)/mob.vx;
-      y_intercept = mob.top + mob.vy * dt;
+    if (mob.left > this.right && mob.left + xDist <= this.right) {
+      dt = (this.right - mob.left)/xDist;
+      y_intercept = mob.top + yDist * dt;
       if (y_intercept + mob.height >= this.top && y_intercept <= this.bottom) {
         return { side: "right", x: this.right, y: y_intercept, t: dt };
       }
     }
 
     // Can possibly touch bottom edge? (same logic)
-    if (mob.top > this.bottom && mob.top + mob.vy <= this.bottom) {
-      dt = (this.bottom - mob.top)/mob.vy;
-      x_intercept = mob.left + mob.vx * dt;
+    if (mob.top > this.bottom && mob.top + yDist <= this.bottom) {
+      dt = (this.bottom - mob.top)/yDist;
+      x_intercept = mob.left + xDist * dt;
       if (x_intercept + mob.width >= this.left && x_intercept <= this.right) {
         return { side: "bottom", x: x_intercept, y: this.bottom, t: dt };
       }
@@ -702,8 +702,9 @@ DisappearingBlock.prototype = {
     return (this.visible);
   },
 
-  update: function(ticks) {
-    this.visible = (Math.floor(ticks / 20) ) % 2 == 0;
+  update: function(elapsedTime) {
+	// todo rewrite to use elapsedTime instead of ticks
+	//this.visible = (Math.floor(ticks / 20) ) % 2 == 0;
   }
 };
 DisappearingBlock.prototype.__proto__ = new Box();

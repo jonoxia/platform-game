@@ -11,6 +11,7 @@ function Mob(filename, x, y, width, height, animate) {
 Mob.prototype = {
   imgLoaded: false,
   dead: false,
+  _pixelsTraveled: 0,
 
   // Stats (could be modified by powerups):
   topSpeed: 122,
@@ -59,12 +60,16 @@ Mob.prototype = {
   },
 
   move: function(dx, dy) {
+	// advancing 12 pixels = 1 frame
     this.jumping = false;
+    this._pixelsTraveled += Math.abs(dx);
     if (dx == 0 && dy == 0 ) {
       this.animationFrame = 0;
+      this._pixelsTraveled = 0;
       this.movementDirection = STAND_STILL;
     } else {
-      this.animationFrame = (this.animationFrame + 1) % 5;
+	this.animationFrame = Math.floor(this._pixelsTraveled / 12) % 5;
+	$("#debug").html(this.animationFrame);
       if (dx <= 0) {
         this.movementDirection = GOING_LEFT;
       }
@@ -113,18 +118,21 @@ Mob.prototype = {
       }	
   },
 
-  update: function(ticks) {
+  update: function(elapsedTime) {
     // Gravity:
     if (!this.onGround()) {
-      this.vy += this.gravity;
+	this.vy += this.gravity * elapsedTime / 100;
     }
+    
+    var xDist = this.vx * elapsedTime / 100;
+    var yDist = this.vy * elapsedTime / 100;
 
     // Collision detection
-    var pathModified = TheWorld.detectPlatformIntercept(this);
+    var pathModified = TheWorld.detectPlatformIntercept(this, xDist, yDist);
     
     if (!pathModified) {
 	// If no collision, move full velocity
-	this.move(this.vx, this.vy);
+	this.move(xDist, yDist);
     }
   },
 
