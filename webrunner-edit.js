@@ -288,8 +288,8 @@ function saveChanges() {
 	    },
 	    dataType: "text"
 	    });
-    $("#debug").html(JSON.stringify(allData));
-    //$("#debug").html("Saving, don't close the page...");
+    //$("#debug").html(JSON.stringify(allData));
+    $("#debug").html("Saving, don't close the page...");
 }
 
 $(document).ready(function() {
