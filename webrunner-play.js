@@ -75,6 +75,9 @@ $(document).ready(function() {
 	$("#bgm")[0].play();
     }
 
+    var currentTime = Date.now();
+    var elapsed = 0;
+    var newTime;
     var mainLoop = function() {
 	if (leftArrowDown && !rightArrowDown) {
 	    player.goLeft();
@@ -84,11 +87,15 @@ $(document).ready(function() {
 	    player.idle();
 	}
 
-	TheWorld.updateEveryone();
+	newTime = Date.now();
+	elapsed = newTime - currentTime;
+	currentTime = newTime;
+	
+	TheWorld.updateEveryone(elapsed);
 	TheWorld.scrollIfNeeded(player);
 	TheWorld.cleanUpDead();
 
-	updateTimer(Date.now() - startTime);
+	updateTimer(currentTime - startTime);
 	TheWorld.draw(context);
 	// check for #WINNING:
 	if (player.intersecting(TheWorld.goalArea)) {
