@@ -83,7 +83,7 @@ Mob.prototype = {
 
   onGround: function() {
     // is something under my feet?
-    return TheWorld.touchingPlatform(this, "bottom");
+    return (TheWorld.touchingPlatform(this, "bottom") != null);
   },
 
   stopAt: function(intercept) {
@@ -188,6 +188,10 @@ Mob.prototype = {
 
   die: function() {
 	this.dead = true;
+  },
+
+  substantial: function(side) {
+    return true;
   }
 };
 Mob.prototype.__proto__ = new Box();
@@ -232,10 +236,25 @@ Enemy.prototype = {
   height: 49,
 
   roam: function() {
-    if (this.direction == "left" && TheWorld.touchingPlatform(this, "left")) {
+    if (this.direction == "left" && 
+	(TheWorld.touchingPlatform(this, "left") != null)) {
 	this.direction = "right";
-    } else if (this.direction == "right" && TheWorld.touchingPlatform(this, "right")) {
+    } else if (this.direction == "right" &&
+       (TheWorld.touchingPlatform(this, "right") != null)) {
 	this.direction = "left";
+    }
+
+    // change direction when you hit a ledge/edge of platform:
+    var underMe = TheWorld.touchingPlatform(this, "bottom");
+    if (underMe) {
+	if (this.direction == "left" &&
+	    (this.left - underMe.left < 10) ) {
+	    this.direction = "right";
+	}
+	if (this.direction == "right" &&
+	    (underMe.right - this.right < 10) ) {
+	    this.direction = "left";
+	}
     }
 
     if (this.direction == "left") {
@@ -243,6 +262,7 @@ Enemy.prototype = {
     } else if (this.direction == "right") {
 	this.goRight();
     }
+
   },
   onMobTouch: function(mob, intercept) {
     // If touch player, hurt player if touching from the
@@ -258,10 +278,7 @@ Enemy.prototype = {
 	}
     }
     // TODO return true or false? stop mob at intercept?
-  },
-  substantial: function(side) {
-	return true;
-    }
+  }
 };
 Enemy.prototype.__proto__ = new Mob();
 ConstructorRegistry.register(Enemy);

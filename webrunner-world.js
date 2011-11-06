@@ -252,7 +252,9 @@ var TheWorld = {
 
   touchingPlatform: function(mob, direction) {
     // Run through all platforms in the foregroundObjects list
-    // and see whether mob is current
+    // and see whether mob is currently touching any of them
+    // returns the platform, or null if none
+    // e.g. touchingPlatform(mob, "bottom") gets platform under mob
     for (var i = 0; i < this.foregroundObjects.length; i++) {
       var platform = this.foregroundObjects[i];
       if (platform === mob) {
@@ -266,7 +268,7 @@ var TheWorld = {
 	    platform.substantial("right") &&
             mob.top <= platform.bottom &&
             mob.bottom >= platform.top) {
-          return true;
+          return platform;
         }
         break;
       case "right":
@@ -274,7 +276,7 @@ var TheWorld = {
 	    platform.substantial("left") &&
             mob.top <= platform.bottom &&
             mob.bottom >= platform.top) {
-          return true;
+          return platform;
         }
         break;
       case "top":
@@ -282,7 +284,7 @@ var TheWorld = {
 	    platform.substantial("bottom") &&
             mob.left < platform.right &&
             mob.right > platform.left) {
-          return true;
+          return platform;
         }
         break;
       case "bottom":
@@ -290,12 +292,12 @@ var TheWorld = {
 	    platform.substantial("top") &&
             mob.left < platform.right &&
             mob.right > platform.left) {
-          return true;
+          return platform;
         }
         break;
       }
     }
-    return false;
+    return null;
   },
 
   getPlatformAt: function(x, y) {
@@ -681,6 +683,7 @@ function DisappearingBlock() {
 DisappearingBlock.prototype = {
   type: "disappearing_block",
   visible: true,
+  time: 0,
 
   draw: function(ctx) {
     if (this.visible) {
@@ -704,8 +707,9 @@ DisappearingBlock.prototype = {
   },
 
   update: function(elapsedTime) {
-	// todo rewrite to use elapsedTime instead of ticks
-	//this.visible = (Math.floor(ticks / 20) ) % 2 == 0;
+    this.time += elapsedTime;
+    // visible every other second:
+    this.visible = (Math.floor(this.time / 1000) ) % 2 == 0;
   }
 };
 DisappearingBlock.prototype.__proto__ = new Box();
