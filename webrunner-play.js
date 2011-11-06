@@ -60,6 +60,9 @@ $(document).ready(function() {
 		player.jump();
 	    }
 	});
+    $(document).bind("mouseup", function(evt) {
+	    player.jump();
+	});
     $(document).bind("keyup", function(evt) {
 	    if (evt.which == LEFT_ARROW) {
 		leftArrowDown = false;
@@ -127,7 +130,7 @@ $(document).ready(function() {
 	    $("#bgm")[0].pause();
 	    playSfx("death-sfx");
 	} else {
-	    requestAnimationFrame(mainLoop);
+	    requestAnimFrame(mainLoop);
 	}
 
     }
