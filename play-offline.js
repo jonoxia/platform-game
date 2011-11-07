@@ -43,6 +43,7 @@ $(document).ready(function() {
 
     var leftArrowDown = false;
     var rightArrowDown = false;
+    var spacebarDown = false;
 
     var startTime = Date.now();
 
@@ -54,7 +55,7 @@ $(document).ready(function() {
 		rightArrowDown = true;
 	    }
 	    if (evt.which == SPACEBAR) {
-		player.jump();
+		spacebarDown = true;
 	    }
 	});
     $(document).bind("keyup", function(evt) {
@@ -63,6 +64,9 @@ $(document).ready(function() {
 	    }
 	    if (evt.which == RIGHT_ARROW) {
 		rightArrowDown = false;
+	    }
+	    if (evt.which == SPACEBAR) {
+		spacebarDown = false;
 	    }
 	});
 
@@ -76,16 +80,23 @@ $(document).ready(function() {
     var elapsed = 0;
     var newTime;
     var mainLoop = function() {
-	if (leftArrowDown && !rightArrowDown) {
-	    player.goLeft();
-	} else if (rightArrowDown && !leftArrowDown) {
-	    player.goRight();
-	} else {
-	    player.idle();
-	}
 	newTime = Date.now();
 	elapsed = newTime - currentTime;
 	currentTime = newTime;
+
+	if (spacebarDown) {
+	    player.jump(elapsed);
+	} else {
+	    player.stopJumping(elapsed);
+	}
+
+	if (leftArrowDown && !rightArrowDown) {
+	    player.goLeft(elapsed);
+	} else if (rightArrowDown && !leftArrowDown) {
+	    player.goRight(elapsed);
+	} else {
+	    player.idle(elapsed);
+	}
 	
 	TheWorld.updateEveryone(elapsed);
 	TheWorld.scrollIfNeeded(player);

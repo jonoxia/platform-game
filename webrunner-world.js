@@ -318,7 +318,7 @@ var TheWorld = {
 	    continue;
 	}
 	if (obj.roam) {
-	    obj.roam();
+	    obj.roam(elapsedTime);
 	}
 	if (obj.update) {
 	    obj.update(elapsedTime);

@@ -15,10 +15,14 @@ Mob.prototype = {
 
   // Stats (could be modified by powerups):
   topSpeed: 122,
-  gravity: 5,
-  acceleration: 2, // make this 3 for a much easier to steer dude
+  gravity: 7,
+   // TODO the reason things feel so slippery is because pushing against the
+  // direction of running actually decelerates you *slower* than waiting for
+  // the surface friction to slow you!  what if it gave you both??
+  acceleration: 3,
   friction: 4,
-  jumpPower: 30,
+  jumpPower: 40,
+  jumping: false,
 
   mobInit: function(filename, animate) {
     var self = this;
@@ -61,7 +65,6 @@ Mob.prototype = {
 
   move: function(dx, dy) {
 	// advancing 12 pixels = 1 frame
-    this.jumping = false;
     this._pixelsTraveled += Math.abs(dx);
     if (dx == 0 && dy == 0 ) {
       this.animationFrame = 0;
@@ -69,7 +72,6 @@ Mob.prototype = {
       this.movementDirection = STAND_STILL;
     } else {
 	this.animationFrame = Math.floor(this._pixelsTraveled / 12) % 5;
-	$("#debug").html(this.animationFrame);
       if (dx <= 0) {
         this.movementDirection = GOING_LEFT;
       }
@@ -136,29 +138,50 @@ Mob.prototype = {
     }
   },
 
-  jump: function() {
-    // Only jump if there is ground under me and nothing blocking
-    // my head.
-    if (this.onGround() && !this.jumping &&
-        ! TheWorld.touchingPlatform(this, "top")) {
+  jump: function(elapsed) {
+	//&& ! TheWorld.touchingPlatform(this, "top")) {
+   if (this.onGround() && !this.jumping) {
+	// start jump
 	playSfx("jump-sfx");
-      this.vy -= this.jumpPower;
-      this.jumping = true; // to make jump idempotent, fix bug 2
+	this.jumping = true;
+	this.remainingJumpPower = this.jumpPower;
+	this.vy -= this.jumpPower;
+    }
+    if (this.jumping) {
+	// track how long we've been holding the key
+	var jumpPowerUsed = 20 * elapsed/100;
+	if (this.remainingJumpPower > jumpPowerUsed) {
+	    this.remainingJumpPower -= jumpPowerUsed;
+	    //$("#debug").html(this.remainingJumpPower); // alwasy prints 20
+	    // which is this.jumpPower - 10.
+	} else {
+	    this.remainingJumpPower = 0;
+	}
+    }
+   
+  },
+
+  stopJumping: function() {
+    this.jumping = false;
+    // brake upwards movement
+    if (this.remainingJumpPower) {
+	this.vy += this.remainingJumpPower;
+	this.remainingJumpPower = 0;
     }
   },
 
-  idle: function() {
+  idle: function(elapsed) {
     // Apply friction if touching ground:
     if (this.onGround()) {
       if (this.vx > 0) {
-        this.vx -= this.friction;
+        this.vx -= this.friction * elapsed / 100;
         if (this.vx < 0) {
           this.vx = 0;
         }
       }
 
       if (this.vx < 0) {
-        this.vx += this.friction;
+        this.vx += this.friction * elapsed / 100;
         if (this.vx > 0) {
           this.vx = 0;
         }
@@ -166,20 +189,20 @@ Mob.prototype = {
     }
   },
 
-  goLeft: function() {
+  goLeft: function(elapsed) {
     if (! TheWorld.touchingPlatform(this, "left")) {
       if (this.vx > 0 - this.topSpeed) {
-        this.vx -= this.acceleration;
+        this.vx -= this.acceleration * elapsed / 100;
       } else {
         this.vx = 0 - this.topSpeed;
       }
     }
   },
 
-  goRight: function() {
+  goRight: function(elapsed) {
     if (! TheWorld.touchingPlatform(this, "right")) {
       if (this.vx < this.topSpeed) {
-        this.vx += this.acceleration;
+        this.vx += this.acceleration * elapsed / 100;
       } else {
         this.vx = this.topSpeed;
       }
@@ -235,7 +258,7 @@ Enemy.prototype = {
   width: 91,
   height: 49,
 
-  roam: function() {
+  roam: function(elapsed) {
     if (this.direction == "left" && 
 	(TheWorld.touchingPlatform(this, "left") != null)) {
 	this.direction = "right";
@@ -258,9 +281,9 @@ Enemy.prototype = {
     }
 
     if (this.direction == "left") {
-	this.goLeft();
+	this.goLeft(elapsed);
     } else if (this.direction == "right") {
-	this.goRight();
+	this.goRight(elapsed);
     }
 
   },
