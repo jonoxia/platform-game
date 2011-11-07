@@ -22,6 +22,7 @@ Mob.prototype = {
   acceleration: 3,
   friction: 4,
   jumpPower: 40,
+  hitPoints: 1,
   jumping: false,
 
   mobInit: function(filename, animate) {
@@ -213,6 +214,13 @@ Mob.prototype = {
 	this.dead = true;
   },
 
+  damage: function(amount) {
+    this.hitPoints -= amount;
+    if (this.hitPoints <= 0) {
+	this.die();
+    }
+  },
+
   substantial: function(side) {
     return true;
   }
@@ -226,6 +234,10 @@ function Player(filename, x, y, width, height) {
 }
 Player.prototype = {
   type: "player",
+
+  hitPoints: 2,
+  maxHitPoints: 2,
+  mercyInvincibility: 0,
 
   onMobTouch: function(mob, intercept) {
 	// So this is kind of weird.
@@ -244,7 +256,44 @@ Player.prototype = {
 	break;
 	}
 	mob.onMobTouch(this, intercept);
+  },
+
+  damage: function(amount) {
+    if (this.mercyInvincibility == 0) {
+      this.hitPoints -= amount;
+      this.mercyInvincibility = 1000;
+      if (this.hitPoints <= 0) {
+        this.die();
+      }
+      $("#hp").html(this.hitPoints);
     }
+  },
+
+  heal: function(amount) {
+    this.hitPoints += amount;
+    if (this.hitPoints > this.maxHitPoints) {
+      this.hitPoints = this.maxHitPoints;
+    }
+    $("#hp").html(this.hitPoints);
+  },
+
+  update: function(elapsedTime) {
+    Mob.prototype.update.call(this, elapsedTime);
+    if (this.mercyInvincibility > 0) {
+	this.mercyInvincibility -= elapsedTime;
+	if (this.mercyInvincibility < 0) {
+	    this.mercyInvincibility = 0;
+	}
+    }
+  },
+
+  draw: function(ctx) {
+    if (this.mercyInvincibility > 0) {
+      ctx.globalAlpha = 0.5;
+    }
+    Mob.prototype.draw.call(this, ctx);
+    ctx.globalAlpha = 1.0;
+  }
 }
 Player.prototype.__proto__ = new Mob();
 
@@ -291,15 +340,26 @@ Enemy.prototype = {
     // If touch player, hurt player if touching from the
     // side; kill enemy if player jumps on its head.
     if (mob.type == "player") {
-	if (intercept.side == "top") {
-	    this.die();
-	    // TODO death animation?
-	    mob.vy = -10; // bounce
-	    playSfx("crunch-sfx");
-        } else {
-	    mob.die();
+      var player = mob;
+      if (intercept.side == "top") {
+        this.damage(1);
+        player.vy = -10; // bounce
+        playSfx("crunch-sfx");
+      } else {
+        player.damage(1);
+
+	// Knockback:
+	player.vy = -10;
+	if (intercept.side == "left") {
+	    player.vx = -10;
+	} else if (intercept.side == "right") {
+	    player.vx = 10;
 	}
+	// TODO this is slightly buggy as it can bounce the player
+	// through a solid wall!
+      }
     }
+    return true;
     // TODO return true or false? stop mob at intercept?
   }
 };

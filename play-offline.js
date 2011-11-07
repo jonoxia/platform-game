@@ -14,7 +14,8 @@ function adjustToScreen() {
     $("#game-canvas").attr("height", TheWorld.canvasHeight);
 }
 
-function updateTimer(ms) {
+var StatusBar = {
+  updateTimer: function(ms) {
     var s = Math.floor(ms / 1000);
     var m = Math.floor(s / 60);
     s = s % 60;
@@ -24,7 +25,39 @@ function updateTimer(ms) {
 	s_str = s;
     }
     $("#timer").html( m + ":" + s_str);
-}
+  },
+
+  draw: function(ctx, player) {
+    // inside the top left of the canvas, draw:
+    // elapsed time
+    // collected trinkets
+    // hearts
+    var maxHP = player.maxHitPoints;
+    var hp = player.hitPoints;
+    ctx.beginPath();
+    ctx.moveTo(40, 40);
+    ctx.lineTo(20, 20);
+    ctx.arc(30, 20, 10, Math.PI, 0, false);
+    ctx.arc(50, 20, 10, Math.PI, 0, false);
+    ctx.lineTo(40, 40);
+    ctx.fillStyle = "black";
+    ctx.fill();
+
+    if (hp >= 1) {
+	ctx.beginPath();
+	ctx.moveTo(40, 38);
+	ctx.lineTo(22, 20);
+	ctx.arc(30, 20, 8, Math.PI, 0, false);
+	if (hp >= 2) {
+	    ctx.arc(50, 20, 8, Math.PI, 0, false);
+	    ctx.lineTo(40, 38);
+	}
+	ctx.fillStyle = "red";
+	ctx.fill();
+    }
+  }
+};
+
 
 $(document).ready(function() {
   adjustToScreen();
@@ -40,6 +73,8 @@ $(document).ready(function() {
 			 64, 64);
     TheWorld.addForegroundObject(player);
     TheWorld.draw(context);
+
+    $("#hp").html(player.hitPoints);
 
     var leftArrowDown = false;
     var rightArrowDown = false;
@@ -102,8 +137,9 @@ $(document).ready(function() {
 	TheWorld.scrollIfNeeded(player);
 	TheWorld.cleanUpDead();
 
-	updateTimer(currentTime - startTime);
+	StatusBar.updateTimer(currentTime - startTime);
 	TheWorld.draw(context);
+	StatusBar.draw(context, player);
 	// check for #WINNING:
 	if (player.intersecting(TheWorld.goalArea)) {
 	    $("#output").html("A WINRAR IS YOU!");
