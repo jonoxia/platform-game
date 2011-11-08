@@ -281,15 +281,15 @@ function saveChanges() {
 	    data: {levelName: title,
 		   levelData: JSON.stringify(allData)}, 
 	    success: function(data, textStatus, jqXHR) {
-		//$("#debug").html(data);
+		$("#debug").html(data);
 	    },
 	    error: function(data, textStatus, thing) {
-		//$("#debug").html(thing);
+		$("#debug").html(thing);
 	    },
 	    dataType: "text"
 	    });
     $("#debug").html(JSON.stringify(allData));
-    //$("#debug").html("Saving, don't close the page...");
+    $("#debug").html("Saving, don't close the page...");
 }
 
 $(document).ready(function() {
