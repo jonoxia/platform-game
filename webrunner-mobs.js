@@ -15,10 +15,15 @@ Mob.prototype = {
 
   // Stats (could be modified by powerups):
   topSpeed: 122,
-  gravity: 5,
-  acceleration: 2, // make this 3 for a much easier to steer dude
+  gravity: 7,
+   // TODO the reason things feel so slippery is because pushing against the
+  // direction of running actually decelerates you *slower* than waiting for
+  // the surface friction to slow you!  what if it gave you both??
+  acceleration: 3,
   friction: 4,
-  jumpPower: 30,
+  jumpPower: 40,
+  hitPoints: 1,
+  jumping: false,
 
   mobInit: function(filename, animate) {
     var self = this;
@@ -61,7 +66,6 @@ Mob.prototype = {
 
   move: function(dx, dy) {
 	// advancing 12 pixels = 1 frame
-    this.jumping = false;
     this._pixelsTraveled += Math.abs(dx);
     if (dx == 0 && dy == 0 ) {
       this.animationFrame = 0;
@@ -69,7 +73,6 @@ Mob.prototype = {
       this.movementDirection = STAND_STILL;
     } else {
 	this.animationFrame = Math.floor(this._pixelsTraveled / 12) % 5;
-	$("#debug").html(this.animationFrame);
       if (dx <= 0) {
         this.movementDirection = GOING_LEFT;
       }
@@ -140,29 +143,50 @@ Mob.prototype = {
     }
   },
 
-  jump: function() {
-    // Only jump if there is ground under me and nothing blocking
-    // my head.
-    if (this.onGround() && !this.jumping &&
-        ! TheWorld.touchingPlatform(this, "top")) {
+  jump: function(elapsed) {
+	//&& ! TheWorld.touchingPlatform(this, "top")) {
+   if (this.onGround() && !this.jumping) {
+	// start jump
 	playSfx("jump-sfx");
-      this.vy -= this.jumpPower;
-      this.jumping = true; // to make jump idempotent, fix bug 2
+	this.jumping = true;
+	this.remainingJumpPower = this.jumpPower;
+	this.vy -= this.jumpPower;
+    }
+    if (this.jumping) {
+	// track how long we've been holding the key
+	var jumpPowerUsed = 20 * elapsed/100;
+	if (this.remainingJumpPower > jumpPowerUsed) {
+	    this.remainingJumpPower -= jumpPowerUsed;
+	    //$("#debug").html(this.remainingJumpPower); // alwasy prints 20
+	    // which is this.jumpPower - 10.
+	} else {
+	    this.remainingJumpPower = 0;
+	}
+    }
+   
+  },
+
+  stopJumping: function() {
+    this.jumping = false;
+    // brake upwards movement
+    if (this.remainingJumpPower) {
+	this.vy += this.remainingJumpPower;
+	this.remainingJumpPower = 0;
     }
   },
 
-  idle: function() {
+  idle: function(elapsed) {
     // Apply friction if touching ground:
     if (this.onGround()) {
       if (this.vx > 0) {
-        this.vx -= this.friction;
+        this.vx -= this.friction * elapsed / 100;
         if (this.vx < 0) {
           this.vx = 0;
         }
       }
 
       if (this.vx < 0) {
-        this.vx += this.friction;
+        this.vx += this.friction * elapsed / 100;
         if (this.vx > 0) {
           this.vx = 0;
         }
@@ -170,20 +194,20 @@ Mob.prototype = {
     }
   },
 
-  goLeft: function() {
+  goLeft: function(elapsed) {
     if (! TheWorld.touchingPlatform(this, "left")) {
       if (this.vx > 0 - this.topSpeed) {
-        this.vx -= this.acceleration;
+        this.vx -= this.acceleration * elapsed / 100;
       } else {
         this.vx = 0 - this.topSpeed;
       }
     }
   },
 
-  goRight: function() {
+  goRight: function(elapsed) {
     if (! TheWorld.touchingPlatform(this, "right")) {
       if (this.vx < this.topSpeed) {
-        this.vx += this.acceleration;
+        this.vx += this.acceleration * elapsed / 100;
       } else {
         this.vx = this.topSpeed;
       }
@@ -192,6 +216,13 @@ Mob.prototype = {
 
   die: function() {
 	this.dead = true;
+  },
+
+  damage: function(amount) {
+    this.hitPoints -= amount;
+    if (this.hitPoints <= 0) {
+	this.die();
+    }
   },
 
   substantial: function(side) {
@@ -207,6 +238,10 @@ function Player(filename, x, y, width, height) {
 }
 Player.prototype = {
   type: "player",
+
+  hitPoints: 2,
+  maxHitPoints: 2,
+  mercyInvincibility: 0,
 
   onMobTouch: function(mob, intercept) {
 	// So this is kind of weird.
@@ -225,7 +260,44 @@ Player.prototype = {
 	break;
 	}
 	mob.onMobTouch(this, intercept);
+  },
+
+  damage: function(amount) {
+    if (this.mercyInvincibility == 0) {
+      this.hitPoints -= amount;
+      this.mercyInvincibility = 1000;
+      if (this.hitPoints <= 0) {
+        this.die();
+      }
+      $("#hp").html(this.hitPoints);
     }
+  },
+
+  heal: function(amount) {
+    this.hitPoints += amount;
+    if (this.hitPoints > this.maxHitPoints) {
+      this.hitPoints = this.maxHitPoints;
+    }
+    $("#hp").html(this.hitPoints);
+  },
+
+  update: function(elapsedTime) {
+    Mob.prototype.update.call(this, elapsedTime);
+    if (this.mercyInvincibility > 0) {
+	this.mercyInvincibility -= elapsedTime;
+	if (this.mercyInvincibility < 0) {
+	    this.mercyInvincibility = 0;
+	}
+    }
+  },
+
+  draw: function(ctx) {
+    if (this.mercyInvincibility > 0) {
+      ctx.globalAlpha = 0.5;
+    }
+    Mob.prototype.draw.call(this, ctx);
+    ctx.globalAlpha = 1.0;
+  }
 }
 Player.prototype.__proto__ = new Mob();
 
@@ -239,7 +311,7 @@ Enemy.prototype = {
   width: 91,
   height: 49,
 
-  roam: function() {
+  roam: function(elapsed) {
     if (this.direction == "left" && 
 	(TheWorld.touchingPlatform(this, "left") != null)) {
 	this.direction = "right";
@@ -262,9 +334,9 @@ Enemy.prototype = {
     }
 
     if (this.direction == "left") {
-	this.goLeft();
+	this.goLeft(elapsed);
     } else if (this.direction == "right") {
-	this.goRight();
+	this.goRight(elapsed);
     }
 
   },
@@ -272,15 +344,26 @@ Enemy.prototype = {
     // If touch player, hurt player if touching from the
     // side; kill enemy if player jumps on its head.
     if (mob.type == "player") {
-	if (intercept.side == "top") {
-	    this.die();
-	    // TODO death animation?
-	    mob.vy = -10; // bounce
-	    playSfx("crunch-sfx");
-        } else {
-	    mob.die();
+      var player = mob;
+      if (intercept.side == "top") {
+        this.damage(1);
+        player.vy = -10; // bounce
+        playSfx("crunch-sfx");
+      } else {
+        player.damage(1);
+
+	// Knockback:
+	player.vy = -10;
+	if (intercept.side == "left") {
+	    player.vx = -10;
+	} else if (intercept.side == "right") {
+	    player.vx = 10;
 	}
+	// TODO this is slightly buggy as it can bounce the player
+	// through a solid wall!
+      }
     }
+    return true;
     // TODO return true or false? stop mob at intercept?
   }
 };

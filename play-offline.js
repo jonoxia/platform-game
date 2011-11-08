@@ -14,7 +14,8 @@ function adjustToScreen() {
     $("#game-canvas").attr("height", TheWorld.canvasHeight);
 }
 
-function updateTimer(ms) {
+var StatusBar = {
+  updateTimer: function(ms) {
     var s = Math.floor(ms / 1000);
     var m = Math.floor(s / 60);
     s = s % 60;
@@ -24,7 +25,39 @@ function updateTimer(ms) {
 	s_str = s;
     }
     $("#timer").html( m + ":" + s_str);
-}
+  },
+
+  draw: function(ctx, player) {
+    // inside the top left of the canvas, draw:
+    // elapsed time
+    // collected trinkets
+    // hearts
+    var maxHP = player.maxHitPoints;
+    var hp = player.hitPoints;
+    ctx.beginPath();
+    ctx.moveTo(40, 40);
+    ctx.lineTo(20, 20);
+    ctx.arc(30, 20, 10, Math.PI, 0, false);
+    ctx.arc(50, 20, 10, Math.PI, 0, false);
+    ctx.lineTo(40, 40);
+    ctx.fillStyle = "black";
+    ctx.fill();
+
+    if (hp >= 1) {
+	ctx.beginPath();
+	ctx.moveTo(40, 38);
+	ctx.lineTo(22, 20);
+	ctx.arc(30, 20, 8, Math.PI, 0, false);
+	if (hp >= 2) {
+	    ctx.arc(50, 20, 8, Math.PI, 0, false);
+	    ctx.lineTo(40, 38);
+	}
+	ctx.fillStyle = "red";
+	ctx.fill();
+    }
+  }
+};
+
 
 $(document).ready(function() {
   adjustToScreen();
@@ -41,8 +74,11 @@ $(document).ready(function() {
     TheWorld.addForegroundObject(player);
     TheWorld.draw(context);
 
+    $("#hp").html(player.hitPoints);
+
     var leftArrowDown = false;
     var rightArrowDown = false;
+    var spacebarDown = false;
 
     var startTime = Date.now();
 
@@ -54,7 +90,7 @@ $(document).ready(function() {
 		rightArrowDown = true;
 	    }
 	    if (evt.which == SPACEBAR) {
-		player.jump();
+		spacebarDown = true;
 	    }
 	});
     $(document).bind("keyup", function(evt) {
@@ -63,6 +99,9 @@ $(document).ready(function() {
 	    }
 	    if (evt.which == RIGHT_ARROW) {
 		rightArrowDown = false;
+	    }
+	    if (evt.which == SPACEBAR) {
+		spacebarDown = false;
 	    }
 	});
 
@@ -76,23 +115,31 @@ $(document).ready(function() {
     var elapsed = 0;
     var newTime;
     var mainLoop = function() {
-	if (leftArrowDown && !rightArrowDown) {
-	    player.goLeft();
-	} else if (rightArrowDown && !leftArrowDown) {
-	    player.goRight();
-	} else {
-	    player.idle();
-	}
 	newTime = Date.now();
 	elapsed = newTime - currentTime;
 	currentTime = newTime;
+
+	if (spacebarDown) {
+	    player.jump(elapsed);
+	} else {
+	    player.stopJumping(elapsed);
+	}
+
+	if (leftArrowDown && !rightArrowDown) {
+	    player.goLeft(elapsed);
+	} else if (rightArrowDown && !leftArrowDown) {
+	    player.goRight(elapsed);
+	} else {
+	    player.idle(elapsed);
+	}
 	
 	TheWorld.updateEveryone(elapsed);
 	TheWorld.scrollIfNeeded(player);
 	TheWorld.cleanUpDead();
 
-	updateTimer(currentTime - startTime);
+	StatusBar.updateTimer(currentTime - startTime);
 	TheWorld.draw(context);
+	StatusBar.draw(context, player);
 	// check for #WINNING:
 	if (player.intersecting(TheWorld.goalArea)) {
 	    $("#output").html("A WINRAR IS YOU!");
