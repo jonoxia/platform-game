@@ -303,14 +303,9 @@ Player.prototype.__proto__ = new Mob();
 
 
 function Enemy() {
-  this.mobInit("shrimp.gif", false);
   this.direction = "left";
 }
 Enemy.prototype = {
-  type: "shrimp",
-  width: 91,
-  height: 49,
-
   roam: function(elapsed) {
     if (this.direction == "left" && 
 	(TheWorld.touchingPlatform(this, "left") != null)) {
@@ -368,7 +363,18 @@ Enemy.prototype = {
   }
 };
 Enemy.prototype.__proto__ = new Mob();
-ConstructorRegistry.register(Enemy);
+
+function Shrimp() {
+  this.mobInit("shrimp.gif", false);
+}
+Shrimp.prototype = {
+  type: "shrimp",
+  width: 91,
+  height: 49,
+};
+Shrimp.prototype.__proto__ = new Enemy();
+ConstructorRegistry.register(Shrimp);
+
 
 function MagicCarpet() {  
 }
@@ -406,117 +412,26 @@ MagicCarpet.prototype.__proto__ = new Mob();
 ConstructorRegistry.register(MagicCarpet);
 
 
+
 function Octogoblin() {
   this.mobInit("octogoblin.png", false);
-  this.direction = "left";
 }
 Octogoblin.prototype = {
   type: "octogoblin",
   width: 73,
   height: 62,
-
-  roam: function() {
-    if (this.direction == "left" && 
-	(TheWorld.touchingPlatform(this, "left") != null)) {
-	this.direction = "right";
-    } else if (this.direction == "right" &&
-       (TheWorld.touchingPlatform(this, "right") != null)) {
-	this.direction = "left";
-    }
-
-    // change direction when you hit a ledge/edge of platform:
-    var underMe = TheWorld.touchingPlatform(this, "bottom");
-    if (underMe) {
-	if (this.direction == "left" &&
-	    (this.left - underMe.left < 10) ) {
-	    this.direction = "right";
-	}
-	if (this.direction == "right" &&
-	    (underMe.right - this.right < 10) ) {
-	    this.direction = "left";
-	}
-    }
-
-    if (this.direction == "left") {
-	this.goLeft();
-    } else if (this.direction == "right") {
-	this.goRight();
-    }
-  },
-  onMobTouch: function(mob, intercept) {
-    // If touch player, hurt player if touching from the
-    // side; kill enemy if player jumps on its head.
-    if (mob.type == "player") {
-	if (intercept.side == "top") {
-	    this.die();
-	    // TODO death animation?
-	    mob.vy = -10; // bounce
-	    playSfx("crunch-sfx");
-        } else {
-	    mob.die();
-	}
-    }
-    // TODO return true or false? stop mob at intercept?
-  }
 };
-Octogoblin.prototype.__proto__ = new Mob();
+Octogoblin.prototype.__proto__ = new Enemy();
 ConstructorRegistry.register(Octogoblin);
-
 
 function Dino() {
   this.mobInit("running_chaos_frames.png", true);
-  this.direction = "left";
 }
 Dino.prototype = {
   type: "dino",
   width: 96,
   height: 64,
-
-  roam: function() {
-    if (this.direction == "left" && 
-	(TheWorld.touchingPlatform(this, "left") != null)) {
-	this.direction = "right";
-    } else if (this.direction == "right" &&
-       (TheWorld.touchingPlatform(this, "right") != null)) {
-	this.direction = "left";
-    }
-
-    // change direction when you hit a ledge/edge of platform:
-    var underMe = TheWorld.touchingPlatform(this, "bottom");
-    if (underMe) {
-	if (this.direction == "left" &&
-	    (this.left - underMe.left < 10) ) {
-	    this.direction = "right";
-	}
-	if (this.direction == "right" &&
-	    (underMe.right - this.right < 10) ) {
-	    this.direction = "left";
-	}
-    }
-
-    if (this.direction == "left") {
-	this.goLeft();
-    } else if (this.direction == "right") {
-	this.goRight();
-    }
-
-  },
-  onMobTouch: function(mob, intercept) {
-    // If touch player, hurt player if touching from the
-    // side; kill enemy if player jumps on its head.
-    if (mob.type == "player") {
-	if (intercept.side == "top") {
-	    this.die();
-	    // TODO death animation?
-	    mob.vy = -10; // bounce
-	    playSfx("crunch-sfx");
-        } else {
-	    mob.die();
-	}
-    }
-    // TODO return true or false? stop mob at intercept?
-  }
 };
-Dino.prototype.__proto__ = new Mob();
+Dino.prototype.__proto__ = new Enemy();
 ConstructorRegistry.register(Dino);
 
