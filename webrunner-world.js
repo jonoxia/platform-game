@@ -715,6 +715,171 @@ DisappearingBlock.prototype = {
 DisappearingBlock.prototype.__proto__ = new Box();
 ConstructorRegistry.register(DisappearingBlock);
 
+function ButtonBlock() {
+}
+ButtonBlock.prototype = {
+  type: "button_block",
+  activated: false,
+  activationTime: 5000,
+  timer: 0,
+  width: 70,
+  height: 10,
+  
+  draw: function(ctx) {
+    if (!this.activated) {
+	  ctx.fillStyle = "red";
+      ctx.fillRect(this.left, this.top, this.width, this.height);
+      ctx.strokeStyle = "black";
+      ctx.strokeRect(this.left, this.top, this.width, this.height);
+    }
+  },
+  
+  onMobTouch: function(mob, intercept) {
+    if (this.activated) {
+      return false;
+    }
+    else if (mob.type == "player" && intercept.side == "top") {
+      this.activate_button();
+      return false;
+    }
+    else {
+      mob.stopAt(intercept);
+      return true;
+    }
+  },
+  
+  substantial: function(edge) {
+    return !this.activated;
+  },
+  
+  update: function(elapsedTime) {
+    if (this.activated) {
+      this.timer += elapsedTime;
+      if (this.timer > this.activationTime) {
+        this.deactivate_button();
+      }
+    }
+  },
+  
+  deactivate_button: function() {
+    this.activated = false;
+    var i = 0;
+    for (i=0; i < TheWorld.foregroundObjects.length; i++) {
+      var obj = TheWorld.foregroundObjects[i];
+      if (obj.button_deactivated) {
+        obj.button_deactivated();
+      }
+    }
+  },
+  
+  activate_button: function() {
+    this.activated = true;
+    this.timer = 0;
+    var i = 0;
+    for (i=0; i < TheWorld.foregroundObjects.length; i++) {
+      var obj = TheWorld.foregroundObjects[i];
+      if (obj.button_activated) {
+        obj.button_activated();
+      }
+    }
+  }
+}
+ButtonBlock.prototype.__proto__ = new Box();
+ConstructorRegistry.register(ButtonBlock);
+
+function TrapdoorBlock() {
+}
+TrapdoorBlock.prototype = {
+  type: "trapdoor_block",
+  open: false,
+  width: 100,
+  height: 10,
+  
+  draw: function(ctx) {
+    if (this.open) {
+      ctx.globalAlpha = 0.5;
+    }
+    else {
+      ctx.globalAlpha = 1;
+    }
+    ctx.fillStyle = "orange";
+    ctx.fillRect(this.left, this.top, this.width, this.height);
+    ctx.strokeStyle = "black";
+    ctx.strokeRect(this.left, this.top, this.width, this.height);
+    ctx.globalAlpha = 1;
+  },
+  
+  onMobTouch: function(mob, intercept) {
+    if (!this.open) {
+      mob.stopAt(intercept);
+      return true;
+    }
+    else {
+      return false;
+    }
+  },
+  
+  substantial: function(edge) {
+    return !this.open;
+  },
+  
+  button_deactivated: function() {
+    this.open = false;
+  },
+  
+  button_activated: function() {
+    this.open = true;
+  }
+}
+TrapdoorBlock.prototype.__proto__ = new Box();
+ConstructorRegistry.register(TrapdoorBlock);
+
+function ActivatedBlock() {
+}
+ActivatedBlock.prototype = {
+  type: "activated_block",
+  active: false,
+  width: 100,
+  height: 10,
+  
+  draw: function(ctx) {
+    if (!this.active) {
+      ctx.globalAlpha = 0.5;
+    }
+    else {
+      ctx.globalAlpha = 1;
+    }
+    ctx.fillStyle = "yellow";
+    ctx.fillRect(this.left, this.top, this.width, this.height);
+    ctx.strokeStyle = "black";
+    ctx.strokeRect(this.left, this.top, this.width, this.height);
+    ctx.globalAlpha = 1;
+  },
+  
+  onMobTouch: function(mob, intercept) {
+    if (this.active) {
+      mob.stopAt(intercept);
+      return true;
+    }
+    else {
+      return false;
+    }
+  },
+  
+  substantial: function(edge) {
+    return this.active;
+  },
+  
+  button_deactivated: function() {
+    this.active = false;
+  },
+  
+  button_activated: function() {
+    this.active = true;
+  }
+}
+ActivatedBlock.prototype.__proto__ = new Box();
+ConstructorRegistry.register(ActivatedBlock);
 
 // more: ladders, springboards, moving platforms, etc
 // need some uI to set parameters for these -- the movement range of

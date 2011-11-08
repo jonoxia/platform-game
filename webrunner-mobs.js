@@ -129,13 +129,17 @@ Mob.prototype = {
     
     var xDist = this.vx * elapsedTime / 100;
     var yDist = this.vy * elapsedTime / 100;
-
+    
+    var platform = TheWorld.touchingPlatform(this, "bottom");
+    if (platform && platform.vx) {
+      xDist += platform.vx * elapsedTime / 100;
+    }
+    
     // Collision detection
     var pathModified = TheWorld.detectPlatformIntercept(this, xDist, yDist);
-    
     if (!pathModified) {
-	// If no collision, move full velocity
-	this.move(xDist, yDist);
+	    // If no collision, move full velocity
+      this.move(xDist, yDist);
     }
   },
 
@@ -366,3 +370,36 @@ Enemy.prototype = {
 Enemy.prototype.__proto__ = new Mob();
 ConstructorRegistry.register(Enemy);
 
+function MagicCarpet() {  
+}
+MagicCarpet.prototype = {
+  type: "magic_carpet",
+  vx: 0,
+
+  draw: function(ctx) {
+    ctx.fillStyle = "red";
+    ctx.strokeStyle = "black";
+    ctx.fillRect(this.left, this.top, this.width, this.height);
+    ctx.strokeRect(this.left, this.top, this.width, this.height);
+  },
+
+  onMobTouch: function(mob, intercept) {
+    mob.stopAt(intercept);
+    if (intercept.side == "top" && mob.type == "player" && !TheWorld.touchingPlatform(this, "right")) {
+      this.vx = 5;
+    } else {
+      this.vx = 0;
+    }
+    return true;
+  },
+
+  update: function(elapsedTime) {
+    var xDist = this.vx * elapsedTime / 100;
+    var pathModified = TheWorld.detectPlatformIntercept(this, xDist, 0);
+    if (!pathModified) {
+      this.left += xDist;
+    }      
+  }
+};
+MagicCarpet.prototype.__proto__ = new Mob();
+ConstructorRegistry.register(MagicCarpet);
