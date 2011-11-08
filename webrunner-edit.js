@@ -195,8 +195,8 @@ var StartTool = {
 
     onMouseUp: function(x, y) {
 	var pt = worldCoords(x, y);
-	TheWorld.startX = x;
-	TheWorld.startY = y;
+	TheWorld.startX = pt.x;
+	TheWorld.startY = pt.y;
     }
 };
 
