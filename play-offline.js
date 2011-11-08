@@ -58,13 +58,10 @@ var StatusBar = {
   }
 };
 
-
-$(document).ready(function() {
+function startGame() {
   adjustToScreen();
-  var context = $("#game-canvas")[0].getContext("2d");
   var avatarURL = $("#avatarURL").html();
-
-  TheWorld.loadFromString(offlineLevelData, function() {
+  var context = $("#game-canvas")[0].getContext("2d");
 
     // Create player, put it in the world:
     var player = new Player(avatarURL,
@@ -186,4 +183,16 @@ $(document).ready(function() {
       }
       resizeTimer = setTimeout(adjustToScreen, 500);
   });
+}
+
+
+$(document).ready(function() {
+  // Playing online or offline?
+  if (offlineLevelData) {
+    TheWorld.loadFromString(offlineLevelData, startGame);
+  } else {
+    var title = gup("level");
+    TheWorld.loadFromServer(title, startGame);
+  }
+
 });
