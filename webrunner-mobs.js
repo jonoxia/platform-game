@@ -16,9 +16,6 @@ Mob.prototype = {
   // Stats (could be modified by powerups):
   topSpeed: 122,
   gravity: 7,
-   // TODO the reason things feel so slippery is because pushing against the
-  // direction of running actually decelerates you *slower* than waiting for
-  // the surface friction to slow you!  what if it gave you both??
   acceleration: 3,
   friction: 4,
   jumpPower: 40,
@@ -196,9 +193,13 @@ Mob.prototype = {
 
   goLeft: function(elapsed) {
     if (! TheWorld.touchingPlatform(this, "left")) {
-      if (this.vx > 0 - this.topSpeed) {
-        this.vx -= this.acceleration * elapsed / 100;
-      } else {
+      var acceleration = this.acceleration;
+      if (this.onGround()) { // add friction when on ground
+        acceleration += this.friction;
+      }
+      this.vx -= acceleration * elapsed / 100;
+
+      if (this.vx < 0 - this.topSpeed) {
         this.vx = 0 - this.topSpeed;
       }
     }
@@ -206,9 +207,14 @@ Mob.prototype = {
 
   goRight: function(elapsed) {
     if (! TheWorld.touchingPlatform(this, "right")) {
-      if (this.vx < this.topSpeed) {
-        this.vx += this.acceleration * elapsed / 100;
-      } else {
+      var acceleration = this.acceleration;
+      if (this.onGround()) { // add friction when on ground
+        acceleration += this.friction;
+      }
+
+      this.vx += acceleration * elapsed / 100;
+
+      if (this.vx > this.topSpeed) {
         this.vx = this.topSpeed;
       }
     }
