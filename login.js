@@ -20,7 +20,7 @@ function doBrowserIdLogin() {
 			}
                     },
                     error: function(req, textStatus, error) {
-		        $("#debug").html("Error");
+		        $("#debug").html(error);
 	            },
 		    dataType: "html"});
         } else {
