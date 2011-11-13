@@ -39,13 +39,16 @@ def printList(player):
         scores = Score.selectBy(level = level)
         best = ""
         if (scores.count() > 0):
-            best = "%s by %s" % (formatTime(scores[0].completionTime), scores[0].player.name)
+            best = "%s by %s with %d trinkets" % (formatTime(scores[0].completionTime),
+                                                 scores[0].player.name,
+                                                 scores[0].trinkets)
         else:
             best = "Nobody Yet!"
         scores = Score.selectBy(player = player, level = level)
         your_time = ""
         if (scores.count() > 0):
-            your_time = formatTime(scores[0].completionTime)
+            your_time = "%s with %d trinkets" % (formatTime(scores[0].completionTime), 
+                                                 scores[0].trinkets)
         work_list += render_template_file( "list-level-row.html",
                                            {"moddate": date,
                                             "title": title,

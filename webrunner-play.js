@@ -150,13 +150,14 @@ function startGame() {
 	// check for #WINNING:
 	if (player.intersecting(TheWorld.goalArea)) {
 	    $("#output").html("A WINRAR IS YOU!");
+	    // stop bgm, play victory sound effects!
 	    $("#bgm")[0].pause();
 	    playSfx("victory-sfx");
-	    // TODO play victory sound effects!
 	    $.ajax({type: "POST", 
 			url: "complete-level.py",
 			data: {levelName: gup("level"),
-			    completionTime: Date.now() - startTime},
+			    completionTime: Date.now() - startTime,
+                            trinkets: player.numTrinkets},
 			success: function(data, textStatus, jqXHR) {
 			$("#debug").html(data);
 		    },

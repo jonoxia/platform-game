@@ -15,6 +15,7 @@ cgitb.enable()
 q = cgi.FieldStorage()
 levelName = q.getfirst("levelName", "")
 completionTime = q.getfirst("completionTime", "")
+trinkets = q.getfirst("trinkets", 0)
 player = verify_id() 
 
 
@@ -28,6 +29,7 @@ if (levelName != "" and completionTime != ""):
         score = Score(level = level,
                       player = player,
                       completionTime = int(completionTime),
+                      trinkets = int(trinkets),
                       achievedOn = datetime.datetime.now())
         print "Saved score %d for %s on %s." % (int(completionTime), player.name, level.name)
     else:

@@ -248,6 +248,7 @@ Player.prototype = {
   hitPoints: 2,
   maxHitPoints: 2,
   mercyInvincibility: 0,
+  numTrinkets: 0,
 
   onMobTouch: function(mob, intercept) {
 	// So this is kind of weird.

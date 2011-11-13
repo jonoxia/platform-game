@@ -673,11 +673,7 @@ PointlessTrinket.prototype = {
   },
   onCollect: function(player) {
     playSfx("kaching-sfx");
-    if (!player.numTrinkets) {
-      player.numTrinkets = 1;
-    } else {
-      player.numTrinkets ++;
-    }
+    player.numTrinkets ++;
     $("#trinkets").html(player.numTrinkets);
   }
 };
