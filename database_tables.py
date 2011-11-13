@@ -23,6 +23,8 @@ class Level(SQLObject):
     tilesetUrl = StringCol(default = "")
     goalUrl = StringCol(default = "")
     musicUrl = StringCol(default = "")
+    physicsConsts = StringCol(default = "")
+    soundUrls = StringCol(default = "")
 
 class LevelObject( SQLObject ):
     level = ForeignKey("Level")
@@ -31,6 +33,7 @@ class LevelObject( SQLObject ):
     y = IntCol()
     width = IntCol()
     height = IntCol()
+    vardata = StringCol(default = "")
 
 class Score( SQLObject ):
     class sqlmeta:
@@ -38,6 +41,7 @@ class Score( SQLObject ):
     level = ForeignKey("Level")
     player = ForeignKey("Player")
     completionTime = IntCol()
+    trinkets = IntCol(default = 0)
     achievedOn = DateTimeCol()
 
 if __name__ == "__main__":
