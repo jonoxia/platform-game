@@ -543,6 +543,12 @@ Platform.prototype = {
   },
 
   onMobTouch: function(mob, intercept) {
+    // fudge factor to allow walking up steps, added by Slifty
+    if ((intercept.side == "left" || intercept.side == "right") &&
+	mob.bottom > this.top && mob.bottom < this.top + 5) { // Are you walking up steps?
+      mob.top = this.top - mob.height; // set the tile to the top of the next step
+      return false; // This doesn't count as an intercept any longer
+    }
     mob.stopAt(intercept);
     return true;
   },
