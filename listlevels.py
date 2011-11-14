@@ -15,7 +15,8 @@ def formatTime(ms):
     ms = ms % 1000
     m = math.floor(s / 60)
     s = s % 60
-    return "%d:%2d.%2d" % (m, s, ms)
+    
+    return "%d:%02d.%02d" % (m, s, ms)
 
 def printList(player):
     print "Content-type: text/html"
