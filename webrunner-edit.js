@@ -277,12 +277,17 @@ function saveChanges() {
     allData.musicUrl = $("#level-music-url").val();
     allData.goalUrl = $("#level-goal-url").val();
     // Physics modifications:
+    var gravity = parseInt($("#gravity").val());
+    var acceleration = parseInt($("#acceleration").val());
+    var topSpeed = parseInt($("#top-speed").val());
+    var friction = parseInt($("#friction").val());
+    var jumpPower = parseInt($("#jump-power").val());
     allData.physicsConsts = {
-	gravity: parseInt($("#gravity").val()) || PhysicsConstants.gravity,
-	acceleration: parseInt($("#acceleration").val()) || PhysicsConstants.acceleration,
-	topSpeed: parseInt($("#top-speed").val()) || PhysicsConstants.topSpeed,
-	friction: parseInt($("#friction").val()) || PhysicsConstants.friction,
-	jumpPower: parseInt($("#jump-power").val()) || PhysicsConstants.jumpPower
+	gravity:  isNaN(gravity)? PhysicsConstants.gravity : gravity,
+	acceleration: isNaN(acceleration) ? PhysicsConstants.acceleration : acceleration,
+	topSpeed: isNaN(topSpeed)? PhysicsConstants.topSpeed : topSpeed,
+	friction: isNaN(friction)? PhysicsConstants.friction : friction,
+	jumpPower: isNaN(jumpPower)? PhysicsConstants.jumpPower : jumpPower
     };
     $.ajax({type: "POST", 
             url: URL,
