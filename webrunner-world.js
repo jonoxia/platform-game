@@ -24,6 +24,14 @@ var ConstructorRegistry = {
     }
 };
 
+var PhysicsConstants = {
+  topSpeed: 122,
+  gravity: 7,
+  acceleration: 3,
+  friction: 4,
+  jumpPower: 40,
+};
+
 var TheWorld = {
   xOffset: 0,  // how far to the right has the view scrolled from its starting location,
   yOffset: 0,
@@ -410,6 +418,10 @@ var TheWorld = {
 				      worldData[i].width,
 				      worldData[i].height);
 	  }
+      }
+      // modified physics:
+      if (parsedData.physicsConsts) {
+	  PhysicsConstants = JSON.parse(parsedData.physicsConsts);
       }
       //$("#debug").html("Loaded.");
       callback();

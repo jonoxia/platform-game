@@ -271,11 +271,19 @@ function saveChanges() {
     // Add starting point:
     allData.startX = TheWorld.startX;
     allData.startY = TheWorld.startY;
-    // BG image:
+    // BG image and other URLs:
     allData.bgUrl = $("#level-bg-url").val();
     allData.tilesetUrl = $("#level-tileset-url").val();
     allData.musicUrl = $("#level-music-url").val();
     allData.goalUrl = $("#level-goal-url").val();
+    // Physics modifications:
+    allData.physicsConsts = {
+	gravity: parseInt($("#gravity").val()) || PhysicsConstants.gravity,
+	acceleration: parseInt($("#acceleration").val()) || PhysicsConstants.acceleration,
+	topSpeed: parseInt($("#top-speed").val()) || PhysicsConstants.topSpeed,
+	friction: parseInt($("#friction").val()) || PhysicsConstants.friction,
+	jumpPower: parseInt($("#jump-power").val()) || PhysicsConstants.jumpPower
+    };
     $.ajax({type: "POST", 
             url: URL,
 	    data: {levelName: title,
@@ -368,6 +376,11 @@ $(document).ready(function() {
     $("#level-tileset-url").val(TheWorld.tilesetUrl);
     $("#level-goal-url").val(TheWorld.goalUrl);
     $("#level-music-url").val(TheWorld.musicUrl);
+    $("#acceleration").val(PhysicsConstants.acceleration);
+    $("#gravity").val(PhysicsConstants.gravity);
+    $("#top-speed").val(PhysicsConstants.topSpeed);
+    $("#jump-power").val(PhysicsConstants.jumpPower);
+    $("#friction").val(PhysicsConstants.friction);
     redraw();
   });
 

@@ -13,12 +13,6 @@ Mob.prototype = {
   dead: false,
   _pixelsTraveled: 0,
 
-  // Stats (could be modified by powerups):
-  topSpeed: 122,
-  gravity: 7,
-  acceleration: 3,
-  friction: 4,
-  jumpPower: 40,
   hitPoints: 1,
   jumping: false,
 
@@ -121,7 +115,7 @@ Mob.prototype = {
   update: function(elapsedTime) {
     // Gravity:
     if (!this.onGround()) {
-	this.vy += this.gravity * elapsedTime / 100;
+	this.vy += PhysicsConstants.gravity * elapsedTime / 100;
     }
     
     var xDist = this.vx * elapsedTime / 100;
@@ -146,8 +140,8 @@ Mob.prototype = {
 	// start jump
 	playSfx("jump-sfx");
 	this.jumping = true;
-	this.remainingJumpPower = this.jumpPower;
-	this.vy -= this.jumpPower;
+	this.remainingJumpPower = PhysicsConstants.jumpPower;
+	this.vy -= PhysicsConstants.jumpPower;
     }
     if (this.jumping) {
 	// track how long we've been holding the key
@@ -176,14 +170,14 @@ Mob.prototype = {
     // Apply friction if touching ground:
     if (this.onGround()) {
       if (this.vx > 0) {
-        this.vx -= this.friction * elapsed / 100;
+        this.vx -= PhysicsConstants.friction * elapsed / 100;
         if (this.vx < 0) {
           this.vx = 0;
         }
       }
 
       if (this.vx < 0) {
-        this.vx += this.friction * elapsed / 100;
+        this.vx += PhysicsConstants.friction * elapsed / 100;
         if (this.vx > 0) {
           this.vx = 0;
         }
@@ -193,29 +187,29 @@ Mob.prototype = {
 
   goLeft: function(elapsed) {
     if (! TheWorld.touchingPlatform(this, "left")) {
-      var acceleration = this.acceleration;
+      var acceleration = PhysicsConstants.acceleration;
       if (this.onGround()) { // add friction when on ground
-        acceleration += this.friction;
+        acceleration += PhysicsConstants.friction;
       }
       this.vx -= acceleration * elapsed / 100;
 
-      if (this.vx < 0 - this.topSpeed) {
-        this.vx = 0 - this.topSpeed;
+      if (this.vx < 0 - PhysicsConstants.topSpeed) {
+        this.vx = 0 - PhysicsConstants.topSpeed;
       }
     }
   },
 
   goRight: function(elapsed) {
     if (! TheWorld.touchingPlatform(this, "right")) {
-      var acceleration = this.acceleration;
+      var acceleration = PhysicsConstants.acceleration;
       if (this.onGround()) { // add friction when on ground
-        acceleration += this.friction;
+        acceleration += PhysicsConstants.friction;
       }
 
       this.vx += acceleration * elapsed / 100;
 
-      if (this.vx > this.topSpeed) {
-        this.vx = this.topSpeed;
+      if (this.vx > PhysicsConstants.topSpeed) {
+        this.vx = PhysicsConstants.topSpeed;
       }
     }
   },

@@ -40,6 +40,7 @@ if levelData != "" and levelName != "":
         level.musicUrl = data["musicUrl"]
         level.goalUrl = data["goalUrl"]
         level.tilesetUrl = data["tilesetUrl"]
+        level.physicsConsts = simplejson.dumps(data["physicsConsts"])
       
         for obj in data["worldData"]:
             l = LevelObject(level = level, type = obj["type"],
