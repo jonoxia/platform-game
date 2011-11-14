@@ -895,6 +895,36 @@ ActivatedBlock.prototype = {
 ActivatedBlock.prototype.__proto__ = new Box();
 ConstructorRegistry.register(ActivatedBlock);
 
+function RubberBlock() {
+}
+RubberBlock.prototype = {
+  type: "rubber_block",
+
+  draw: function(ctx) {
+    ctx.fillStyle = "black";
+    ctx.fillRect(this.left, this.top, this.width, this.height);
+  },
+
+  onMobTouch: function(mob, intercept) {
+    var vx = mob.vx;
+    var vy = mob.vy;
+    mob.stopAt(intercept);
+    if (intercept.side == "left" || intercept.side == "right") {
+	mob.vx = (-0.9) * vx;
+    }
+    if (intercept.side == "top" || intercept.side == "bottom") {
+	mob.vy = (-0.9) * vy;
+    }
+      return true;
+  },
+
+  substantial: function(edge) {
+    return true;
+  }
+};
+RubberBlock.prototype.__proto__ = new Box();
+ConstructorRegistry.register(RubberBlock);
+
 // more: ladders, springboards, moving platforms, etc
 // need some uI to set parameters for these -- the movement range of
 // moving platforms, the timing of disappearing blocks, etc.
