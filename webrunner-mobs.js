@@ -167,32 +167,43 @@ Mob.prototype = {
   },
 
   idle: function(elapsed) {
-    // Apply friction if touching ground:
-    if (this.onGround()) {
-      if (this.vx > 0) {
-        this.vx -= PhysicsConstants.friction * elapsed / 100;
-        if (this.vx < 0) {
-          this.vx = 0;
-        }
-      }
-
+    // slow down when not pushing any direction
+    var friction = (this.onGround() ? PhysicsConstants.groundFriction : PhysicsConstants.airFriction);
+    if (this.vx > 0) {
+      this.vx -= friction * elapsed / 100;
       if (this.vx < 0) {
-        this.vx += PhysicsConstants.friction * elapsed / 100;
-        if (this.vx > 0) {
-          this.vx = 0;
-        }
+        this.vx = 0;
+      }
+    }
+    if (this.vx < 0) {
+      this.vx += friction * elapsed / 100;
+      if (this.vx > 0) {
+        this.vx = 0;
       }
     }
   },
 
+  _getAcceleration: function(direction) {
+     var decelerating = (direction == "left" && this.vx > 0) ||
+	(direction == "right" && this.vx < 0);
+     if (this.onGround()) {
+	 if (decelerating) {
+	     return PhysicsConstants.groundDeceleration;
+	 } else {
+	     return PhysicsConstants.groundAcceleration;
+	 }
+     } else {
+	 if (decelerating) {
+	     return PhysicsConstants.airDeceleration;
+	 } else {
+	     return PhysicsConstants.airAcceleration;
+	 }
+     }
+ },	
+
   goLeft: function(elapsed) {
     if (! TheWorld.touchingPlatform(this, "left")) {
-      var acceleration = PhysicsConstants.acceleration;
-      if (this.onGround()) { // add friction when on ground
-        acceleration += PhysicsConstants.friction;
-      }
-      this.vx -= acceleration * elapsed / 100;
-
+      this.vx -= this._getAcceleration("left") * elapsed / 100;
       if (this.vx < 0 - PhysicsConstants.topSpeed) {
         this.vx = 0 - PhysicsConstants.topSpeed;
       }
@@ -201,13 +212,7 @@ Mob.prototype = {
 
   goRight: function(elapsed) {
     if (! TheWorld.touchingPlatform(this, "right")) {
-      var acceleration = PhysicsConstants.acceleration;
-      if (this.onGround()) { // add friction when on ground
-        acceleration += PhysicsConstants.friction;
-      }
-
-      this.vx += acceleration * elapsed / 100;
-
+      this.vx += this._getAcceleration("right") * elapsed / 100;
       if (this.vx > PhysicsConstants.topSpeed) {
         this.vx = PhysicsConstants.topSpeed;
       }

@@ -277,18 +277,14 @@ function saveChanges() {
     allData.musicUrl = $("#level-music-url").val();
     allData.goalUrl = $("#level-goal-url").val();
     // Physics modifications:
-    var gravity = parseInt($("#gravity").val());
-    var acceleration = parseInt($("#acceleration").val());
-    var topSpeed = parseInt($("#top-speed").val());
-    var friction = parseInt($("#friction").val());
-    var jumpPower = parseInt($("#jump-power").val());
-    allData.physicsConsts = {
-	gravity:  isNaN(gravity)? PhysicsConstants.gravity : gravity,
-	acceleration: isNaN(acceleration) ? PhysicsConstants.acceleration : acceleration,
-	topSpeed: isNaN(topSpeed)? PhysicsConstants.topSpeed : topSpeed,
-	friction: isNaN(friction)? PhysicsConstants.friction : friction,
-	jumpPower: isNaN(jumpPower)? PhysicsConstants.jumpPower : jumpPower
-    };
+
+    allData.physicsConsts = {};
+    for (var prop in PhysicsConstants) {
+	var fieldVal = parseInt($("#" + prop).val());
+        allData.physicsConsts[prop] = isNaN(fieldVal) ? 
+	    PhysicsConstants[prop] : fieldVal;
+    }
+
     $.ajax({type: "POST", 
             url: URL,
 	    data: {levelName: title,
@@ -381,11 +377,11 @@ $(document).ready(function() {
     $("#level-tileset-url").val(TheWorld.tilesetUrl);
     $("#level-goal-url").val(TheWorld.goalUrl);
     $("#level-music-url").val(TheWorld.musicUrl);
-    $("#acceleration").val(PhysicsConstants.acceleration);
-    $("#gravity").val(PhysicsConstants.gravity);
-    $("#top-speed").val(PhysicsConstants.topSpeed);
-    $("#jump-power").val(PhysicsConstants.jumpPower);
-    $("#friction").val(PhysicsConstants.friction);
+
+    
+    for (var prop in PhysicsConstants) {
+	$("#" + prop).val( PhysicsConstants[prop] );
+    }
     redraw();
   });
 

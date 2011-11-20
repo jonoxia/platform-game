@@ -27,9 +27,13 @@ var ConstructorRegistry = {
 var PhysicsConstants = {
   topSpeed: 122,
   gravity: 7,
-  acceleration: 3,
-  friction: 4,
   jumpPower: 40,
+  groundAcceleration: 4,
+  groundDeceleration: 6,
+  groundFriction: 4,
+  airAcceleration: 2,
+  airDeceleration: 3,
+  airFriction: 2
 };
 
 var TheWorld = {
@@ -421,7 +425,9 @@ var TheWorld = {
       }
       // modified physics:
       if (parsedData.physicsConsts) {
-	  PhysicsConstants = JSON.parse(parsedData.physicsConsts);
+	  if (parsedData.physicsConsts.airDeceleration) {
+	      PhysicsConstants = JSON.parse(parsedData.physicsConsts);
+	  }
       }
       //$("#debug").html("Loaded.");
       callback();
@@ -638,6 +644,7 @@ SpeedPlus.prototype = {
     ctx.strokeText("+ SPD", this.left + 5, this.top +32);
   },
   onCollect: function(player) {
+    // TODO needs to be rewritten to work with PhysicsConstants
     player.topSpeed += 30;
     player.acceleration += 1;
     // TODO this is permanent -- make it revokable / time-limited?
