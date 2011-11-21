@@ -58,8 +58,11 @@ var StatusBar = {
   }
 };
 
+var progressBar;
+
 function startGame(loader) {
   adjustToScreen();
+  progressBar.draw(0.5);
 
   // Call adjustToScreen if screen size changes
   var resizeTimer = null;
@@ -183,13 +186,16 @@ function startGame(loader) {
     }
   };
 
-  loader.loadThemAll(mainLoop);
+  loader.loadThemAll(mainLoop, function(progress) {
+      progressBar.draw(0.5 + 0.5 * progress);
+    });
 }
 
 
 $(document).ready(function() {
-
   var loader = new AssetLoader();
+  progressBar = new ProgressBar($("#game-canvas")[0].getContext("2d"));
+  progressBar.draw(0);
   // Playing online or offline?
   if (typeof offlineLevelData != "undefined") {
     TheWorld.loadFromString(offlineLevelData, loader, startGame);

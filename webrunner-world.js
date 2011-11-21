@@ -36,6 +36,29 @@ var PhysicsConstants = {
   airFriction: 2
 };
 
+
+function ProgressBar(ctx) {
+    this._ctx = ctx;
+}
+ProgressBar.prototype = {
+    draw: function(progress) {
+	this._ctx.strokeStyle = "black";
+	this._ctx.fillStyle = "green";
+	this._ctx.strokeText("LOADING...", 
+			     TheWorld.canvasWidth /2,
+			     TheWorld.canvasHeight/2 - 50);
+	this._ctx.fillRect(TheWorld.canvasWidth/2 - 200,
+			   TheWorld.canvasHeight/2,
+			   400 * progress,
+			   50);
+	this._ctx.strokeRect(TheWorld.canvasWidth/2 - 200,
+			     TheWorld.canvasHeight/2,
+			     400,
+			     50);
+    }
+};
+
+
 var TheWorld = {
   xOffset: 0,  // how far to the right has the view scrolled from its starting location,
   yOffset: 0,

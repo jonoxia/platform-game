@@ -45,12 +45,15 @@ AssetLoader.prototype = {
 	return thing.img;
     },
 
-    loadThemAll: function(callback) {
+    loadThemAll: function(callback, updateFunc) {
 	var self = this;
 	for (var t = 0; t < this._thingsToLoad; t++) {
 	    (function(thing) {
 		thing.img.onload = function() {
 		    self._thingsLoaded ++;
+		    if (updateFunc) {
+			updateFunc( self._thingsLoaded / self._thingsToLoad );
+		    }
 		    if (self._thingsLoaded == self._thingsToLoad) {
 			callback();
 		    }

@@ -373,8 +373,11 @@ $(document).ready(function() {
   });
 
   var loader = new AssetLoader();
+  var progressBar = new ProgressBar($("#design-canvas")[0].getContext("2d"));
+  progressBar.draw(0);
 
   TheWorld.loadFromServer(title, loader, function() {
+    progressBar.draw(0.5);
     $("#level-bg-url").val(TheWorld.bgUrl);
     $("#level-tileset-url").val(TheWorld.tilesetUrl);
     $("#level-goal-url").val(TheWorld.goalUrl);
@@ -385,7 +388,9 @@ $(document).ready(function() {
 	$("#" + prop).val( PhysicsConstants[prop] );
     }
 
-    loader.loadThemAll(redraw);
+    loader.loadThemAll(redraw, function(progress) {
+      progressBar.draw(0.5 + 0.5 * progress);
+    });
   });
 
 });
