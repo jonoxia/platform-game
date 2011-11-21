@@ -74,7 +74,8 @@ function startGame(loader) {
   var context = $("#game-canvas")[0].getContext("2d");
 
   // Create player, put it in the world:
-  var player = new Player(avatarURL,
+  var player = new Player(loader,
+			  avatarURL,
                           TheWorld.startX,
 			  TheWorld.startY,
 			  64, 64);

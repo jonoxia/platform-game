@@ -399,7 +399,7 @@ var TheWorld = {
 	  var type = worldData[i].type;
 	  var cons = ConstructorRegistry.getConstructor(type);
 	  if (cons) {
-	      var obj = new cons();
+	      var obj = new cons(loader);
 	      obj.boxInit(worldData[i].x,
 			  worldData[i].y,
 			  worldData[i].width,

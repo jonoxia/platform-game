@@ -2,27 +2,22 @@ const GOING_LEFT = 0;
 const GOING_RIGHT = 1;
 const STAND_STILL = 2;
 
-function Mob(filename, x, y, width, height, animate) {
+function Mob(loader, filename, x, y, width, height, animate) {
   if (filename) {
     this.boxInit(x, y, width, height);
-    this.mobInit(filename, animate);
+    this.mobInit(loader, filename, animate);
   }
 }
 Mob.prototype = {
-  imgLoaded: false,
   dead: false,
   _pixelsTraveled: 0,
 
   hitPoints: 1,
   jumping: false,
 
-  mobInit: function(filename, animate) {
+  mobInit: function(loader, filename, animate) {
     var self = this;
-    this.img = new Image();
-    this.img.onload = function() {
-      self.imgLoaded = true;
-    };
-    this.img.src = filename;
+    this.img = loader.add(filename);
 
     this.vx = 0;
     this.vy = 0;
@@ -35,19 +30,13 @@ Mob.prototype = {
   },
 
   draw: function(ctx) {
-    if (this.imgLoaded) {
-      if (this.isAnimated) {
-        var spriteOffsetX = this.width * this.animationFrame;
-        var spriteOffsetY = this.height * this.movementDirection;
-        ctx.drawImage(this.img, spriteOffsetX, spriteOffsetY, this.width, this.height,
-                      this.left, this.top, this.width, this.height);
-      } else {
-        ctx.drawImage(this.img, this.left, this.top);
-      }
+    if (this.isAnimated) {
+      var spriteOffsetX = this.width * this.animationFrame;
+      var spriteOffsetY = this.height * this.movementDirection;
+      ctx.drawImage(this.img, spriteOffsetX, spriteOffsetY, this.width, this.height,
+                    this.left, this.top, this.width, this.height);
     } else {
-	// if img not loaded yet, draw an empty box
-	ctx.strokeStyle = "black";
-	ctx.strokeRect(this.left, this.top, this.width, this.height);
+      ctx.drawImage(this.img, this.left, this.top);
     }
   },
 
@@ -237,8 +226,8 @@ Mob.prototype = {
 Mob.prototype.__proto__ = new Box();
 
 
-function Player(filename, x, y, width, height) {
-  this.mobInit(filename, true);
+function Player(loader, filename, x, y, width, height) {
+  this.mobInit(loader, filename, true);
   this.boxInit(x, y, width, height);
 }
 Player.prototype = {
@@ -308,7 +297,7 @@ Player.prototype = {
 Player.prototype.__proto__ = new Mob();
 
 
-function Enemy() {
+function Enemy(loader) {
   this.direction = "left";
 }
 Enemy.prototype = {
@@ -370,8 +359,8 @@ Enemy.prototype = {
 };
 Enemy.prototype.__proto__ = new Mob();
 
-function Shrimp() {
-  this.mobInit("shrimp.gif", false);
+function Shrimp(loader) {
+  this.mobInit(loader, "shrimp.gif", false);
 }
 Shrimp.prototype = {
   type: "shrimp",
@@ -382,7 +371,7 @@ Shrimp.prototype.__proto__ = new Enemy();
 ConstructorRegistry.register(Shrimp);
 
 
-function MagicCarpet() {  
+function MagicCarpet(loader) {
 }
 MagicCarpet.prototype = {
   type: "magic_carpet",
@@ -419,8 +408,8 @@ ConstructorRegistry.register(MagicCarpet);
 
 
 
-function Octogoblin() {
-  this.mobInit("octogoblin.png", false);
+function Octogoblin(loader) {
+  this.mobInit(loader, "octogoblin.png", false);
 }
 Octogoblin.prototype = {
   type: "octogoblin",
@@ -430,8 +419,8 @@ Octogoblin.prototype = {
 Octogoblin.prototype.__proto__ = new Enemy();
 ConstructorRegistry.register(Octogoblin);
 
-function Dino() {
-  this.mobInit("running_chaos_frames.png", true);
+function Dino(loader) {
+  this.mobInit(loader, "running_chaos_frames.png", true);
 }
 Dino.prototype = {
   type: "dino",
