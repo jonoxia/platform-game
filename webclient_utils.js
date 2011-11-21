@@ -28,3 +28,35 @@ window.requestAnimFrame = (function(){
             window.setTimeout(callback, 1000 / 60);
           };
 })();
+
+function AssetLoader() {
+}
+AssetLoader.prototype = {
+    _thingsToLoad: 0,
+    _thingsLoaded: 0,
+    _things: [],
+
+    add: function(url, type) {
+	// TODO "type" can be something besides Image -- Audio, for instance.
+	this._thingsToLoad++;
+	var thing = { img: new Image(),
+		      url: url};
+	this._things.push(thing);
+	return thing.img;
+    },
+
+    loadThemAll: function(callback) {
+	var self = this;
+	for (var t = 0; t < this._thingsToLoad; t++) {
+	    (function(thing) {
+		thing.img.onload = function() {
+		    self._thingsLoaded ++;
+		    if (self._thingsLoaded == self._thingsToLoad) {
+			callback();
+		    }
+		}
+		thing.img.src = thing.url;
+	    })(this._things[t]);
+	}
+    }
+};

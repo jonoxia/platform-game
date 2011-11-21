@@ -46,15 +46,12 @@ var TheWorld = {
 
   bgUrl: "",
   bgImg: null,
-  bgImgLoaded: false,
 
   tilesetUrl: "",
   tileSetImg: null,
-  tileSetLoaded: false,
 
   goalUrl: "",
   goalImg: null,
-  goalImgLoaded: false,
   
   // TODO those repeated variables make me think we should have a smart-loading image class.
   musicUrl: "",
@@ -67,7 +64,7 @@ var TheWorld = {
 	get right() { return this.left + this.width; },
 	get bottom() { return this.top + this.height; },
 	draw: function(ctx) {
-	    if (TheWorld.goalImgLoaded) {
+	    if (TheWorld.goalImg) {
 		// scale image to fit size of goal area
 		ctx.drawImage(TheWorld.goalImg, 0, 0, TheWorld.goalImg.width, TheWorld.goalImg.height,
 			      this.left, this.top, this.width, this.height);
@@ -187,7 +184,7 @@ var TheWorld = {
   },
 
   draw: function(ctx) {
-    if (this.bgImgLoaded) {
+    if (this.bgImg) {
 	// tile img to cover whole background
 	var w = this.bgImg.width;
 	var h = this.bgImg.height;
@@ -375,7 +372,7 @@ var TheWorld = {
       }
   },
 
-  loadFromString: function(data, callback) {
+  loadFromString: function(data, loader, callback) {
       var self = this;
       //$("#debug").html("In callback, parsing json: " + data );
       var parsedData = JSON.parse(data);
@@ -384,23 +381,17 @@ var TheWorld = {
       // background img
       self.bgUrl = parsedData.bgUrl;
       if (self.bgUrl && self.bgUrl!= "") {
-	  self.bgImg = new Image();
-	  self.bgImg.onload = function() {self.bgImgLoaded = true; };
-	  self.bgImg.src = self.bgUrl;
+	  self.bgImg = loader.add(self.bgUrl);
       }
       // tileset img
       self.tilesetUrl = parsedData.tilesetUrl;
       if (self.tilesetUrl && self.tilesetUrl != "") {
-	  self.tileSetImg = new Image();
-	  self.tileSetImg.onload = function() { self.tileSetLoaded = true; };
-	  self.tileSetImg.src = self.tilesetUrl;
+	  self.tileSetImg = loader.add(self.tilesetUrl);
       }
       // goal img
       self.goalUrl = parsedData.goalUrl;
       if (self.goalUrl && self.goalUrl != "") {
-	  self.goalImg = new Image();
-	  self.goalImg.onload = function() { self.goalImgLoaded = true; };
-	  self.goalImg.src = self.goalUrl;
+	  self.goalImg = loader.add(self.goalUrl);
       }
       self.musicUrl = parsedData.musicUrl;
       var worldData = parsedData.worldData;
@@ -430,15 +421,15 @@ var TheWorld = {
 	  }
       }
       //$("#debug").html("Loaded.");
-      callback();
+      callback(loader);
   },
 
-  loadFromServer: function (levelName, callback) {
+  loadFromServer: function (levelName, loader, callback) {
     var url = "load-level.py";
     var self = this;
     $("#debug").html("Loading level...");
     $.get(url, {levelName: levelName}, function(data, textStatus, jqXHR) {
-	    self.loadFromString(data, callback);
+	    self.loadFromString(data, loader, callback);
 	}, "html");
   }
 };
@@ -550,7 +541,7 @@ Platform.prototype = {
   type: "platform",
 
   draw: function(ctx) {
-    if (TheWorld.tileSetLoaded) {
+    if (TheWorld.tileSetImg) {
 	this.fillTiled(ctx, TheWorld.tileSetImg, 0, 0, 64, 64);
     } else {
 	ctx.fillStyle = GROUND_COLOR;
@@ -584,7 +575,7 @@ SemiPermiablePlatform.prototype = {
   type: "semiplatform",
 
   draw: function(ctx) {
-    if (TheWorld.tileSetLoaded) {
+    if (TheWorld.tileSetImg) {
 	this.fillTiled(ctx, TheWorld.tileSetImg, 64, 0, 64, 64);
     } else {
 	ctx.fillStyle = "green";
@@ -681,7 +672,7 @@ PointlessTrinket.prototype = {
   width: 32,
   height: 32,
   draw: function(ctx) {
-    if (TheWorld.tileSetLoaded) {
+    if (TheWorld.tileSetImg) {
 	ctx.drawImage(TheWorld.tileSetImg, 0, 64, 32, 32, this.left, this.top, 32, 32);
     } else {
 	ctx.fillStyle = "yellow";

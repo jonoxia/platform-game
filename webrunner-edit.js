@@ -372,7 +372,9 @@ $(document).ready(function() {
     }
   });
 
-  TheWorld.loadFromServer(title, function() {
+  var loader = new AssetLoader();
+
+  TheWorld.loadFromServer(title, loader, function() {
     $("#level-bg-url").val(TheWorld.bgUrl);
     $("#level-tileset-url").val(TheWorld.tilesetUrl);
     $("#level-goal-url").val(TheWorld.goalUrl);
@@ -382,7 +384,8 @@ $(document).ready(function() {
     for (var prop in PhysicsConstants) {
 	$("#" + prop).val( PhysicsConstants[prop] );
     }
-    redraw();
+
+    loader.loadThemAll(redraw);
   });
 
 });

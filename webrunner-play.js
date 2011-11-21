@@ -58,7 +58,7 @@ var StatusBar = {
   }
 };
 
-function startGame() {
+function startGame(loader) {
   adjustToScreen();
 
   // Call adjustToScreen if screen size changes
@@ -73,127 +73,128 @@ function startGame() {
   var avatarURL = $("#avatarURL").html();
   var context = $("#game-canvas")[0].getContext("2d");
 
-    // Create player, put it in the world:
-    var player = new Player(avatarURL,
-			 TheWorld.startX,
-			 TheWorld.startY,
-			 64, 64);
-    TheWorld.addForegroundObject(player);
-    TheWorld.draw(context);
+  // Create player, put it in the world:
+  var player = new Player(avatarURL,
+                          TheWorld.startX,
+			  TheWorld.startY,
+			  64, 64);
+  TheWorld.addForegroundObject(player);
+  //TheWorld.draw(context);
 
-    $("#hp").html(player.hitPoints);
+  $("#hp").html(player.hitPoints);
 
-    var leftArrowDown = false;
-    var rightArrowDown = false;
-    var spacebarDown = false;
+  var leftArrowDown = false;
+  var rightArrowDown = false;
+  var spacebarDown = false;
 
-    var startTime = Date.now();
+  var startTime = Date.now();
 
-    $(document).bind("keydown", function(evt) {
-	    if (evt.which == LEFT_ARROW) {
-		leftArrowDown = true;
-	    }
-	    if (evt.which == RIGHT_ARROW) {
-		rightArrowDown = true;
-	    }
-	    if (evt.which == SPACEBAR) {
-		spacebarDown = true;
-	    }
-	});
-    $(document).bind("keyup", function(evt) {
-	    if (evt.which == LEFT_ARROW) {
-		leftArrowDown = false;
-	    }
-	    if (evt.which == RIGHT_ARROW) {
-		rightArrowDown = false;
-	    }
-	    if (evt.which == SPACEBAR) {
-		spacebarDown = false;
-	    }
-	});
+  $(document).bind("keydown", function(evt) {
+     if (evt.which == LEFT_ARROW) {
+       leftArrowDown = true;
+     }
+     if (evt.which == RIGHT_ARROW) {
+       rightArrowDown = true;
+     }
+     if (evt.which == SPACEBAR) {
+       spacebarDown = true;
+     }
+    });
+  $(document).bind("keyup", function(evt) {
+    if (evt.which == LEFT_ARROW) {
+	leftArrowDown = false;
+    }
+    if (evt.which == RIGHT_ARROW) {
+	rightArrowDown = false;
+    }
+    if (evt.which == SPACEBAR) {
+	spacebarDown = false;
+    }
+  });
 
-    var bottomLimit = TheWorld.getBottomLimit();
-    if (TheWorld.musicUrl != "") {
-	$("#bgm").attr("src", TheWorld.musicUrl);
-	$("#bgm")[0].play();
+  var bottomLimit = TheWorld.getBottomLimit();
+  if (TheWorld.musicUrl != "") {
+    $("#bgm").attr("src", TheWorld.musicUrl);
+    $("#bgm")[0].play();
+  }
+
+  var currentTime = Date.now();
+  var elapsed = 0;
+  var newTime;
+  var mainLoop = function() {
+    newTime = Date.now();
+    elapsed = newTime - currentTime;
+    currentTime = newTime;
+
+    if (spacebarDown) {
+      player.jump(elapsed);
+    } else {
+       player.stopJumping(elapsed);
     }
 
-    var currentTime = Date.now();
-    var elapsed = 0;
-    var newTime;
-    var mainLoop = function() {
-	newTime = Date.now();
-	elapsed = newTime - currentTime;
-	currentTime = newTime;
-
-	if (spacebarDown) {
-	    player.jump(elapsed);
-	} else {
-	    player.stopJumping(elapsed);
-	}
-
-	if (leftArrowDown && !rightArrowDown) {
-	    player.goLeft(elapsed);
-	} else if (rightArrowDown && !leftArrowDown) {
-	    player.goRight(elapsed);
-	} else {
-	    player.idle(elapsed);
-	}
+    if (leftArrowDown && !rightArrowDown) {
+      player.goLeft(elapsed);
+    } else if (rightArrowDown && !leftArrowDown) {
+      player.goRight(elapsed);
+    } else {
+       player.idle(elapsed);
+    }
 	
-	TheWorld.updateEveryone(elapsed);
-	TheWorld.scrollIfNeeded(player);
-	TheWorld.cleanUpDead();
+    TheWorld.updateEveryone(elapsed);
+    TheWorld.scrollIfNeeded(player);
+    TheWorld.cleanUpDead();
 
-	StatusBar.updateTimer(currentTime - startTime);
-	TheWorld.draw(context);
-	StatusBar.draw(context, player);
-	// check for #WINNING:
-	if (player.intersecting(TheWorld.goalArea)) {
-	    $("#output").html("A WINRAR IS YOU!");
-	    // stop bgm, play victory sound effects!
-	    $("#bgm")[0].pause();
-	    playSfx("victory-sfx");
-	    $.ajax({type: "POST", 
-			url: "complete-level.py",
-			data: {levelName: gup("level"),
-			    completionTime: Date.now() - startTime,
-                            trinkets: player.numTrinkets},
-			success: function(data, textStatus, jqXHR) {
-			$("#debug").html(data);
-		    },
-			error: function(data, textStatus, thing) {
-			$("#debug").html(thing);
-		    },
-			dataType: "text"
-			});
-	    $("#debug").html("Saving score...");
-	}
-	// check for #LOSING:
-	else if (player.dead) {
-	    $("#output").html("YOU'RE MONSTER CHOW (reload to play again)");
-	    $("#bgm")[0].pause();
-	    playSfx("death-sfx");
-	} else if (player.top > bottomLimit) {
-	    $("#output").html("GRAVITY IS A HARSH MISTRESS (reload to play again)");
-	    $("#bgm")[0].pause();
-	    playSfx("death-sfx");
-	} else {
-	    window.requestAnimFrame(mainLoop);
-	}
+    StatusBar.updateTimer(currentTime - startTime);
+    TheWorld.draw(context);
+    StatusBar.draw(context, player);
+    // check for #WINNING:
+    if (player.intersecting(TheWorld.goalArea)) {
+      $("#output").html("A WINRAR IS YOU!");
+      // stop bgm, play victory sound effects!
+      $("#bgm")[0].pause();
+      playSfx("victory-sfx");
+      $.ajax({type: "POST", 
+		url: "complete-level.py",
+		data: {levelName: gup("level"),
+		      completionTime: Date.now() - startTime,
+		      trinkets: player.numTrinkets},
+		success: function(data, textStatus, jqXHR) {
+		    $("#debug").html(data);
+                },
+		error: function(data, textStatus, thing) {
+		    $("#debug").html(thing);
+	        },
+		  dataType: "text"
+		  });
+      $("#debug").html("Saving score...");
+    }
+    // check for #LOSING:
+    else if (player.dead) {
+      $("#output").html("YOU'RE MONSTER CHOW (reload to play again)");
+      $("#bgm")[0].pause();
+      playSfx("death-sfx");
+    } else if (player.top > bottomLimit) {
+      $("#output").html("GRAVITY IS A HARSH MISTRESS (reload to play again)");
+      $("#bgm")[0].pause();
+      playSfx("death-sfx");
+    } else {
+      window.requestAnimFrame(mainLoop);
+    }
+  };
 
-    };
-
-    mainLoop();
+  loader.loadThemAll(mainLoop);
 }
 
 
 $(document).ready(function() {
+
+  var loader = new AssetLoader();
   // Playing online or offline?
   if (typeof offlineLevelData != "undefined") {
-    TheWorld.loadFromString(offlineLevelData, startGame);
+    TheWorld.loadFromString(offlineLevelData, loader, startGame);
   } else {
     var title = gup("level");
-    TheWorld.loadFromServer(title, startGame);
+    TheWorld.loadFromServer(title, loader, startGame);
   }
 
 });
