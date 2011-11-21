@@ -61,6 +61,12 @@ var StatusBar = {
 var progressBar;
 
 function startGame(loader) {
+
+  if (TheWorld.musicUrl != "") {
+    $("#bgm").attr("src", TheWorld.musicUrl);
+    $("#bgm")[0].play();
+  }
+
   adjustToScreen();
   progressBar.draw(0.5);
 
@@ -117,11 +123,6 @@ function startGame(loader) {
   });
 
   var bottomLimit = TheWorld.getBottomLimit();
-  if (TheWorld.musicUrl != "") {
-    $("#bgm").attr("src", TheWorld.musicUrl);
-    $("#bgm")[0].play();
-  }
-
   var currentTime = Date.now();
   var elapsed = 0;
   var newTime;

@@ -37,19 +37,18 @@ AssetLoader.prototype = {
     _things: [],
 
     add: function(url, type) {
-	// TODO "type" can be something besides Image -- Audio, for instance.
 	this._thingsToLoad++;
-	var thing = { img: new Image(),
-		      url: url};
+	var thing = { url: url,
+	              tag: new Image()};
 	this._things.push(thing);
-	return thing.img;
+	return thing.tag;
     },
 
     loadThemAll: function(callback, updateFunc) {
 	var self = this;
 	for (var t = 0; t < this._thingsToLoad; t++) {
 	    (function(thing) {
-		thing.img.onload = function() {
+		thing.tag.onload = function() {
 		    self._thingsLoaded ++;
 		    if (updateFunc) {
 			updateFunc( self._thingsLoaded / self._thingsToLoad );
@@ -58,7 +57,7 @@ AssetLoader.prototype = {
 			callback();
 		    }
 		}
-		thing.img.src = thing.url;
+		thing.tag.src = thing.url;
 	    })(this._things[t]);
 	}
     }
