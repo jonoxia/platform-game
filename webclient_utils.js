@@ -30,18 +30,18 @@ window.requestAnimFrame = (function(){
 })();
 
 function AssetLoader() {
+    this._things = [];
+    this._thingsToLoad = 0;
+    this._thingsLoaded = 0;
 }
 AssetLoader.prototype = {
-    _thingsToLoad: 0,
-    _thingsLoaded: 0,
-    _things: [],
-
     add: function(url, type) {
 	this._thingsToLoad++;
+	var tag = new Image();
 	var thing = { url: url,
-	              tag: new Image()};
+	              tag: tag };
 	this._things.push(thing);
-	return thing.tag;
+	return tag;
     },
 
     loadThemAll: function(callback, updateFunc) {

@@ -14,6 +14,7 @@ Mob.prototype = {
 
   hitPoints: 1,
   jumping: false,
+  img: null,
 
   mobInit: function(loader, filename, animate) {
     var self = this;
@@ -137,8 +138,6 @@ Mob.prototype = {
 	var jumpPowerUsed = 20 * elapsed/100;
 	if (this.remainingJumpPower > jumpPowerUsed) {
 	    this.remainingJumpPower -= jumpPowerUsed;
-	    //$("#debug").html(this.remainingJumpPower); // alwasy prints 20
-	    // which is this.jumpPower - 10.
 	} else {
 	    this.remainingJumpPower = 0;
 	}
@@ -359,18 +358,6 @@ Enemy.prototype = {
 };
 Enemy.prototype.__proto__ = new Mob();
 
-function Shrimp(loader) {
-  this.mobInit(loader, "shrimp.gif", false);
-}
-Shrimp.prototype = {
-  type: "shrimp",
-  width: 91,
-  height: 49,
-};
-Shrimp.prototype.__proto__ = new Enemy();
-ConstructorRegistry.register(Shrimp);
-
-
 function MagicCarpet(loader) {
 }
 MagicCarpet.prototype = {
@@ -407,26 +394,43 @@ MagicCarpet.prototype.__proto__ = new Mob();
 ConstructorRegistry.register(MagicCarpet);
 
 
+function DefineEnemy(options) {
+    var constructor = function(loader) {
+	this.mobInit(loader, options.imageUrl, !(!options.animated));
+    }
+    constructor.prototype = {
+	type: options.name,
+	width: options.width ? options.width : 64,
+	height: options.height ? options.height : 64
+    };
+    constructor.prototype.__proto__ = new Enemy();
+    ConstructorRegistry.register(constructor);
 
-function Octogoblin(loader) {
-  this.mobInit(loader, "octogoblin.png", false);
+    // More things that should be overridable by this function:
+    // roam(), update(), draw(), onMobTouch()
 }
-Octogoblin.prototype = {
-  type: "octogoblin",
+
+
+DefineEnemy({
+  name: "octogoblin",
   width: 73,
   height: 62,
-};
-Octogoblin.prototype.__proto__ = new Enemy();
-ConstructorRegistry.register(Octogoblin);
+  imageUrl: "octogoblin.png"
+});
 
-function Dino(loader) {
-  this.mobInit(loader, "running_chaos_frames.png", true);
-}
-Dino.prototype = {
-  type: "dino",
+DefineEnemy({
+  name: "dino",
+  animated: true,
   width: 96,
   height: 64,
-};
-Dino.prototype.__proto__ = new Enemy();
-ConstructorRegistry.register(Dino);
+  imageUrl: "running_chaos_frames.png"
+});
+
+DefineEnemy({
+  name: "shrimp",
+  width: 91,
+  height: 49,
+  imageUrl: "shrimp.gif"
+});
+
 

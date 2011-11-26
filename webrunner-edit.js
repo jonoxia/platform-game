@@ -1,4 +1,5 @@
 
+
 function adjustToScreen() {
     var screenWidth = window.innerWidth;
     var screenHeight = window.innerHeight;
@@ -55,10 +56,14 @@ GenericPlacementTool.prototype = {
 	var pt = worldCoords(x, y);
 	if (!this.currentPlatform) {
 	    // Construct instance at this point, add it to TheWorld
-	    var obj = new this._cons();
-	    obj.boxInit(Math.floor(pt.x), Math.floor(pt.y),
-			this._cons.prototype.width, this._cons.prototype.height);
-	    TheWorld.addForegroundObject(obj);
+	    var cons = this._cons;
+	    var loader = new AssetLoader();
+	    var obj = new cons(loader);
+            loader.loadThemAll( function() {
+	      obj.boxInit(Math.floor(pt.x), Math.floor(pt.y),
+		          cons.prototype.width, cons.prototype.height);
+              TheWorld.addForegroundObject(obj);
+	    });
 	}
 	this.currentPlatform = null;
 	this.mouseIsDown = false;

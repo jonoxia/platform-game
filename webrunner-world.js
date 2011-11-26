@@ -76,7 +76,6 @@ var TheWorld = {
   goalUrl: "",
   goalImg: null,
   
-  // TODO those repeated variables make me think we should have a smart-loading image class.
   musicUrl: "",
  
   goalArea: {
