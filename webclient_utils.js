@@ -46,6 +46,11 @@ AssetLoader.prototype = {
 
     loadThemAll: function(callback, updateFunc) {
 	var self = this;
+	// Edge case where nothing has been added - call callback immediately:
+	if (this._thingsToLoad == 0) {
+	    callback();
+	    return;
+	}
 	for (var t = 0; t < this._thingsToLoad; t++) {
 	    (function(thing) {
 		thing.tag.onload = function() {
