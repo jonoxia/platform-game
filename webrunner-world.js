@@ -438,8 +438,9 @@ var TheWorld = {
       }
       // modified physics:
       if (parsedData.physicsConsts) {
-	  if (parsedData.physicsConsts.airDeceleration) {
-	      PhysicsConstants = JSON.parse(parsedData.physicsConsts);
+	  var parsedConsts = JSON.parse(parsedData.physicsConsts);
+	  if (typeof parsedConsts.airDeceleration != "undefined") {
+	      PhysicsConstants = parsedConsts;
 	  }
       }
       //$("#debug").html("Loaded.");
