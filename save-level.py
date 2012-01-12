@@ -41,6 +41,7 @@ if levelData != "" and levelName != "":
         level.goalUrl = data["goalUrl"]
         level.tilesetUrl = data["tilesetUrl"]
         level.physicsConsts = simplejson.dumps(data["physicsConsts"])
+        level.published = (data["published"]  == "true")
       
         for obj in data["worldData"]:
             l = LevelObject(level = level, type = obj["type"],

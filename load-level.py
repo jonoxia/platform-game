@@ -30,6 +30,7 @@ if levels.count() > 0:
     data["tilesetUrl"] = levels[0].tilesetUrl
     data["musicUrl"] = levels[0].musicUrl
     data["physicsConsts"] = levels[0].physicsConsts
+    data["published"] = levels[0].published
 
 print "Content-type: text/html"
 print

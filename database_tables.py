@@ -25,6 +25,7 @@ class Level(SQLObject):
     musicUrl = StringCol(default = "")
     physicsConsts = StringCol(default = "")
     soundUrls = StringCol(default = "")
+    published = BoolCol(default = False)
 
 class LevelObject( SQLObject ):
     level = ForeignKey("Level")

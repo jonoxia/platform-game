@@ -289,6 +289,7 @@ function saveChanges() {
         allData.physicsConsts[prop] = isNaN(fieldVal) ? 
 	    PhysicsConstants[prop] : fieldVal;
     }
+    allData.published = $("#publish").attr("checked") ? "true":"false";
 
     $.ajax({type: "POST", 
             url: URL,
@@ -391,6 +392,10 @@ $(document).ready(function() {
     
     for (var prop in PhysicsConstants) {
 	$("#" + prop).val( PhysicsConstants[prop] );
+    }
+
+    if (TheWorld.published) {
+      $("#publish").attr("checked", "checked");
     }
 
     loader.loadThemAll(redraw, function(progress) {

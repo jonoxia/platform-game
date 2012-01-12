@@ -7,9 +7,16 @@
   <body>
     <h1>RunJumpBuild - All Levels</h1>
     <h2>Welcome, ${player}</h2>
+    <h3>Published Levels</h3>
     <table>
-    <tr><th>Title</th><th></th><th></th><th>Last Modified</th><th>Creator</th><th>Your Time</th><th>Best Time</th></tr>
-      ${work_list}
+    <tr><th>Title</th><th></th><th>Last Modified</th><th>Creator</th><th>Your Time</th><th>Best Time</th></tr>
+      ${published_list}
+    </table>
+    <hr/>
+    <h3>Your Levels</h3>
+    <table>
+    <tr><th>Title</th><th></th><th></th><th>Last Modified</th><th>Published?</th><th>Your Time</th><th>Best Time</th></tr>
+      ${your_list}
     </table>
     <hr/>
     <form action="newlevel.py" method="post">

@@ -443,6 +443,7 @@ var TheWorld = {
 	      PhysicsConstants = parsedConsts;
 	  }
       }
+      self.published = parsedData.published;
       //$("#debug").html("Loaded.");
       callback(loader);
   },

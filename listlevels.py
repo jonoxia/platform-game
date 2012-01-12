@@ -9,6 +9,7 @@ import math
 
 from database_tables import Level, LevelObject, Score
 from webserver_utils import render_template_file, verify_id
+from sqlobject import OR
 
 def formatTime(ms):
     s = math.floor(ms / 1000)
@@ -22,8 +23,11 @@ def printList(player):
     print "Content-type: text/html"
     print
 
-    matches = Level.select(orderBy = "-modified")
-    work_list = ""
+    # Show levels that are published and/or created by the current player.
+    matches = Level.select(OR(Level.q.published == True, 
+                              Level.q.creator == player), orderBy = "-modified")
+    published_list = ""
+    your_list = ""
     for level in matches:
         title = level.name
         date = level.modified
@@ -31,7 +35,6 @@ def printList(player):
         if level.creator != None:
             if level.creator == player:
                 creator = "You"
-                edit_link = "<a href=\"designer.html?level=%s\">Edit</a>" % title
             else:
                 creator = level.creator.name
         else:
@@ -50,15 +53,27 @@ def printList(player):
         if (scores.count() > 0):
             your_time = "%s with %d trinkets" % (formatTime(scores[0].completionTime), 
                                                  scores[0].trinkets)
-        work_list += render_template_file( "list-level-row.html",
+        if level.creator == player:
+            if level.published:
+              published = "Yes"
+            else:
+              published = "No"
+            your_list += render_template_file( "list-my-level-row.html",
+                                               {"moddate": date,
+                                                "title": title,
+                                                "published": published,
+                                                "best": best,
+                                                "yourtime": your_time} )
+        else:
+            published_list += render_template_file( "list-level-row.html",
                                            {"moddate": date,
                                             "title": title,
                                             "creator": creator,
-                                            "editlink": edit_link,
                                             "best": best,
                                             "yourtime": your_time} )
     
-    print render_template_file( "list-levels.html", {"work_list": work_list,
+    print render_template_file( "list-levels.html", {"published_list": published_list,
+                                                     "your_list": your_list,
                                                      "player": player.name,
                                                      "avatarURL": player.avatarURL})
 

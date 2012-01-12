@@ -21,12 +21,12 @@
     <label for="level-music-url">Music URL:</label><input type="text" id="level-music-url"/><br>
     <div id="physics-props">
     <label for="gravity">Gravity:</label><input type="text" id="gravity"/><br>
-    <label for="friction">Ground Friction:</label><input type="text" id="groundFriction"/><br>
-    <label for="friction">Air Friction:</label><input type="text" id="airFriction"/><br>
-    <label for="acceleration">Ground Acceleration:</label><input type="text" id="groundAcceleration"/><br>
-    <label for="acceleration">Air Acceleration:</label><input type="text" id="airAcceleration"/><br>
-    <label for="acceleration">Ground Deceleration:</label><input type="text" id="groundDeceleration"/><br>
-    <label for="acceleration">Air Deceleration:</label><input type="text" id="airDeceleration"/><br>
+    <label for="groundFriction">Ground Friction:</label><input type="text" id="groundFriction"/><br>
+    <label for="airFriction">Air Friction:</label><input type="text" id="airFriction"/><br>
+    <label for="groundAcceleration">Ground Acceleration:</label><input type="text" id="groundAcceleration"/><br>
+    <label for="airAcceleration">Air Acceleration:</label><input type="text" id="airAcceleration"/><br>
+    <label for="groundDeceleration">Ground Deceleration:</label><input type="text" id="groundDeceleration"/><br>
+    <label for="airDeceleration">Air Deceleration:</label><input type="text" id="airDeceleration"/><br>
     <label for="jump-power">Jump Power:</label><input type="text" id="jumpPower"/><br>
     <label for="top-speed">Top Speed:</label><input type="text" id="topSpeed"/><br>
     </div>
@@ -41,6 +41,7 @@
     <label for="goal-tool">Goal Location Tool</label><br>
     <hr/>
     <div id="more-tools"></div>
+    <input type="checkbox" id="publish"/><label for="publish">Make this level visible to others</label>
     <button onclick="saveChanges();">Save Changes</button><br>
   </div>
 
