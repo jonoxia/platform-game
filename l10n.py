@@ -1,12 +1,13 @@
+import simplejson
 
-m_loc_strings =  False
+m_all_strings = False
 
 def getStrings():
-    if m_loc_strings == False:
-        # Localization TODO read strings.json once
+    global m_all_strings
+    if m_all_strings == False:
+        # Localization - read srings.json only once
         string_file = open( "strings.json", "r")
-        strings = simplejson.loads(string_file.read().decode("utf-8"))
+        m_all_strings= simplejson.loads(string_file.read().decode("utf-8"))
         string_file.close()
-        m_loc_strings = strings["jp"] # TODO get language from settings
-    return m_loc_strings
+    return m_all_strings["jp"]  # TODO get current language from settings
 
