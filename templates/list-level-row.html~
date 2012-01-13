@@ -3,7 +3,7 @@
     ${title}
   </td>
   <td>
-    <a href="play.py?level=${title}">${_play}</a>
+    <a href="play.py?level=${title}">${_pla}y</a>
   </td>
   <td>
     ${moddate}

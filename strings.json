@@ -16,7 +16,9 @@
   "_your_player_data": "Your Player Data",
   "_player_name": "Player Name",
   "_your_avatar": "Your Avatar",
-  "_save_changes": "Save Changes"
+  "_save_changes": "Save Changes",
+  "_play": "Play",
+  "_edit": "Edit"
 },
 "jp": {
   "_runjumpbuild": "ランジャンプブイルド",
@@ -35,7 +37,9 @@
   "_your_player_data": "プレイヤーのデータ",
   "_player_name": "名前",
   "_your_avatar": "あなたのキャラ",
-  "_save_changes": "保存する"
+  "_save_changes": "保存する",
+  "_play": "Charenji suru",
+  "_edit": "Henkou suru"
 }
 
 }

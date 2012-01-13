@@ -6,26 +6,23 @@ import sys
 import string
 import simplejson
 import re
+import l10n
 from platformer_config import TEMPLATE_DIR
 from database_tables import Player
 
-def render_template_file( filename, substitutionDict ):
-    # Localization TODO read strings.json once
-    string_file = open( "strings.json", "r")
-    strings = simplejson.loads(string_file.read())
-    string_file.close()
-    localized_strings = strings["en"] # TODO get language from settings
-   
+def render_template_file( filename, substitutionDict ):   
     # find everything that matches ${_stuff}
     template_file = open( os.path.join( TEMPLATE_DIR, filename ), "r")
     template_file_contents = template_file.read()
     template_file.close()
 
     localizations = re.findall(r"\$\{(\_[^}]*)\}", template_file_contents)
+
+    loc_strings = l10n.getStrings()
     for key in localizations:
-      substitutionDict[key] = localized_strings[key]
+      substitutionDict[key] = loc_strings[key].encode("utf-8")
     template = string.Template(template_file_contents)
-    return template.substitute( substitutionDict )
+    return template.safe_substitute( substitutionDict )
 
 def print_redirect(url, cookie = None):
     print "Status: 302" # temporary redirect
