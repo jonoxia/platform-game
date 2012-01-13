@@ -19,7 +19,23 @@
   "_save_changes": "Save Changes"
 },
 "jp": {
-  "_runjumpbuild": ""
+  "_runjumpbuild": "ランジャンプブイルド",
+  "_all_levels": "全部のレベル",
+  "_welcome": "ようこそ",
+  "_published_levels": "公開したレベル",
+  "_title": "タイトル",
+  "_last_modified": "変更した日時",
+  "_creator": "作家",
+  "_your_time": "あなたの時間",
+  "_best_time": "一番早い時間",
+  "_your_levels": "あなたのレベル",
+  "_published": "公開したか",
+  "_new_level_name": "新しいレベルのタイトル",
+  "_create_level": "レベルを作る",
+  "_your_player_data": "プレイヤーのデータ",
+  "_player_name": "名前",
+  "_your_avatar": "あなたのキャラ",
+  "_save_changes": "保存する"
 }
 
 }
