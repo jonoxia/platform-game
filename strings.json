@@ -1,0 +1,25 @@
+{
+"en": {
+  "_runjumpbuild": "RunJumpBuild",
+  "_all_levels": "All Levels",
+  "_welcome": "Welcome",
+  "_published_levels": "Published Levels",
+  "_title": "Title",
+  "_last_modified": "Last Modified",
+  "_creator": "Creator",
+  "_your_time": "Your Time",
+  "_best_time": "Best Time",
+  "_your_levels": "Your Levels",
+  "_published": "Published?",
+  "_new_level_name": "New Level Name",
+  "_create_level": "Create Level",
+  "_your_player_data": "Your Player Data",
+  "_player_name": "Player Name",
+  "_your_avatar": "Your Avatar",
+  "_save_changes": "Save Changes"
+},
+"jp": {
+  "_runjumpbuild": ""
+}
+
+}

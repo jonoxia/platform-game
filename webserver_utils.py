@@ -4,13 +4,27 @@ import Cookie
 import os
 import sys
 import string
+import simplejson
+import re
 from platformer_config import TEMPLATE_DIR
 from database_tables import Player
 
 def render_template_file( filename, substitutionDict ):
-    file = open( os.path.join( TEMPLATE_DIR, filename ), "r")
-    template = string.Template(file.read())
-    file.close()
+    # Localization TODO read strings.json once
+    string_file = open( "strings.json", "r")
+    strings = simplejson.loads(string_file.read())
+    string_file.close()
+    localized_strings = strings["en"] # TODO get language from settings
+   
+    # find everything that matches ${_stuff}
+    template_file = open( os.path.join( TEMPLATE_DIR, filename ), "r")
+    template_file_contents = template_file.read()
+    template_file.close()
+
+    localizations = re.findall(r"\$\{(\_[^}]*)\}", template_file_contents)
+    for key in localizations:
+      substitutionDict[key] = localized_strings[key]
+    template = string.Template(template_file_contents)
     return template.substitute( substitutionDict )
 
 def print_redirect(url, cookie = None):
