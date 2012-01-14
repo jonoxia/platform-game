@@ -57,11 +57,11 @@
   "_other_levels": "他のレベル",
   "_time": "時間",
   "_useless_trinkets": "無用な宝",
-  "_winning": "daiseikou da!",
-  "_saving_score": "score wo save shite iru",
-  "_lose_monster": "bakemono ni taberareta!",
-  "_reload_play_again": "riro-do de kurikaesu",
-  "_lose_falling": "otoshite shinda!"
+  "_winning": "大成功だ！",
+  "_saving_score": "スコアを記録している。。。",
+  "_lose_monster": "化け物に食べられた！",
+  "_reload_play_again": "もう一度してみたいならリロードして。",
+  "_lose_falling": "落として死んだ！"
 }
 
 }
