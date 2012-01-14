@@ -24,7 +24,12 @@
   "_game_instructions": "Arrow keys to move, Space bar to jump.",
   "_other_levels": "Other Levels",
   "_time": "Time",
-  "_useless_trinkets": "Useless Trinkets"
+  "_useless_trinkets": "Useless Trinkets",
+  "_winning": "A WINRAR IS YOU!",
+  "_saving_score": "Saving score...",
+  "_lose_monster": "YOU'RE MONSTER CHOW!",
+  "_reload_play_again": "(reload to play again)",
+  "_lose_falling": "GRAVITY IS A HARSH MISTRESS"
 },
 "jp": {
   "_runjumpbuild": "ランジャンプブイルド",
@@ -51,7 +56,12 @@
   "_game_instructions": "矢印キーで動く。スペースバーで跳ぶ。",
   "_other_levels": "他のレベル",
   "_time": "時間",
-  "_useless_trinkets": "無用な宝"
+  "_useless_trinkets": "無用な宝",
+  "_winning": "daiseikou da!",
+  "_saving_score": "score wo save shite iru",
+  "_lose_monster": "bakemono ni taberareta!",
+  "_reload_play_again": "riro-do de kurikaesu",
+  "_lose_falling": "otoshite shinda!"
 }
 
 }

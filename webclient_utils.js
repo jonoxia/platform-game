@@ -29,6 +29,29 @@ window.requestAnimFrame = (function(){
           };
 })();
 
+var localized_strings = null;
+function getLocalString(key) {
+    // TODO How do we preload strings.json only once?
+    // method 1 - XHR it when loading page (before asset loader?),
+    // keep in memory
+    // method 2 - embed strings.json in the page using templating,
+    // read it out here.
+
+    if (!localized_strings) {
+	localized_strings = $("#localized_strings");
+	if (!localized_strings) {
+	    return "";
+	}
+	localized_strings = JSON.parse(localized_strings.html());
+    }
+    var str = localized_strings[key];
+    if (str) {
+	return str;
+    } else {
+	return "";
+    }
+}
+
 function AssetLoader() {
     this._things = [];
     this._thingsToLoad = 0;

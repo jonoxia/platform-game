@@ -21,6 +21,10 @@ def render_template_file( filename, substitutionDict ):
     loc_strings = l10n.getStrings()
     for key in localizations:
       substitutionDict[key] = loc_strings[key].encode("utf-8")
+
+    if re.search(r"\$\{localized\_strings\}", template_file_contents) != None:
+        substitutionDict["localized_strings"] = simplejson.dumps(loc_strings)
+
     template = string.Template(template_file_contents)
     return template.safe_substitute( substitutionDict )
 

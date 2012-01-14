@@ -154,7 +154,7 @@ function startGame(loader) {
     StatusBar.draw(context, player);
     // check for #WINNING:
     if (player.intersecting(TheWorld.goalArea)) {
-      $("#output").html("A WINRAR IS YOU!");
+      $("#output").html(getLocalString("_winning"));
       // stop bgm, play victory sound effects!
       $("#bgm")[0].pause();
       playSfx("victory-sfx");
@@ -171,15 +171,17 @@ function startGame(loader) {
 	        },
 		  dataType: "text"
 		  });
-      $("#debug").html("Saving score...");
+      $("#debug").html(getLocalString("_saving_score"));
     }
     // check for #LOSING:
     else if (player.dead) {
-      $("#output").html("YOU'RE MONSTER CHOW (reload to play again)");
+	$("#output").html(getLocalString("_lose_monster") + " " +
+			  getLocalString("_reload_play_again"));
       $("#bgm")[0].pause();
       playSfx("death-sfx");
     } else if (player.top > bottomLimit) {
-      $("#output").html("GRAVITY IS A HARSH MISTRESS (reload to play again)");
+	$("#output").html(getLocalString("_lose_falling") + " " + 
+			  getLocalString("_reload_play_again"));
       $("#bgm")[0].pause();
       playSfx("death-sfx");
     } else {
