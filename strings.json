@@ -44,14 +44,14 @@
   "_player_name": "名前",
   "_your_avatar": "あなたのキャラ",
   "_save_changes": "保存する",
-  "_play": "Charenji suru",
-  "_edit": "Henkou suru",
-  "_hi": "ooi",
-  "_level_name": "Kono Reberu ha",
-  "_game_instructions": "yajirushi ki- de ugoku. supe-suba- de tobu.",
-  "_other_levels": "hoka no reberu",
-  "_time": "jikan",
-  "_useless_trinkets": "muyouna takara"
+  "_play": "チャレンジする",
+  "_edit": "変更する",
+  "_hi": "おおい",
+  "_level_name": "このレベルは",
+  "_game_instructions": "矢印キーで動く。スペースバーで跳ぶ。",
+  "_other_levels": "他のレベル",
+  "_time": "時間",
+  "_useless_trinkets": "無用な宝"
 }
 
 }
