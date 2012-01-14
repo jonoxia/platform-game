@@ -18,7 +18,13 @@
   "_your_avatar": "Your Avatar",
   "_save_changes": "Save Changes",
   "_play": "Play",
-  "_edit": "Edit"
+  "_edit": "Edit",
+  "_hi": "Hi",
+  "_level_name": "You are playing level",
+  "_game_instructions": "Arrow keys to move, Space bar to jump.",
+  "_other_levels": "Other Levels",
+  "_time": "Time",
+  "_useless_trinkets": "Useless Trinkets"
 },
 "jp": {
   "_runjumpbuild": "ランジャンプブイルド",
@@ -39,7 +45,13 @@
   "_your_avatar": "あなたのキャラ",
   "_save_changes": "保存する",
   "_play": "Charenji suru",
-  "_edit": "Henkou suru"
+  "_edit": "Henkou suru",
+  "_hi": "ooi",
+  "_level_name": "Kono Reberu ha",
+  "_game_instructions": "yajirushi ki- de ugoku. supe-suba- de tobu.",
+  "_other_levels": "hoka no reberu",
+  "_time": "jikan",
+  "_useless_trinkets": "muyouna takara"
 }
 
 }
