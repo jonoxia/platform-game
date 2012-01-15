@@ -4,8 +4,6 @@ from webserver_utils import *
 
 import cgi
 import cgitb
-import datetime
-import simplejson
 
 cgitb.enable()
 q = cgi.FieldStorage()
@@ -20,7 +18,7 @@ levels = Level.selectBy(name = levelName)
 if levels.count() > 0:
     level = levels[0]
     if (level.creator == player):
-        editLink = "<a href=\"designer.html?level=%s\">Edit This Level</a>" % levelName
+        editLink = "<a href=\"design.py?level=%s\">Edit This Level</a>" % levelName
     elif (level.creator != None):
         editLink = "Created by %s." % level.creator.name
     else:

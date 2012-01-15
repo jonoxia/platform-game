@@ -1,5 +1,4 @@
 
-
 function adjustToScreen() {
     var screenWidth = window.innerWidth;
     var screenHeight = window.innerHeight;
@@ -309,9 +308,7 @@ function saveChanges() {
 
 $(document).ready(function() {
   var title = gup("level");
-  $("#play-this").attr("href", "play.py?level=" + title);
   adjustToScreen();
-
 
   // Handle mouseclicks on canvas according to selected tool:
   $("#design-canvas").bind("mousedown", function(evt) {
