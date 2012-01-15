@@ -1,6 +1,7 @@
 <html>
 <head>
-  <title>RunJumpBuild - Level Designer</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>${_runjumpbuild} &mdash; ${_level_designer}</title>
   <script src="jquery.js"></script>
   <script src="webclient_utils.js"></script>
   <script src="webrunner-world.js"></script>
@@ -12,37 +13,37 @@
 	  width="600" height="400"></canvas>
   <div id="tools" style="float:left">
     <span id="debug"></span>
-    <a href="play.py?level=${level_name}">Play This Level</a><br/>
-    <a href="listlevels.py">Other Levels</a><br/>
+    <a href="play.py?level=${level_name}">${_play_this_level}</a><br/>
+    <a href="listlevels.py">${_other_levels}</a><br/>
     <hr/>
-    <label for="level-bg-url">Background Img URL:</label><input type="text" id="level-bg-url"/><br>
-    <label for="level-tileset-url">Tileset URL:</label><input type="text" id="level-tileset-url"/><br>
-    <label for="level-goal-url">Goal Img URL:</label><input type="text" id="level-goal-url"/><br>
-    <label for="level-music-url">Music URL:</label><input type="text" id="level-music-url"/><br>
+    <label for="level-bg-url">${_background_img_url}:</label><input type="text" id="level-bg-url"/><br>
+    <label for="level-tileset-url">${_tileset_url}:</label><input type="text" id="level-tileset-url"/><br>
+    <label for="level-goal-url">${_goal_img_url}:</label><input type="text" id="level-goal-url"/><br>
+    <label for="level-music-url">${_music_url}:</label><input type="text" id="level-music-url"/><br>
     <div id="physics-props">
-    <label for="gravity">Gravity:</label><input type="text" id="gravity"/><br>
-    <label for="groundFriction">Ground Friction:</label><input type="text" id="groundFriction"/><br>
-    <label for="airFriction">Air Friction:</label><input type="text" id="airFriction"/><br>
-    <label for="groundAcceleration">Ground Acceleration:</label><input type="text" id="groundAcceleration"/><br>
-    <label for="airAcceleration">Air Acceleration:</label><input type="text" id="airAcceleration"/><br>
-    <label for="groundDeceleration">Ground Deceleration:</label><input type="text" id="groundDeceleration"/><br>
-    <label for="airDeceleration">Air Deceleration:</label><input type="text" id="airDeceleration"/><br>
-    <label for="jump-power">Jump Power:</label><input type="text" id="jumpPower"/><br>
-    <label for="top-speed">Top Speed:</label><input type="text" id="topSpeed"/><br>
+    <label for="gravity">${_gravity}:</label><input type="text" id="gravity"/><br>
+    <label for="groundFriction">${_ground_friction}:</label><input type="text" id="groundFriction"/><br>
+    <label for="airFriction">${_air_friction}:</label><input type="text" id="airFriction"/><br>
+    <label for="groundAcceleration">${_ground_accel}:</label><input type="text" id="groundAcceleration"/><br>
+    <label for="airAcceleration">${_air_accel}:</label><input type="text" id="airAcceleration"/><br>
+    <label for="groundDeceleration">${_ground_decel}:</label><input type="text" id="groundDeceleration"/><br>
+    <label for="airDeceleration">${_air_decel}:</label><input type="text" id="airDeceleration"/><br>
+    <label for="jump-power">${_jump_power}:</label><input type="text" id="jumpPower"/><br>
+    <label for="top-speed">${_top_speed}:</label><input type="text" id="topSpeed"/><br>
     </div>
     <hr/>
     <input type="radio" name="tools" value="eraser" id="eraser-tool"/>
-    <label for="eraser-tool">Eraser tool (click platform to remove it)</label><br>
+    <label for="eraser-tool">${_eraser_tool} ${_eraser_tool_exp}</label><br>
     <input type="radio" name="tools" value="scroll" id="scroll-tool"/>
-    <label for="scroll-tool">Scroll tool (drag to scroll level)</label><br>
+    <label for="scroll-tool">${_scroll_tool} ${_scroll_tool_exp}</label><br>
     <input type="radio" name="tools" value="start" id="start-tool"/>
-    <label for="start-tool">Start Location Tool</label><br>
+    <label for="start-tool">${_start_loc_tool}</label><br>
     <input type="radio" name="tools" value="goal" id="goal-tool"/>
-    <label for="goal-tool">Goal Location Tool</label><br>
+    <label for="goal-tool">${_goal_loc_tool}</label><br>
     <hr/>
     <div id="more-tools"></div>
-    <input type="checkbox" id="publish"/><label for="publish">Make this level visible to others</label>
-    <button onclick="saveChanges();">Save Changes</button><br>
+    <input type="checkbox" id="publish"/><label for="publish">${_publish}</label>
+    <button onclick="saveChanges();">${_save_changes}</button><br>
   </div>
 
 </body>
