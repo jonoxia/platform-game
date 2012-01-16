@@ -117,13 +117,13 @@
   "_publish": "このレベルを公開する",
   "_lang_pref": "言葉",
   "_this_language": "日本語",
-  "_you": "You",
-  "_nobody": "Nobody",
-  "_nobody_yet": "Nobody Yet!",
-  "_published_yes": "Yes",
-  "_published_no": "No",
-  "_other_player_score": "%(time)s by %(player)s with %(trinkets)d trinkets",
-  "_your_score": "%(time)s with %(trinkets)d trinkets"
+  "_you": "あなた",
+  "_nobody": "誰もいない",
+  "_nobody_yet": "まだ完成した人はいない",
+  "_published_yes": "公開した",
+  "_published_no": "公開していない",
+  "_other_player_score": "%(player)sが宝を%(trinkets)d もって、%(time)s　をかかって完成した",
+  "_your_score": "宝を%(trinkets)d もって、%(time)s　をかかって完成した"
 }
 
 }
