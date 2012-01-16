@@ -8,7 +8,7 @@ import cgitb
 import math
 
 from database_tables import Level, LevelObject, Score
-from webserver_utils import render_template_file, verify_id, make_lang_settings
+from webserver_utils import render_template_file, verify_id, make_lang_settings, getStr
 from sqlobject import OR
 
 def formatTime(ms):
@@ -35,32 +35,32 @@ def printList(player):
         edit_link = ""
         if level.creator != None:
             if level.creator == player:
-                creator = "You"            # TODO l10n
+                creator = getStr(player, "_you")
             else:
                 creator = level.creator.name
         else:
-            creator = "Nobody"            # TODO l10n
+            creator = getStr(player, "_nobody")
             
         scores = Score.selectBy(level = level)
         best = ""
         if (scores.count() > 0):
-            # TODO l10n
-            best = "%s by %s with %d trinkets" % (formatTime(scores[0].completionTime),
-                                                 scores[0].player.name,
-                                                 scores[0].trinkets)
+            best = getStr(player, "_other_player_score") % {
+               "time": formatTime(scores[0].completionTime),
+               "player": scores[0].player.name,
+               "trinkets": scores[0].trinkets }
         else:
-            best = "Nobody Yet!"            # TODO l10n
+            best = getStr(player, "_nobody_yet")
         scores = Score.selectBy(player = player, level = level)
         your_time = ""
         if (scores.count() > 0):
-            # TODO l10n
-            your_time = "%s with %d trinkets" % (formatTime(scores[0].completionTime), 
-                                                 scores[0].trinkets)
+            your_time = getStr(player, "_your_score") % {
+                "time": formatTime(scores[0].completionTime),
+                "trinkets": scores[0].trinkets }
         if level.creator == player:
             if level.published:
-              published = "Yes"            # TODO l10n
+              published = getStr(player, "_published_yes")
             else:
-              published = "No"
+              published = getStr(player, "_published_no")
             your_list += render_template_file( "list-my-level-row.html",
                                                {"moddate": date,
                                                 "title": title,
@@ -88,9 +88,6 @@ if __name__ == "__main__":
     q = cgi.FieldStorage()
 
     player = verify_id()
-    # action = q.getfirst("action", "")
-    # title = q.getfirst("title", "")
-
     printList(player)
 
 

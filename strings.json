@@ -53,7 +53,14 @@
   "_goal_loc_tool": "Goal Location Tool",
   "_publish": "Make this level visible to others",
   "_lang_pref": "Language",
-  "_this_language": "English"
+  "_this_language": "English",
+  "_you": "You",
+  "_nobody": "Nobody",
+  "_nobody_yet": "Nobody Yet!",
+  "_published_yes": "Yes",
+  "_published_no": "No",
+  "_other_player_score": "%(time)s by %(player)s with %(trinkets)d trinkets",
+  "_your_score": "%(time)s with %(trinkets)d trinkets"
 },
 "jp": {
   "_runjumpbuild": "ランジャンプブイルド",
@@ -109,7 +116,14 @@
   "_goal_loc_tool": "目的を置くツール",
   "_publish": "このレベルを公開する",
   "_lang_pref": "言葉",
-  "_this_language": "日本語"
+  "_this_language": "日本語",
+  "_you": "You",
+  "_nobody": "Nobody",
+  "_nobody_yet": "Nobody Yet!",
+  "_published_yes": "Yes",
+  "_published_no": "No",
+  "_other_player_score": "%(time)s by %(player)s with %(trinkets)d trinkets",
+  "_your_score": "%(time)s with %(trinkets)d trinkets"
 }
 
 }

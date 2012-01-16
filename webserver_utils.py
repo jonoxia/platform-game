@@ -80,6 +80,10 @@ def getStrings(player):
 
     return m_all_strings[lang]
 
+def getStr(player, key):
+    strings = getStrings(player)
+    return strings[key].encode("utf-8")
+
 def make_lang_settings(selectedLang): 
     global m_all_strings
     if m_all_strings == False:
