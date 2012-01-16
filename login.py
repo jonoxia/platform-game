@@ -54,7 +54,8 @@ if __name__ == "__main__":
             kwargs = {"email": email,
                       "name": email.split("@")[0],  # use first part of email address as username
                       "session": session,
-                      "avatarURL": DEFAULT_AVATAR_URL}
+                      "avatarURL": DEFAULT_AVATAR_URL,
+                      "langPref": "en"}
             newUser = Player(**kwargs)
         else:
             oldUser = matches[0]
