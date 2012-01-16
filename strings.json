@@ -51,7 +51,9 @@
   "_scroll_tool_exp": "(drag to scroll level)",
   "_start_loc_tool": "Start Location Tool",
   "_goal_loc_tool": "Goal Location Tool",
-  "_publish": "Make this level visible to others"
+  "_publish": "Make this level visible to others",
+  "_lang_pref": "Language",
+  "_this_language": "English"
 },
 "jp": {
   "_runjumpbuild": "ランジャンプブイルド",
@@ -105,7 +107,9 @@
   "_scroll_tool_exp": "(レベルをスクロールするためにドラッグして)",
   "_start_loc_tool": "始めを置くツール",
   "_goal_loc_tool": "目的を置くツール",
-  "_publish": "このレベルを公開する"
+  "_publish": "このレベルを公開する",
+  "_lang_pref": "Kotoba",
+  "_this_language": "Nihongo"
 }
 
 }

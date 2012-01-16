@@ -12,6 +12,7 @@ class Player(SQLObject):
     name = StringCol()
     session = StringCol()
     avatarURL = StringCol()
+    langPref = StringCol()
 
 class Level(SQLObject):
     name = StringCol()

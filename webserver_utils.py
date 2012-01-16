@@ -6,7 +6,6 @@ import sys
 import string
 import simplejson
 import re
-import l10n
 from platformer_config import TEMPLATE_DIR
 from database_tables import Player
 
@@ -18,7 +17,8 @@ def render_template_file( filename, substitutionDict ):
 
     localizations = re.findall(r"\$\{(\_[^}]*)\}", template_file_contents)
 
-    loc_strings = l10n.getStrings()
+    player = verify_id()
+    loc_strings = getStrings(player)
     for key in localizations:
       substitutionDict[key] = loc_strings[key].encode("utf-8")
 
@@ -58,3 +58,42 @@ def verify_id():
     # If verification fails, kick 'em back out to index.html
     print_redirect("index.html")
     sys.exit(1)
+
+m_all_strings = False
+
+def _loadStringDict():
+    global m_all_strings
+    # Localization - read srings.json only once
+    string_file = open( "strings.json", "r")
+    m_all_strings= simplejson.loads(string_file.read().decode("utf-8"))
+    string_file.close()
+
+
+def getStrings(player):
+    global m_all_strings
+    if m_all_strings == False:
+        _loadStringDict()
+
+    lang = player.langPref
+    if lang == "" or (not lang in m_all_strings.keys()):
+        lang = "en"
+
+    return m_all_strings[lang]
+
+def make_lang_settings(selectedLang): 
+    global m_all_strings
+    if m_all_strings == False:
+        _loadStringDict()
+
+    settingsHtml = ""
+
+    for key in m_all_strings.keys():
+        dict = {"lang_code": key.encode("utf-8"),
+                "checked": "",
+                "language": (m_all_strings[key]["_this_language"]).encode("utf-8")}
+        if selectedLang == key.encode("utf-8"):
+            dict["checked"] = "checked=\"checked\""
+
+        settingsHtml += render_template_file("lang-radio-button.html", dict)
+    
+    return settingsHtml

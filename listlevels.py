@@ -8,7 +8,7 @@ import cgitb
 import math
 
 from database_tables import Level, LevelObject, Score
-from webserver_utils import render_template_file, verify_id
+from webserver_utils import render_template_file, verify_id, make_lang_settings
 from sqlobject import OR
 
 def formatTime(ms):
@@ -18,6 +18,7 @@ def formatTime(ms):
     s = s % 60
     
     return "%d:%02d.%02d" % (m, s, ms)
+
 
 def printList(player):
     print "Content-type: text/html"
@@ -34,28 +35,30 @@ def printList(player):
         edit_link = ""
         if level.creator != None:
             if level.creator == player:
-                creator = "You"
+                creator = "You"            # TODO l10n
             else:
                 creator = level.creator.name
         else:
-            creator = "Nobody"
+            creator = "Nobody"            # TODO l10n
             
         scores = Score.selectBy(level = level)
         best = ""
         if (scores.count() > 0):
+            # TODO l10n
             best = "%s by %s with %d trinkets" % (formatTime(scores[0].completionTime),
                                                  scores[0].player.name,
                                                  scores[0].trinkets)
         else:
-            best = "Nobody Yet!"
+            best = "Nobody Yet!"            # TODO l10n
         scores = Score.selectBy(player = player, level = level)
         your_time = ""
         if (scores.count() > 0):
+            # TODO l10n
             your_time = "%s with %d trinkets" % (formatTime(scores[0].completionTime), 
                                                  scores[0].trinkets)
         if level.creator == player:
             if level.published:
-              published = "Yes"
+              published = "Yes"            # TODO l10n
             else:
               published = "No"
             your_list += render_template_file( "list-my-level-row.html",
@@ -71,11 +74,14 @@ def printList(player):
                                             "creator": creator,
                                             "best": best,
                                             "yourtime": your_time} )
+
+    sub_words = {"published_list": published_list,
+                 "your_list": your_list,
+                 "player": player.name,
+                 "avatarURL": player.avatarURL,
+                 "lang_radio_buttons": make_lang_settings(player.langPref)}
     
-    print render_template_file( "list-levels.html", {"published_list": published_list,
-                                                     "your_list": your_list,
-                                                     "player": player.name,
-                                                     "avatarURL": player.avatarURL})
+    print render_template_file( "list-levels.html", sub_words)
 
 if __name__ == "__main__":
     cgitb.enable()
