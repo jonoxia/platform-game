@@ -32,6 +32,8 @@
   "_lose_falling": "GRAVITY IS A HARSH MISTRESS",
   "_level_designer": "Level Designer",
   "_play_this_level": "Play This Level",
+  "_edit_this_level": "Edit This Level",
+  "_created_by": "Created by %s.",
   "_background_img_url": "Background Img URL",
   "_tileset_url": "Tileset URL",
   "_goal_img_url": "Goal Img URL",
@@ -60,7 +62,12 @@
   "_published_yes": "Yes",
   "_published_no": "No",
   "_other_player_score": "%(time)s by %(player)s with %(trinkets)d trinkets",
-  "_your_score": "%(time)s with %(trinkets)d trinkets"
+  "_your_score": "%(time)s with %(trinkets)d trinkets",
+  "_code_editor": "Code Editor",
+  "_nugget_name": "namae",
+  "_nugget_type": "donna",
+  "_test_code": "tesuto",
+  "_save_code": "bozon"
 },
 "jp": {
   "_runjumpbuild": "ランジャンプブイルド",
@@ -95,6 +102,8 @@
   "_lose_falling": "落として死んだ！",
   "_level_designer": "レベルの設計",
   "_play_this_level": "このレベルをしてみる",
+  "_edit_this_level": "Edit This Level",
+  "_created_by": "Created by %s.",
   "_background_img_url": "風景の画像のURL",
   "_tileset_url": "タイルセットのURL",
   "_goal_img_url": "目的の画像のURL",
@@ -123,7 +132,12 @@
   "_published_yes": "公開した",
   "_published_no": "公開していない",
   "_other_player_score": "%(player)sが宝を%(trinkets)d もって、%(time)s　をかかって完成した",
-  "_your_score": "宝を%(trinkets)d もって、%(time)s　をかかって完成した"
+  "_your_score": "宝を%(trinkets)d もって、%(time)s　をかかって完成した",
+  "_code_editor": "Codo Editaa",
+  "_nugget_name": "namae",
+  "_nugget_type": "donna",
+  "_test_code": "tesuto",
+  "_save_code": "bozon"
 }
 
 }

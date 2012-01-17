@@ -46,8 +46,19 @@ class Score( SQLObject ):
     trinkets = IntCol(default = 0)
     achievedOn = DateTimeCol()
 
+class UserCodeNugget( SQLObject ):
+    name = StringCol()
+    creator = ForeignKey("Player")
+    modified = DateTimeCol()
+    code = StringCol()
+    type = StringCol() # Monster, Powerup, or Obstacle
+        #??  Monster, Powerup, or Obstacle ? or can i have more than one in the same module?
+        # How are we going to refer to these in order to load them? Have to be able to tell what's in there
+        # before loading the code nuggets, I think
+
 if __name__ == "__main__":
-    Player.createTable()
-    Level.createTable()
-    LevelObject.createTable()
-    Score.createTable()
+    #Player.createTable()
+    #Level.createTable()
+    #LevelObject.createTable()
+    #Score.createTable()
+    UserCodeNugget.createTable()
