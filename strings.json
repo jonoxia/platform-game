@@ -60,7 +60,13 @@
   "_published_yes": "Yes",
   "_published_no": "No",
   "_other_player_score": "%(time)s by %(player)s with %(trinkets)d trinkets",
-  "_your_score": "%(time)s with %(trinkets)d trinkets"
+  "_your_score": "%(time)s with %(trinkets)d trinkets",
+  "_code_editor": "code editor",
+  "_nugget_id": "nugget id",
+  "_nugget_name": "nugget name",	
+  "_nugget_type": "nugget type",
+  "_save_code": "save code",
+  "_test_code": "test code"
 },
 "jp": {
   "_runjumpbuild": "ラン・ジャンプ・ビルド",
@@ -123,7 +129,13 @@
   "_published_yes": "公開中",
   "_published_no": "未公開",
   "_other_player_score": "%(player)s さんの成績：%(time)s お宝 %(trinkets)d 個",
-  "_your_score": "%(time)s お宝 %(trinkets)d 個"
+  "_your_score": "%(time)s お宝 %(trinkets)d 個",
+  "_code_editor": "code editor",
+  "_nugget_id": "nugget id",
+  "_nugget_name": "nugget name",	
+  "_nugget_type": "nugget type",
+  "_save_code": "save code",
+  "_test_code": "test code"
 }
 
 }
