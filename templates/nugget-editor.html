@@ -3,19 +3,21 @@
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <title>${_runjumpbuild} &mdash; ${_code_editor}</title>
   <script src="jquery.js"></script>
+  <script src="require.js"></script>
   <script src="nugget-loader.js"></script>
 </head>
 <body>
   <form action="nugget-editor.py" method="POST">
-    <input type="hidden" name="id" value="${nugget_id}"/>
-    ${_nugget_name}: <input type="text" name="nugget-name"
+    <input type="hidden" name="id" id="nugget-id" value="${nugget_id}"/>
+    ${_nugget_name}: <input type="text" name="nugget-name" id="nugget-name"
 			    value="${nugget_name}"/><br/>
-    ${_nugget_type}: <input type="text" name="nugget-type"
+    ${_nugget_type}: <input type="text" name="nugget-type" id="nugget-type"
 			    value="${nugget_type}"/><br/>
-    <textarea rows="30" cols="80" name="code-input"/>${nugget_code}</textarea>
-    <button id="test" onclick="testCode()">${_test_code}</button><br/>
+    <textarea rows="30" cols="80" name="code-input"  id="code-input"/>${nugget_code}</textarea>
     <input type="submit" value="${_save_code}"/><br/>
   </form>
+  <button id="test" onclick="testCode()">${_test_code}</button><br/>
   <span id="debug"></span>
+  <img id="img-preview"/>
 </body>
 </html>
