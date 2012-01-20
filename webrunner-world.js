@@ -44,7 +44,7 @@ ProgressBar.prototype = {
     draw: function(progress) {
 	this._ctx.strokeStyle = "black";
 	this._ctx.fillStyle = "green";
-	this._ctx.strokeText("LOADING...", 
+	this._ctx.strokeText("LOADING...",   // TODO l10n
 			     TheWorld.canvasWidth /2,
 			     TheWorld.canvasHeight/2 - 50);
 	this._ctx.fillRect(TheWorld.canvasWidth/2 - 200,
@@ -93,7 +93,7 @@ var TheWorld = {
 	    } else {
 		ctx.strokeStyle = "black";
 		ctx.strokeRect(this.left, this.top, 64, 64);
-		ctx.strokeText("GOAL", this.left + 5, this.top +32);
+		ctx.strokeText("GOAL", this.left + 5, this.top +32); // TODO l10n
 	    }
 	},
 	setBounds: function(l, t, w, h) {
@@ -451,7 +451,7 @@ var TheWorld = {
   loadFromServer: function (levelName, loader, callback) {
     var url = "load-level.py";
     var self = this;
-    $("#debug").html("Loading level...");
+    $("#debug").html("Loading level..."); // TODO l10n
     $.get(url, {levelName: levelName}, function(data, textStatus, jqXHR) {
 	    self.loadFromString(data, loader, callback);
 	}, "html");

@@ -239,7 +239,7 @@ function redraw() {
     var x = TheWorld.worldXToScreenX(TheWorld.startX);
     var y = TheWorld.worldYToScreenY(TheWorld.startY);
     context.strokeRect(x, y, 64, 64);
-    context.strokeText("START", x + 5, y +32);
+    context.strokeText("START", x + 5, y +32); // TODO l10n
 }
 
 function saveChanges() {
@@ -303,7 +303,7 @@ function saveChanges() {
 	    dataType: "text"
 	    });
     $("#debug").html(JSON.stringify(allData));
-    $("#debug").html("Saving, don't close the page...");
+    $("#debug").html("Saving, don't close the page..."); // TODO l10n
 }
 
 $(document).ready(function() {

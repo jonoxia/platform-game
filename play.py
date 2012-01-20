@@ -18,9 +18,9 @@ levels = Level.selectBy(name = levelName)
 if levels.count() > 0:
     level = levels[0]
     if (level.creator == player):
-        editLink = "<a href=\"design.py?level=%s\">Edit This Level</a>" % levelName
+        editLink = "<a href=\"design.py?level=%s\">%s</a>" % (levelName, getStr(player, "_edit_this_level"))
     elif (level.creator != None):
-        editLink = "Created by %s." % level.creator.name
+        editLink = getStr(player, "_created_by") % level.creator.name
     else:
         editLink = ""
     print "Content-type: text/html"
