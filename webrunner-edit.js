@@ -1,3 +1,4 @@
+// TODO zoom function!!
 
 function adjustToScreen() {
     var screenWidth = window.innerWidth;
@@ -8,6 +9,20 @@ function adjustToScreen() {
 
     $("#design-canvas").attr("width", TheWorld.canvasWidth);
     $("#design-canvas").attr("height", TheWorld.canvasHeight);
+
+    $("#tools").css("max-width", screenWidth * 0.2);
+    $("#tools").attr("max-width", screenWidth * 0.2);
+    $("#tools").attr("width", screenWidth * 0.2);
+    redraw();
+}
+
+function showhide(id) {
+  var div = $("#" + id);
+  if (div.css("display") != "none") {
+    div.css("display", "none");
+  } else {
+    div.css("display", "block");
+  }
 }
 
 function GenericPlacementTool(cons) {
@@ -128,7 +143,7 @@ GenericRectangleTool.prototype = {
 		var rect = this.defineRect(pt.x, pt.y);
 		var context = $("#design-canvas")[0].getContext("2d");
 		context.strokeStyle = "black";
-		context.strokeRect(TheWorld.worldXToScreenX(rect.l), 
+		context.strokeRect(TheWorld.worldXToScreenX(rect.l),
 				   TheWorld.worldYToScreenY(rect.t),
 				   rect.w, rect.h);
 	    }
@@ -245,7 +260,7 @@ function redraw() {
 function saveChanges() {
     // AJAX Post json data to save-level.py
     var URL = "save-level.py";
-    
+
     var title = gup("level");
     var i, objs;
     var allData = {};
@@ -285,15 +300,15 @@ function saveChanges() {
     allData.physicsConsts = {};
     for (var prop in PhysicsConstants) {
 	var fieldVal = parseInt($("#" + prop).val());
-        allData.physicsConsts[prop] = isNaN(fieldVal) ? 
+        allData.physicsConsts[prop] = isNaN(fieldVal) ?
 	    PhysicsConstants[prop] : fieldVal;
     }
     allData.published = $("#publish").attr("checked") ? "true":"false";
 
-    $.ajax({type: "POST", 
+    $.ajax({type: "POST",
             url: URL,
 	    data: {levelName: title,
-		   levelData: JSON.stringify(allData)}, 
+		   levelData: JSON.stringify(allData)},
 	    success: function(data, textStatus, jqXHR) {
 		$("#debug").html(data);
 	    },
@@ -306,21 +321,74 @@ function saveChanges() {
     $("#debug").html("Saving, don't close the page...");
 }
 
+function makeFancyButton(constructorName) {
+  // TODO instead of a radio button, name, and canvas, how about
+  // a single canvas with the image and name both on it, that acts like a button
+  // when you click anywhere
+  // TODO instead of using constructorName as the name, use a localized description
+  // TODO images for the scroll, startloc, and eraser tools?
+  var button = $("<input></input>");
+  button.attr("type", "radio");
+  button.attr("name", "tools");
+  button.attr("value", constructorName);
+  button.attr("id", constructorName);
+  var label = $("<label></label>");
+  label.attr("for", constructorName);
+  label.html(constructorName + " tool");
+  var cons = ConstructorRegistry.getConstructor(constructorName);
+  var proto = cons.prototype;
+  var minicanvas = $("<canvas></canvas>");
+  var width = proto.width ? proto.width: 64;
+  var height = proto.height ? proto.height: 64;
+  minicanvas.attr("width", width);
+  minicanvas.attr("height", height);
+
+  // Put the tool into either the monster, obstacle, or powerup category, according to its
+  // classification
+  var container;
+  switch(proto.classification) {
+    case "monster":
+      container = $("#more-monster-tools");
+    break;
+    case "obstacle":
+      container = $("#more-obstacle-tools");
+      break;
+    case "powerup":
+      container = $("#more-powerup-tools");
+      break;
+  default:
+    container = $("#more-tools");
+    break;
+  }
+
+  container.append(button);
+  container.append(label);
+  container.append(minicanvas);
+  // let's try drawing that sucker
+  var loader = new AssetLoader();
+  var ctx = minicanvas[0].getContext("2d");
+  var obj = new cons(loader);
+  loader.loadThemAll( function() {
+    obj.boxInit(0, 0, width, height);
+    obj.draw(ctx);
+  });
+  container.append("<br/>");
+}
+
 $(document).ready(function() {
   var title = gup("level");
-  adjustToScreen();
 
   // Handle mouseclicks on canvas according to selected tool:
   $("#design-canvas").bind("mousedown", function(evt) {
-    pos = canvasCoords(evt);
+    var pos = canvasCoords(evt);
     g_selectedTool.onMouseDown(pos.x, pos.y);
   });
   $("#design-canvas").bind("mousemove", function(evt) {
-    pos = canvasCoords(evt);
+    var pos = canvasCoords(evt);
     g_selectedTool.onMouseMove(pos.x, pos.y);
   });
   $("#design-canvas").bind("mouseup", function(evt) {
-    pos = canvasCoords(evt);
+    var pos = canvasCoords(evt);
     g_selectedTool.onMouseUp(pos.x, pos.y);
     redraw();
   });
@@ -328,19 +396,9 @@ $(document).ready(function() {
   // Create tools for all the object constructors we know about
   var names = ConstructorRegistry.listNames();
   for (var i = 0; i < names.length; i++) {
-      var button = $("<input></input>");
-      button.attr("type", "radio");
-      button.attr("name", "tools");
-      button.attr("value", names[i]);
-      button.attr("id", names[i]);
-      var label = $("<label></label>");
-      label.attr("for", names[i]);
-      label.html(names[i] + " tool");
-      $("#more-tools").append(button);
-      $("#more-tools").append(label);
-      $("#more-tools").append("<br/>");
+    makeFancyButton(names[i]);
   }
-	
+
   // When you change the selected radio button, change the tool:
   $("input").change(function() {
     var id = $("input[@name=testGroup]:checked").attr('id');
@@ -379,14 +437,22 @@ $(document).ready(function() {
   var progressBar = new ProgressBar($("#design-canvas")[0].getContext("2d"));
   progressBar.draw(0);
 
-  TheWorld.loadFromServer(title, loader, function() {
+  var startEditing = function() {
     progressBar.draw(0.5);
     $("#level-bg-url").val(TheWorld.bgUrl);
     $("#level-tileset-url").val(TheWorld.tilesetUrl);
     $("#level-goal-url").val(TheWorld.goalUrl);
     $("#level-music-url").val(TheWorld.musicUrl);
 
-    
+    var resizeTimer = null;
+    adjustToScreen();
+    $(window).resize(function() {
+        if (resizeTimer) {
+            clearTimeout(resizeTimer);
+        }
+        resizeTimer = setTimeout(adjustToScreen, 500);
+    });
+
     for (var prop in PhysicsConstants) {
 	$("#" + prop).val( PhysicsConstants[prop] );
     }
@@ -398,6 +464,13 @@ $(document).ready(function() {
     loader.loadThemAll(redraw, function(progress) {
       progressBar.draw(0.5 + 0.5 * progress);
     });
-  });
+  };
+
+  // Playing online or offline?
+  if (typeof offlineLevelData != "undefined") {
+    TheWorld.loadFromString(offlineLevelData, loader, startEditing);
+  } else {
+    TheWorld.loadFromServer(title, loader, startEditing);
+  }
 
 });

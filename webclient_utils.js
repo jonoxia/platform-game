@@ -19,11 +19,11 @@ function playSfx(tagId) {
 // shim layer with setTimeout fallback
 // Written by Paul Irish
 window.requestAnimFrame = (function(){
-  return  window.requestAnimationFrame       || 
-          window.webkitRequestAnimationFrame || 
-          window.mozRequestAnimationFrame    || 
-          window.oRequestAnimationFrame      || 
-          window.msRequestAnimationFrame     || 
+  return  window.requestAnimationFrame       ||
+          window.webkitRequestAnimationFrame ||
+          window.mozRequestAnimationFrame    ||
+          window.oRequestAnimationFrame      ||
+          window.msRequestAnimationFrame     ||
           function(/* function */ callback, /* DOMElement */ element){
             window.setTimeout(callback, 1000 / 60);
           };
@@ -84,7 +84,7 @@ AssetLoader.prototype = {
 		    if (self._thingsLoaded == self._thingsToLoad) {
 			callback();
 		    }
-		}
+		};
 		thing.tag.src = thing.url;
 	    })(this._things[t]);
 	}

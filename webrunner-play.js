@@ -144,7 +144,7 @@ function startGame(loader) {
     } else {
        player.idle(elapsed);
     }
-	
+
     TheWorld.updateEveryone(elapsed);
     TheWorld.scrollIfNeeded(player);
     TheWorld.cleanUpDead();
@@ -158,7 +158,7 @@ function startGame(loader) {
       // stop bgm, play victory sound effects!
       $("#bgm")[0].pause();
       playSfx("victory-sfx");
-      $.ajax({type: "POST", 
+      $.ajax({type: "POST",
 		url: "complete-level.py",
 		data: {levelName: gup("level"),
 		      completionTime: Date.now() - startTime,
@@ -180,7 +180,7 @@ function startGame(loader) {
       $("#bgm")[0].pause();
       playSfx("death-sfx");
     } else if (player.top > bottomLimit) {
-	$("#output").html(getLocalString("_lose_falling") + " " + 
+	$("#output").html(getLocalString("_lose_falling") + " " +
 			  getLocalString("_reload_play_again"));
       $("#bgm")[0].pause();
       playSfx("death-sfx");
