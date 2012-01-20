@@ -7,6 +7,11 @@
   <script src="webrunner-world.js"></script>
   <script src="webrunner-mobs.js"></script>
   <script src="webrunner-edit.js"></script>
+  <style>
+    .hidden-panel {
+       display: none;
+     }
+  </style>
 </head>
 <body>
   <canvas style="float: left" id="design-canvas" 
@@ -18,9 +23,10 @@
     <hr/>
     <label for="level-bg-url">${_background_img_url}:</label><input type="text" id="level-bg-url"/><br>
     <label for="level-tileset-url">${_tileset_url}:</label><input type="text" id="level-tileset-url"/><br>
-    <label for="level-goal-url">${_goal_img_url}:</label><input type="text" id="level-goal-url"/><br>
     <label for="level-music-url">${_music_url}:</label><input type="text" id="level-music-url"/><br>
-    <div id="physics-props">
+
+    ${_physics}<button onclick="showhide('physics-props');">${_show_hide}</button>
+    <div id="physics-props" class="hidden-panel">
     <label for="gravity">${_gravity}:</label><input type="text" id="gravity"/><br>
     <label for="groundFriction">${_ground_friction}:</label><input type="text" id="groundFriction"/><br>
     <label for="airFriction">${_air_friction}:</label><input type="text" id="airFriction"/><br>
@@ -31,6 +37,7 @@
     <label for="jump-power">${_jump_power}:</label><input type="text" id="jumpPower"/><br>
     <label for="top-speed">${_top_speed}:</label><input type="text" id="topSpeed"/><br>
     </div>
+    
     <hr/>
     <input type="radio" name="tools" value="eraser" id="eraser-tool"/>
     <label for="eraser-tool">${_eraser_tool} ${_eraser_tool_exp}</label><br>
@@ -40,11 +47,21 @@
     <label for="start-tool">${_start_loc_tool}</label><br>
     <input type="radio" name="tools" value="goal" id="goal-tool"/>
     <label for="goal-tool">${_goal_loc_tool}</label><br>
+    <label for="level-goal-url">${_goal_img_url}:</label><input type="text"     id="level-goal-url"/><br>
     <hr/>
-    <div id="more-tools"></div>
+    <div id="more-tools">
+      ${_obstacle_tools} <button onclick="showhide('more-obstacle-tools');">${_show_hide}</button>
+      <div id="more-obstacle-tools" class="hidden-panel">
+      </div>
+      ${_monster_tools} <button onclick="showhide('more-monster-tools');">${_show_hide}</button>
+      <div id="more-monster-tools" class="hidden-panel">
+      </div>
+      ${_powerup_tools} <button onclick="showhide('more-powerup-tools');">${_show_hide}</button>
+      <div id="more-powerup-tools" class="hidden-panel">
+      </div>
+    </div>
     <input type="checkbox" id="publish"/><label for="publish">${_publish}</label>
     <button onclick="saveChanges();">${_save_changes}</button><br>
   </div>
-
 </body>
 </html>

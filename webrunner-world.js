@@ -75,9 +75,9 @@ var TheWorld = {
 
   goalUrl: "",
   goalImg: null,
-  
+
   musicUrl: "",
- 
+
   goalArea: {
 	left: 500,
 	top: 350,
@@ -264,7 +264,7 @@ var TheWorld = {
       }
     }
     // sort in increasing order of t (time-until intercept)
-    
+
     // If only one intercept, just do it:
     intercepts.sort(function(a, b) { return a.cept.t - b.cept.t;} );
     var pathModified;
@@ -334,7 +334,7 @@ var TheWorld = {
   getPlatformAt: function(x, y) {
     for (var i = 0; i < this.foregroundObjects.length; i++) {
       var platform = this.foregroundObjects[i];
-      if (x > platform.left && x <= platform.right 
+      if (x > platform.left && x <= platform.right
 	  && y > platform.top && y <= platform.bottom) {
 	  return platform;
       }
@@ -532,7 +532,7 @@ Box.prototype = {
 
   substantial: function(edge) {
       return false;
-  }, 
+  },
 
   intersecting: function(rect) {
       return (this.left <= rect.right && this.right >= rect.left
@@ -563,6 +563,7 @@ function Platform() {
 }
 Platform.prototype = {
   type: "platform",
+  classification: "obstacle",
 
   draw: function(ctx) {
     if (TheWorld.tileSetImg) {
@@ -597,6 +598,7 @@ function SemiPermiablePlatform() {
 }
 SemiPermiablePlatform.prototype = {
   type: "semiplatform",
+  classification: "obstacle",
 
   draw: function(ctx) {
     if (TheWorld.tileSetImg) {
@@ -618,7 +620,7 @@ SemiPermiablePlatform.prototype = {
     },
 
   substantial: function(edge) {
-	return (edge == "top");
+    return (edge == "top");
   }
 };
 SemiPermiablePlatform.prototype.__proto__ = new Box();
@@ -628,12 +630,13 @@ function PowerUp() {
 }
 PowerUp.prototype = {
   type: "powerup",
+  classification: "powerup",
   draw: function(ctx) {
   },
   onMobTouch: function(mob, intercept) {
     if (mob.type == "player") {
       // monsters don't collect powerups
-      TheWorld.removeForegroundObject(this);	
+      TheWorld.removeForegroundObject(this);
       this.onCollect(mob);
       // TODO play a sound here or something?
     }
@@ -651,6 +654,7 @@ function SpeedPlus() {
 }
 SpeedPlus.prototype = {
   type: "speedplus",
+  classification: "powerup",
   width: 32,
   height: 32,
   draw: function(ctx) {
@@ -673,6 +677,7 @@ function JumpPlus() {
 }
 JumpPlus.prototype = {
   type: "jumpplus",
+  classification: "powerup",
   width: 32,
   height: 32,
   draw: function(ctx) {
@@ -693,6 +698,7 @@ function PointlessTrinket() {
 }
 PointlessTrinket.prototype = {
   type: "trinket",
+  classification: "powerup",
   width: 32,
   height: 32,
   draw: function(ctx) {
@@ -718,6 +724,7 @@ function DisappearingBlock() {
 }
 DisappearingBlock.prototype = {
   type: "disappearing_block",
+  classification: "obstacle",
   visible: true,
   time: 0,
 
@@ -755,12 +762,13 @@ function ButtonBlock() {
 }
 ButtonBlock.prototype = {
   type: "button_block",
+  classification: "obstacle",
   activated: false,
   activationTime: 5000,
   timer: 0,
   width: 70,
   height: 10,
-  
+
   draw: function(ctx) {
     if (!this.activated) {
 	  ctx.fillStyle = "red";
@@ -769,7 +777,7 @@ ButtonBlock.prototype = {
       ctx.strokeRect(this.left, this.top, this.width, this.height);
     }
   },
-  
+
   onMobTouch: function(mob, intercept) {
     if (this.activated) {
       return false;
@@ -783,11 +791,11 @@ ButtonBlock.prototype = {
       return true;
     }
   },
-  
+
   substantial: function(edge) {
     return !this.activated;
   },
-  
+
   update: function(elapsedTime) {
     if (this.activated) {
       this.timer += elapsedTime;
@@ -796,7 +804,7 @@ ButtonBlock.prototype = {
       }
     }
   },
-  
+
   deactivate_button: function() {
     this.activated = false;
     var i = 0;
@@ -807,7 +815,7 @@ ButtonBlock.prototype = {
       }
     }
   },
-  
+
   activate_button: function() {
     this.activated = true;
     this.timer = 0;
@@ -827,10 +835,11 @@ function TrapdoorBlock() {
 }
 TrapdoorBlock.prototype = {
   type: "trapdoor_block",
+  classification: "obstacle",
   open: false,
   width: 100,
   height: 10,
-  
+
   draw: function(ctx) {
     if (this.open) {
       ctx.globalAlpha = 0.5;
@@ -844,7 +853,7 @@ TrapdoorBlock.prototype = {
     ctx.strokeRect(this.left, this.top, this.width, this.height);
     ctx.globalAlpha = 1;
   },
-  
+
   onMobTouch: function(mob, intercept) {
     if (!this.open) {
       mob.stopAt(intercept);
@@ -854,15 +863,15 @@ TrapdoorBlock.prototype = {
       return false;
     }
   },
-  
+
   substantial: function(edge) {
     return !this.open;
   },
-  
+
   button_deactivated: function() {
     this.open = false;
   },
-  
+
   button_activated: function() {
     this.open = true;
   }
@@ -874,10 +883,11 @@ function ActivatedBlock() {
 }
 ActivatedBlock.prototype = {
   type: "activated_block",
+  classification: "obstacle",
   active: false,
   width: 100,
   height: 10,
-  
+
   draw: function(ctx) {
     if (!this.active) {
       ctx.globalAlpha = 0.5;
@@ -891,7 +901,7 @@ ActivatedBlock.prototype = {
     ctx.strokeRect(this.left, this.top, this.width, this.height);
     ctx.globalAlpha = 1;
   },
-  
+
   onMobTouch: function(mob, intercept) {
     if (this.active) {
       mob.stopAt(intercept);
@@ -901,15 +911,15 @@ ActivatedBlock.prototype = {
       return false;
     }
   },
-  
+
   substantial: function(edge) {
     return this.active;
   },
-  
+
   button_deactivated: function() {
     this.active = false;
   },
-  
+
   button_activated: function() {
     this.active = true;
   }
@@ -921,6 +931,7 @@ function RubberBlock() {
 }
 RubberBlock.prototype = {
   type: "rubber_block",
+  classification: "obstacle",
 
   draw: function(ctx) {
     ctx.fillStyle = "black";

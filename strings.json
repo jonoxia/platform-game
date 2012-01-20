@@ -61,6 +61,10 @@
   "_published_no": "No",
   "_other_player_score": "%(time)s by %(player)s with %(trinkets)d trinkets",
   "_your_score": "%(time)s with %(trinkets)d trinkets",
+  "_obstacle_tools": "obstacles",
+  "_monster_tools": "monsters",
+  "_powerup_tools": "powerups",
+  "_show_hide": "show/hide",
   "_code_editor": "code editor",
   "_nugget_id": "nugget id",
   "_nugget_name": "nugget name",	
@@ -130,12 +134,16 @@
   "_published_no": "未公開",
   "_other_player_score": "%(player)s さんの成績：%(time)s お宝 %(trinkets)d 個",
   "_your_score": "%(time)s お宝 %(trinkets)d 個",
-  "_code_editor": "code editor",
+  "_obstacle_tools": "床と壁",
+  "_monster_tools": "化け物",
+  "_powerup_tools": "パワーアップ",
+  "_show_hide": "示す／隠す",
+  "_code_editor": "コードエディタ",
   "_nugget_id": "nugget id",
   "_nugget_name": "nugget name",	
   "_nugget_type": "nugget type",
-  "_save_code": "save code",
-  "_test_code": "test code"
+  "_save_code": "コードを保存する",
+  "_test_code": "コードをテスト"
 }
 
 }

@@ -99,7 +99,7 @@ Mob.prototype = {
         this.top = intercept.y;
       playSfx("bonk-sfx")
         break;
-      }	
+      }
   },
 
   update: function(elapsedTime) {
@@ -107,15 +107,15 @@ Mob.prototype = {
     if (!this.onGround()) {
 	this.vy += PhysicsConstants.gravity * elapsedTime / 100;
     }
-    
+
     var xDist = this.vx * elapsedTime / 100;
     var yDist = this.vy * elapsedTime / 100;
-    
+
     var platform = TheWorld.touchingPlatform(this, "bottom");
     if (platform && platform.vx) {
       xDist += platform.vx * elapsedTime / 100;
     }
-    
+
     // Collision detection
     var pathModified = TheWorld.detectPlatformIntercept(this, xDist, yDist);
     if (!pathModified) {
@@ -142,7 +142,7 @@ Mob.prototype = {
 	    this.remainingJumpPower = 0;
 	}
     }
-   
+
   },
 
   stopJumping: function() {
@@ -187,7 +187,7 @@ Mob.prototype = {
 	     return PhysicsConstants.airAcceleration;
 	 }
      }
- },	
+ },
 
   goLeft: function(elapsed) {
     if (! TheWorld.touchingPlatform(this, "left")) {
@@ -301,7 +301,7 @@ function Enemy(loader) {
 }
 Enemy.prototype = {
   roam: function(elapsed) {
-    if (this.direction == "left" && 
+    if (this.direction == "left" &&
 	(TheWorld.touchingPlatform(this, "left") != null)) {
 	this.direction = "right";
     } else if (this.direction == "right" &&
@@ -362,6 +362,7 @@ function MagicCarpet(loader) {
 }
 MagicCarpet.prototype = {
   type: "magic_carpet",
+  classification: "obstacle",
   vx: 0,
 
   draw: function(ctx) {
@@ -387,22 +388,24 @@ MagicCarpet.prototype = {
     var pathModified = TheWorld.detectPlatformIntercept(this, xDist, 0);
     if (!pathModified) {
       this.left += xDist;
-    }      
+    }
   }
 }
 MagicCarpet.prototype.__proto__ = new Mob();
 ConstructorRegistry.register(MagicCarpet);
 
-
 function DefineEnemy(options) {
     var constructor = function(loader) {
 	this.mobInit(loader, options.imageUrl, !(!options.animated));
-    }
+    };
     constructor.prototype = {
 	type: options.name,
 	width: options.width ? options.width : 64,
-	height: options.height ? options.height : 64
+        height: options.height ? options.height : 64,
+        classification: "monster",
+        imageUrl: options.imageUrl
     };
+    // TODO any crazy thing the options has should go in the prototype
     constructor.prototype.__proto__ = new Enemy();
     ConstructorRegistry.register(constructor);
 
