@@ -250,7 +250,8 @@ function redraw() {
     var x = TheWorld.worldXToScreenX(TheWorld.startX);
     var y = TheWorld.worldYToScreenY(TheWorld.startY);
     context.strokeRect(x, y, 64, 64);
-    context.strokeText("START", x + 5, y +32); // TODO l10n
+    context.font="10pt arial";
+    context.strokeText(getLocalString("_start"), x + 5, y +32);
 }
 
 function saveChanges() {

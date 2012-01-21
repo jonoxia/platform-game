@@ -92,8 +92,9 @@ var TheWorld = {
 			      this.left, this.top, this.width, this.height);
 	    } else {
 		ctx.strokeStyle = "black";
+                ctx.font="14pt arial";
 		ctx.strokeRect(this.left, this.top, 64, 64);
-		ctx.strokeText("GOAL", this.left + 5, this.top +32); // TODO l10n
+                ctx.strokeText(getLocalString("_goal"), this.left + 5, this.top +32);
 	    }
 	},
 	setBounds: function(l, t, w, h) {

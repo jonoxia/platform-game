@@ -9,10 +9,7 @@
   <script src="webrunner-play.js"></script>
 </head>
 <body>
-  <p>Welcome to <span id="levelName">MozFestDemo</span>.
-     Arrow keys to move, Space bar to jump.</p>
-  <p>Time: <span id="timer"></span>&nbsp;Hearts: <span id="hp"></span>&nbsp;<h2 id="output"></h2></p>
-
+  <h2 id="output"></h2>
   <canvas id="game-canvas" width="800" height="600"></canvas>
   <span style="display:none;" id="avatarURL">running_human_frames.png</span>
   <span id="debug"></span>
@@ -25,7 +22,7 @@
   <audio id="crunch-sfx" preload="auto" autobuffer="true" src="sfx/crunch.ogg"></audio>
   <audio id="kaching-sfx" preload="auto" autobuffer="true" src="sfx/kaching.ogg"></audio>
   <span id="localized_strings" style="display:none">
- {
+{
   "_runjumpbuild": "ラン・ジャンプ・ビルド",
   "_all_levels": "全てのゲーム",
   "_welcome": "ようこそ",
@@ -77,6 +74,8 @@
   "_scroll_tool_exp": "(ステージをスクロールするためにドラッグして)",
   "_start_loc_tool": "スタート設置ツール",
   "_goal_loc_tool": "ゴール設置ツール",
+  "_start":"スタート",
+  "_goal":"ゴール",
   "_publish": "このステージを公開する",
   "_lang_pref": "言語",
   "_this_language": "日本語",
@@ -86,7 +85,18 @@
   "_published_yes": "公開中",
   "_published_no": "未公開",
   "_other_player_score": "%(player)s さんの成績：%(time)s お宝 %(trinkets)d 個",
-  "_your_score": "%(time)s お宝 %(trinkets)d 個"
+  "_your_score": "%(time)s お宝 %(trinkets)d 個",
+  "_obstacle_tools": "障害物ツール",
+  "_monster_tools": "モンスターツール",
+  "_powerup_tools": "パワーアップツール",
+  "_physics": "物理",
+  "_show_hide": "開く／閉じる",
+  "_code_editor": "コードエディタ",
+  "_nugget_id": "nugget id",
+  "_nugget_name": "nugget name",	
+  "_nugget_type": "nugget type",
+  "_save_code": "コードを保存する",
+  "_test_code": "コードをテストする"
 }
   </span>
 

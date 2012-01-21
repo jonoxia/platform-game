@@ -14,7 +14,16 @@ function adjustToScreen() {
     $("#game-canvas").attr("height", TheWorld.canvasHeight);
 }
 
+function bannerText(text) {
+  var ctx = $("#game-canvas")[0].getContext("2d");
+  ctx.font="36pt arial";
+  ctx.fillStyle = "black";
+  //var textWidth = ctx.measureText(text);
+  ctx.fillText(text, 100, TheWorld.canvasHeight/2 - 50);
+}
+
 var StatusBar = {
+  timeString: "",
   updateTimer: function(ms) {
     var s = Math.floor(ms / 1000);
     var m = Math.floor(s / 60);
@@ -24,7 +33,7 @@ var StatusBar = {
     } else {
 	s_str = s;
     }
-    $("#timer").html( m + ":" + s_str);
+    this.timeString = m + ":" + s_str;
   },
 
   draw: function(ctx, player) {
@@ -55,6 +64,13 @@ var StatusBar = {
 	ctx.fillStyle = "red";
 	ctx.fill();
     }
+
+    ctx.font="18pt arial";
+    ctx.fillStyle = "black";
+    //var textWidth = ctx.measureText(text);
+    ctx.fillText(getLocalString("_time") + ": " + this.timeString, 80, 30);
+
+    ctx.fillText(getLocalString("_useless_trinkets") + ": " + player.numTrinkets, 240, 30);
   }
 };
 
@@ -91,15 +107,15 @@ function startGame(loader) {
   TheWorld.addForegroundObject(player);
   //TheWorld.draw(context);
 
-  $("#hp").html(player.hitPoints);
-
   var leftArrowDown = false;
   var rightArrowDown = false;
   var spacebarDown = false;
+  var gameStarted = false;
 
   var startTime = Date.now();
 
   $(document).bind("keydown", function(evt) {
+    gameStarted = true;
      if (evt.which == LEFT_ARROW) {
        leftArrowDown = true;
      }
@@ -126,6 +142,7 @@ function startGame(loader) {
   var currentTime = Date.now();
   var elapsed = 0;
   var newTime;
+
   var mainLoop = function() {
     newTime = Date.now();
     elapsed = newTime - currentTime;
@@ -152,14 +169,21 @@ function startGame(loader) {
     StatusBar.updateTimer(currentTime - startTime);
     TheWorld.draw(context);
     StatusBar.draw(context, player);
+
+    // Show instructions on screen until player starts moving:
+    if (!gameStarted) {
+      bannerText(getLocalString("_game_instructions"));
+    }
+
     // check for #WINNING:
     if (player.intersecting(TheWorld.goalArea)) {
-      $("#output").html(getLocalString("_winning"));
+      bannerText(getLocalString("_winning"));
       // stop bgm, play victory sound effects!
       $("#bgm")[0].pause();
       playSfx("victory-sfx");
-      $.ajax({type: "POST",
-		url: "complete-level.py",
+      if (!offlineMode) {
+        $.ajax({type: "POST",
+                url: "complete-level.py",
 		data: {levelName: gup("level"),
 		      completionTime: Date.now() - startTime,
 		      trinkets: player.numTrinkets},
@@ -169,19 +193,20 @@ function startGame(loader) {
 		error: function(data, textStatus, thing) {
 		    $("#debug").html(thing);
 	        },
-		  dataType: "text"
-		  });
-      $("#debug").html(getLocalString("_saving_score"));
+		dataType: "text"
+		});
+        $("#debug").html(getLocalString("_saving_score"));
+      }
     }
     // check for #LOSING:
     else if (player.dead) {
-	$("#output").html(getLocalString("_lose_monster") + " " +
-			  getLocalString("_reload_play_again"));
+	bannerText(getLocalString("_lose_monster") + " " +
+		   getLocalString("_reload_play_again"));
       $("#bgm")[0].pause();
       playSfx("death-sfx");
     } else if (player.top > bottomLimit) {
-	$("#output").html(getLocalString("_lose_falling") + " " +
-			  getLocalString("_reload_play_again"));
+	bannerText(getLocalString("_lose_falling") + " " +
+		   getLocalString("_reload_play_again"));
       $("#bgm")[0].pause();
       playSfx("death-sfx");
     } else {
@@ -195,14 +220,17 @@ function startGame(loader) {
 }
 
 
+var offlineMode;
 $(document).ready(function() {
   var loader = new AssetLoader();
   progressBar = new ProgressBar($("#game-canvas")[0].getContext("2d"));
   progressBar.draw(0);
   // Playing online or offline?
   if (typeof offlineLevelData != "undefined") {
+    offlineMode = true;
     TheWorld.loadFromString(offlineLevelData, loader, startGame);
   } else {
+    offlineMode = false;
     var title = gup("level");
     TheWorld.loadFromServer(title, loader, startGame);
   }
