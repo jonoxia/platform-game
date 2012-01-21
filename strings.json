@@ -153,7 +153,7 @@
   "_save_code": "コードを保存する",
   "_test_code": "コードをテストする",
   "_edit_this_level": "このステージを変更する",
-  "_created_by": "Created by %s"
+  "_created_by": "%sに作られた"
 }
 
 }
