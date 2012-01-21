@@ -1,0 +1,145 @@
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>RunJumpBuild &mdash; Offline Level Editor</title>
+  <script src="jquery.js"></script>
+  <script src="webclient_utils.js"></script>
+  <script src="webrunner-world.js"></script>
+  <script src="webrunner-mobs.js"></script>
+  <script src="offline_level.js"></script>
+  <script src="webrunner-edit.js"></script>
+  <style>
+    .hidden-panel {
+       display: none;
+     }
+  </style>
+</head>
+<body>
+  <canvas style="float: left" id="design-canvas" 
+	  width="600" height="400"></canvas>
+  <div id="tools" style="float:left">
+    <span id="debug"></span>
+    <hr/>
+    <input type="checkbox" id="publish"/><label for="publish">${_publish}</label>
+    <button onclick="saveChanges();">${_save_changes}</button><br>
+ 
+    <label for="level-bg-url">${_background_img_url}:</label><input type="text" id="level-bg-url"/><br>
+    <label for="level-tileset-url">${_tileset_url}:</label><input type="text" id="level-tileset-url"/><br>
+    <label for="level-music-url">${_music_url}:</label><input type="text" id="level-music-url"/><br>    
+    <hr/>
+    <input type="radio" name="tools" value="eraser" id="eraser-tool"/>
+    <label for="eraser-tool">${_eraser_tool} ${_eraser_tool_exp}</label><br>
+    <input type="radio" name="tools" value="scroll" id="scroll-tool"/>
+    <label for="scroll-tool">${_scroll_tool} ${_scroll_tool_exp}</label><br>
+    <input type="radio" name="tools" value="start" id="start-tool"/>
+    <label for="start-tool">${_start_loc_tool}</label><br>
+    <input type="radio" name="tools" value="goal" id="goal-tool"/>
+    <label for="goal-tool">${_goal_loc_tool}</label><br>
+    <label for="level-goal-url">${_goal_img_url}:</label><input type="text"     id="level-goal-url"/><br>
+    <hr/>
+    <div id="more-tools">
+      <button onclick="showhide('more-obstacle-tools');">${_obstacle_tools} </button>
+      <button onclick="showhide('more-monster-tools');">${_monster_tools}</button>
+      <button onclick="showhide('more-powerup-tools');">${_powerup_tools}</button>
+      <button onclick="showhide('physics-props');">${_physics}</button>
+      <div id="more-obstacle-tools" class="hidden-panel">
+      </div><br/>
+      <div id="more-monster-tools" class="hidden-panel">
+      </div><br/>
+      <div id="more-powerup-tools" class="hidden-panel">
+      </div><br/>
+      <div id="physics-props" class="hidden-panel">
+    <label for="gravity">${_gravity}:</label><input type="text" id="gravity"/><br>
+    <label for="groundFriction">${_ground_friction}:</label><input type="text" id="groundFriction"/><br>
+    <label for="airFriction">${_air_friction}:</label><input type="text" id="airFriction"/><br>
+    <label for="groundAcceleration">${_ground_accel}:</label><input type="text" id="groundAcceleration"/><br>
+    <label for="airAcceleration">${_air_accel}:</label><input type="text" id="airAcceleration"/><br>
+    <label for="groundDeceleration">${_ground_decel}:</label><input type="text" id="groundDeceleration"/><br>
+    <label for="airDeceleration">${_air_decel}:</label><input type="text" id="airDeceleration"/><br>
+    <label for="jump-power">${_jump_power}:</label><input type="text" id="jumpPower"/><br>
+    <label for="top-speed">${_top_speed}:</label><input type="text" id="topSpeed"/><br>
+    </div>
+
+    </div>
+  </div>
+  <span id="localized_strings" style="display:none">
+{
+  "_runjumpbuild": "ラン・ジャンプ・ビルド",
+  "_all_levels": "全てのゲーム",
+  "_welcome": "ようこそ",
+  "_published_levels": "公開されているステージ",
+  "_title": "タイトル",
+  "_last_modified": "更新日時",
+  "_creator": "作者",
+  "_your_time": "あなたのベストタイム",
+  "_best_time": "ベストタイム",
+  "_your_levels": "あなたの状況",
+  "_published": "公開",
+  "_new_level_name": "新しいステージ",
+  "_create_level": "ステージを作る",
+  "_your_player_data": "プレイヤーのデータ",
+  "_player_name": "名前",
+  "_your_avatar": "あなたのキャラクタ",
+  "_save_changes": "保存する",
+  "_play": "チャレンジする",
+  "_edit": "変更する",
+  "_hi": "おおい",
+  "_level_name": "このステージは",
+  "_game_instructions": "矢印キーで動く。スペースバーで跳ぶ。",
+  "_other_levels": "他のステージ",
+  "_time": "時間",
+  "_useless_trinkets": "お宝",
+  "_winning": "やったね！大成功だ！",
+  "_saving_score": "スコア保存中。。。",
+  "_lose_monster": "食べられたよ。。",
+  "_reload_play_again": "リロードして再チャレンジ！",
+  "_lose_falling": "落ちたよ。。",
+  "_level_designer": "ステージの設計",
+  "_play_this_level": "このステージをチャレンジ！",
+  "_background_img_url": "背景画像のURL",
+  "_tileset_url": "タイルセットのURL",
+  "_goal_img_url": "ゴール画像のURL",
+  "_music_url": "BGMのURL",
+  "_gravity": "重力",
+  "_ground_friction": "摩擦",
+  "_air_friction": "空気抵抗",
+  "_ground_accel": "地上での加速度",
+  "_air_accel": "空での加速度",
+  "_ground_decel": "地上での減速度",
+  "_air_decel": "空での減速度",
+  "_jump_power": "跳躍のパワー",
+  "_top_speed": "最高速度",
+  "_eraser_tool": "消しゴムツール",
+  "_eraser_tool_exp": "(消したい物をクリックして)",
+  "_scroll_tool": "スクロールツール",
+  "_scroll_tool_exp": "(ステージをスクロールするためにドラッグして)",
+  "_start_loc_tool": "スタート設置ツール",
+  "_goal_loc_tool": "ゴール設置ツール",
+  "_start":"スタート",
+  "_goal":"ゴール",
+  "_publish": "このステージを公開する",
+  "_lang_pref": "言語",
+  "_this_language": "日本語",
+  "_you": "あなた",
+  "_nobody": "誰もいない",
+  "_nobody_yet": "まだ誰もクリアしていません",
+  "_published_yes": "公開中",
+  "_published_no": "未公開",
+  "_other_player_score": "%(player)s さんの成績：%(time)s お宝 %(trinkets)d 個",
+  "_your_score": "%(time)s お宝 %(trinkets)d 個",
+  "_obstacle_tools": "障害物ツール",
+  "_monster_tools": "モンスターツール",
+  "_powerup_tools": "パワーアップツール",
+  "_physics": "物理",
+  "_show_hide": "開く／閉じる",
+  "_code_editor": "コードエディタ",
+  "_nugget_id": "nugget id",
+  "_nugget_name": "nugget name",	
+  "_nugget_type": "nugget type",
+  "_save_code": "コードを保存する",
+  "_test_code": "コードをテストする"
+}
+  </span>
+
+</body>
+</html>
