@@ -135,17 +135,17 @@
   "_published_no": "未公開",
   "_other_player_score": "%(player)s さんの成績：%(time)s お宝 %(trinkets)d 個",
   "_your_score": "%(time)s お宝 %(trinkets)d 個",
-  "_obstacle_tools": "床と壁",
-  "_monster_tools": "化け物",
-  "_powerup_tools": "パワーアップ",
+  "_obstacle_tools": "障害物ツール",
+  "_monster_tools": "モンスターツール",
+  "_powerup_tools": "パワーアップツール",
   "_physics": "物理",
-  "_show_hide": "示す／隠す",
+  "_show_hide": "開く／閉じる",
   "_code_editor": "コードエディタ",
   "_nugget_id": "nugget id",
   "_nugget_name": "nugget name",	
   "_nugget_type": "nugget type",
   "_save_code": "コードを保存する",
-  "_test_code": "コードをテスト"
+  "_test_code": "コードをテストする"
 }
 
 }
