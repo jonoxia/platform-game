@@ -367,7 +367,7 @@ function makeFancyButton(constructorName) {
   var obj = new cons(loader);
   loader.loadThemAll( function() {
     obj.boxInit(0, 0, width, height);
-    //obj.draw(ctx);
+    obj.draw(ctx);
   });
   container.append("<br/>");
 }

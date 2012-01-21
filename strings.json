@@ -73,7 +73,8 @@
   "_nugget_name": "nugget name",	
   "_nugget_type": "nugget type",
   "_save_code": "save code",
-  "_test_code": "test code"
+  "_test_code": "test code",
+  "_edit_this_level": "Edit this level"
 },
 "jp": {
   "_runjumpbuild": "ラン・ジャンプ・ビルド",
@@ -149,7 +150,8 @@
   "_nugget_name": "nugget name",	
   "_nugget_type": "nugget type",
   "_save_code": "コードを保存する",
-  "_test_code": "コードをテストする"
+  "_test_code": "コードをテストする",
+  "_edit_this_level": "Edit this level"
 }
 
 }

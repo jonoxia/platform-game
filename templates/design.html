@@ -18,26 +18,15 @@
 	  width="600" height="400"></canvas>
   <div id="tools" style="float:left">
     <span id="debug"></span>
+    <hr/>
+    <input type="checkbox" id="publish"/><label for="publish">${_publish}</label>
+    <button onclick="saveChanges();">${_save_changes}</button><br>
     <a href="play.py?level=${level_name}">${_play_this_level}</a><br/>
     <a href="listlevels.py">${_other_levels}</a><br/>
-    <hr/>
+ 
     <label for="level-bg-url">${_background_img_url}:</label><input type="text" id="level-bg-url"/><br>
     <label for="level-tileset-url">${_tileset_url}:</label><input type="text" id="level-tileset-url"/><br>
-    <label for="level-music-url">${_music_url}:</label><input type="text" id="level-music-url"/><br>
-
-    ${_physics}<button onclick="showhide('physics-props');">${_show_hide}</button>
-    <div id="physics-props" class="hidden-panel">
-    <label for="gravity">${_gravity}:</label><input type="text" id="gravity"/><br>
-    <label for="groundFriction">${_ground_friction}:</label><input type="text" id="groundFriction"/><br>
-    <label for="airFriction">${_air_friction}:</label><input type="text" id="airFriction"/><br>
-    <label for="groundAcceleration">${_ground_accel}:</label><input type="text" id="groundAcceleration"/><br>
-    <label for="airAcceleration">${_air_accel}:</label><input type="text" id="airAcceleration"/><br>
-    <label for="groundDeceleration">${_ground_decel}:</label><input type="text" id="groundDeceleration"/><br>
-    <label for="airDeceleration">${_air_decel}:</label><input type="text" id="airDeceleration"/><br>
-    <label for="jump-power">${_jump_power}:</label><input type="text" id="jumpPower"/><br>
-    <label for="top-speed">${_top_speed}:</label><input type="text" id="topSpeed"/><br>
-    </div>
-    
+    <label for="level-music-url">${_music_url}:</label><input type="text" id="level-music-url"/><br>    
     <hr/>
     <input type="radio" name="tools" value="eraser" id="eraser-tool"/>
     <label for="eraser-tool">${_eraser_tool} ${_eraser_tool_exp}</label><br>
@@ -50,19 +39,31 @@
     <label for="level-goal-url">${_goal_img_url}:</label><input type="text"     id="level-goal-url"/><br>
     <hr/>
     <div id="more-tools">
-      ${_obstacle_tools} <button onclick="showhide('more-obstacle-tools');">${_show_hide}</button>
+      <button onclick="showhide('more-obstacle-tools');">${_obstacle_tools} </button>
+      <button onclick="showhide('more-monster-tools');">${_monster_tools}</button>
+      <button onclick="showhide('more-powerup-tools');">${_powerup_tools}</button>
+      <button onclick="showhide('physics-props');">${_physics}</button>
       <div id="more-obstacle-tools" class="hidden-panel">
-      </div>
-      ${_monster_tools} <button onclick="showhide('more-monster-tools');">${_show_hide}</button>
+      </div><br/>
       <div id="more-monster-tools" class="hidden-panel">
-      </div>
-      ${_powerup_tools} <button onclick="showhide('more-powerup-tools');">${_show_hide}</button>
+      </div><br/>
       <div id="more-powerup-tools" class="hidden-panel">
-      </div>
+      </div><br/>
+      <div id="physics-props" class="hidden-panel">
+    <label for="gravity">${_gravity}:</label><input type="text" id="gravity"/><br>
+    <label for="groundFriction">${_ground_friction}:</label><input type="text" id="groundFriction"/><br>
+    <label for="airFriction">${_air_friction}:</label><input type="text" id="airFriction"/><br>
+    <label for="groundAcceleration">${_ground_accel}:</label><input type="text" id="groundAcceleration"/><br>
+    <label for="airAcceleration">${_air_accel}:</label><input type="text" id="airAcceleration"/><br>
+    <label for="groundDeceleration">${_ground_decel}:</label><input type="text" id="groundDeceleration"/><br>
+    <label for="airDeceleration">${_air_decel}:</label><input type="text" id="airDeceleration"/><br>
+    <label for="jump-power">${_jump_power}:</label><input type="text" id="jumpPower"/><br>
+    <label for="top-speed">${_top_speed}:</label><input type="text" id="topSpeed"/><br>
     </div>
-    <input type="checkbox" id="publish"/><label for="publish">${_publish}</label>
-    <button onclick="saveChanges();">${_save_changes}</button><br>
+
+    </div>
   </div>
-  <span id="localized_strings" style="display:none"></span>
+
+  <span id="localized_strings" style="display:none">${localized_strings}</span>
 </body>
 </html>
