@@ -8,9 +8,8 @@
   <script src="webrunner-play.js"></script>
 </head>
 <body>
-  <p>${_hi} <span id="playername">${playerName}</span>! ${_level_name} <span id="levelName">${levelName}</span>.
-     ${_game_instructions} ${editLink} <a href="listlevels.py">${_other_levels}</a></p>
-  <p>${_time}: <span id="timer"></span>&nbsp;${_useless_trinkets}: <span id="trinkets"></span><h2 id="output"></h2></p>
+  <p>${_level_name} : <span id="levelName">${levelName}</span>${editLink} <a href="listlevels.py">${_other_levels}</a></p>
+  <h2 id="output"></h2></p>
   <canvas id="game-canvas" width="800" height="600"></canvas>
   <span style="display:none;" id="avatarURL">${avatarURL}</span>
   <span style="display:none;" id="localized_strings">${localized_strings}</span>
