@@ -17,12 +17,8 @@ function adjustToScreen() {
 }
 
 function showhide(id) {
-  var div = $("#" + id);
-  if (div.css("display") != "none") {
-    div.css("display", "none");
-  } else {
-    div.css("display", "block");
-  }
+  $(".hidden-panel").css("display", "none");
+  $("#" + id).css("display", "block");
 }
 
 function GenericPlacementTool(cons) {
@@ -370,7 +366,7 @@ function makeFancyButton(constructorName) {
   var obj = new cons(loader);
   loader.loadThemAll( function() {
     obj.boxInit(0, 0, width, height);
-    obj.draw(ctx);
+    //obj.draw(ctx);
   });
   container.append("<br/>");
 }
@@ -444,15 +440,6 @@ $(document).ready(function() {
     $("#level-goal-url").val(TheWorld.goalUrl);
     $("#level-music-url").val(TheWorld.musicUrl);
 
-    var resizeTimer = null;
-    adjustToScreen();
-    $(window).resize(function() {
-        if (resizeTimer) {
-            clearTimeout(resizeTimer);
-        }
-        resizeTimer = setTimeout(adjustToScreen, 500);
-    });
-
     for (var prop in PhysicsConstants) {
 	$("#" + prop).val( PhysicsConstants[prop] );
     }
@@ -461,9 +448,20 @@ $(document).ready(function() {
       $("#publish").attr("checked", "checked");
     }
 
-    loader.loadThemAll(redraw, function(progress) {
-      progressBar.draw(0.5 + 0.5 * progress);
-    });
+    loader.loadThemAll(
+      function() {
+        var resizeTimer = null;
+        adjustToScreen();
+        $(window).resize(function() {
+          if (resizeTimer) {
+            clearTimeout(resizeTimer);
+          }
+          resizeTimer = setTimeout(adjustToScreen, 500);
+        });
+      },
+      function(progress) {
+        progressBar.draw(0.5 + 0.5 * progress);
+      });
   };
 
   // Playing online or offline?

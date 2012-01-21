@@ -85,19 +85,19 @@ Mob.prototype = {
         this.vx = 0;
         this.left = intercept.x - this.width;
         this.top = intercept.y;
-      playSfx("bonk-sfx")
+        playSfx("bonk-sfx");
         break;
       case "right":
         this.vx = 0;
         this.left = intercept.x;
         this.top = intercept.y;
-      playSfx("bonk-sfx")
+        playSfx("bonk-sfx");
         break;
       case "bottom":
         this.vy = 0;
         this.left = intercept.x;
         this.top = intercept.y;
-      playSfx("bonk-sfx")
+        playSfx("bonk-sfx");
         break;
       }
   },
