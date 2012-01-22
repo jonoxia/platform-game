@@ -76,8 +76,11 @@
   "_test_code": "test code",
   "_edit_this_level": "Edit this level",
   "_created_by": "Created by %s",
-  "_platform_img_url": "Platform img url",
-  "_trinket_img_url": "Trinket img url"
+  "_platform_img_url": "Block img url",
+  "_trinket_img_url": "Trinket img url",
+  "_semiplatform_img_url": "Platform img url",
+  "_rubber_block_img_url": "Rubber block url",
+  "_disappearing_block_img_url": "Disappearing block url"
 },
 "jp": {
   "_runjumpbuild": "ラン・ジャンプ・ビルド",
@@ -156,8 +159,11 @@
   "_test_code": "コードをテストする",
   "_edit_this_level": "このステージを変更する",
   "_created_by": "%sに作られた",
-  "_platform_img_url": "Platform img url",
-  "_trinket_img_url": "Trinket img url"
+  "_platform_img_url": "ブロックの画像URL",
+  "_trinket_img_url": "お宝の画像URL",
+  "_semiplatform_img_url": "床の画像URL",
+  "_rubber_block_img_url": "ゴムブロックの画像URL",
+  "_disappearing_block_img_url": "消えたりするブロックの画像URL"
 }
 
 }
