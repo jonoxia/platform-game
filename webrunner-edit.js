@@ -289,7 +289,9 @@ function saveChanges() {
     allData.startY = TheWorld.startY;
     // BG image and other URLs:
     allData.bgUrl = $("#level-bg-url").val();
-    allData.tilesetUrl = $("#level-tileset-url").val();
+    allData.tilesetUrl = JSON.stringify({ "platform-img-url": $("#platform-img-url").val(),
+					  "trinket-img-url": $("#trinket-img-url").val()
+                                        });
     allData.musicUrl = $("#level-music-url").val();
     allData.goalUrl = $("#level-goal-url").val();
     // Physics modifications:
@@ -437,9 +439,16 @@ $(document).ready(function() {
   var startEditing = function() {
     progressBar.draw(0.5);
     $("#level-bg-url").val(TheWorld.bgUrl);
-    $("#level-tileset-url").val(TheWorld.tilesetUrl);
+
     $("#level-goal-url").val(TheWorld.goalUrl);
     $("#level-music-url").val(TheWorld.musicUrl);
+
+    if (TheWorld.tileset) {
+	var tileUrls = JSON.parse(TheWorld.tileset);
+	for (var name in tileUrls) {
+	    $("#" + name).val(tileUrls[name]);
+	}
+    }
 
     for (var prop in PhysicsConstants) {
 	$("#" + prop).val( PhysicsConstants[prop] );

@@ -20,6 +20,15 @@ Mob.prototype = {
     var self = this;
     this.img = loader.add(filename);
 
+    if ((filename.indexOf(".gif") > -1 || filename.indexOf(".svg") > -1) && filename != "shrimp.gif") {
+      this.hackImg = $("<img>").attr("src", filename).attr("class", "anim-gif");
+      
+      this.hackImg.attr("width", this.width)
+      this.hackImg.attr("height", this.height);
+      $("#gifslum").append(this.hackImg);
+      this.horribleHack = true;
+    }
+
     this.vx = 0;
     this.vy = 0;
 
@@ -31,11 +40,14 @@ Mob.prototype = {
   },
 
   draw: function(ctx) {
-    if (this.isAnimated) {
+    if (this.horribleHack) {
+	this.hackImg.css("left", TheWorld.worldXToScreenX(this.left) + $("#game-canvas").offset().left); // if using this method, we have to do wold transform
+	this.hackImg.css("top", TheWorld.worldYToScreenY(this.top) + $("#game-canvas").offset().top);
+    } else if (this.isAnimated) {
       var spriteOffsetX = this.width * this.animationFrame;
       var spriteOffsetY = this.height * this.movementDirection;
       ctx.drawImage(this.img, spriteOffsetX, spriteOffsetY, this.width, this.height,
-                    this.left, this.top, this.width, this.height);
+		    this.left, this.top, this.width, this.height);
     } else {
       ctx.drawImage(this.img, this.left, this.top);
     }
@@ -226,8 +238,8 @@ Mob.prototype.__proto__ = new Box();
 
 
 function Player(loader, filename, x, y, width, height) {
-  this.mobInit(loader, filename, true);
   this.boxInit(x, y, width, height);
+  this.mobInit(loader, filename, true);
 }
 Player.prototype = {
   type: "player",

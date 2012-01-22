@@ -25,7 +25,6 @@
     <a href="listlevels.py">${_other_levels}</a><br/>
  
     <label for="level-bg-url">${_background_img_url}:</label><input type="text" id="level-bg-url"/><br>
-    <label for="level-tileset-url">${_tileset_url}:</label><input type="text" id="level-tileset-url"/><br>
     <label for="level-music-url">${_music_url}:</label><input type="text" id="level-music-url"/><br>    
     <hr/>
     <input type="radio" name="tools" value="eraser" id="eraser-tool"/>
@@ -44,10 +43,12 @@
       <button onclick="showhide('more-powerup-tools');">${_powerup_tools}</button>
       <button onclick="showhide('physics-props');">${_physics}</button>
       <div id="more-obstacle-tools" class="hidden-panel">
+        <label for="platform-img-url">${_platform_img_url}</label><input type="text" id="platform-img-url"/><br/>
       </div><br/>
       <div id="more-monster-tools" class="hidden-panel">
       </div><br/>
       <div id="more-powerup-tools" class="hidden-panel">
+        <label for="platform-img-url">${_trinket_img_url}</label><input type="text" id="trinket-img-url"/><br/>
       </div><br/>
       <div id="physics-props" class="hidden-panel">
     <label for="gravity">${_gravity}:</label><input type="text" id="gravity"/><br>

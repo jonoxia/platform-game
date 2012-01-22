@@ -70,8 +70,8 @@ var TheWorld = {
   bgUrl: "",
   bgImg: null,
 
-  tilesetUrl: "",
-  tileSetImg: null,
+  tileset: "",
+  tilesetImages: {},
 
   goalUrl: "",
   goalImg: null,
@@ -406,10 +406,15 @@ var TheWorld = {
       if (self.bgUrl && self.bgUrl!= "") {
 	  self.bgImg = loader.add(self.bgUrl);
       }
-      // tileset img
-      self.tilesetUrl = parsedData.tilesetUrl;
-      if (self.tilesetUrl && self.tilesetUrl != "") {
-	  self.tileSetImg = loader.add(self.tilesetUrl);
+      // tileset images
+      self.tileset = parsedData.tilesetUrl;
+      if (self.tileset && self.tileset != "") {
+          var tileUrls = JSON.parse(self.tileset);
+	  for (var name in tileUrls) {
+	      if (tileUrls[name] != "") {
+		  self.tilesetImages[name] = loader.add(tileUrls[name]);
+	      }
+	  }
       }
       // goal img
       self.goalUrl = parsedData.goalUrl;
@@ -567,8 +572,8 @@ Platform.prototype = {
   classification: "obstacle",
 
   draw: function(ctx) {
-    if (TheWorld.tileSetImg) {
-	this.fillTiled(ctx, TheWorld.tileSetImg, 0, 0, 64, 64);
+    if (TheWorld.tilesetImages["platform-img-url"]) {
+	this.fillTiled(ctx, TheWorld.tilesetImages["platform-img-url"], 0, 0, 64, 64);
     } else {
 	ctx.fillStyle = GROUND_COLOR;
 	ctx.fillRect(this.left, this.top, this.width, this.height);
@@ -602,8 +607,8 @@ SemiPermiablePlatform.prototype = {
   classification: "obstacle",
 
   draw: function(ctx) {
-    if (TheWorld.tileSetImg) {
-	this.fillTiled(ctx, TheWorld.tileSetImg, 64, 0, 64, 64);
+    if (TheWorld.tilesetImages["semiplatform-img-url"]) {
+	this.fillTiled(ctx, TheWorld.tilesetImages["semiplatform-img-url"], 0, 0, 64, 64);
     } else {
 	ctx.fillStyle = "green";
 	ctx.fillRect(this.left, this.top, this.width, this.height);
@@ -651,7 +656,7 @@ PowerUp.prototype.__proto__ = new Box();
 // We're not registering this one because it should never be
 // instantiated.
 
-function SpeedPlus() {
+/*function SpeedPlus() {
 }
 SpeedPlus.prototype = {
   type: "speedplus",
@@ -694,6 +699,7 @@ JumpPlus.prototype = {
 };
 JumpPlus.prototype.__proto__ = new PowerUp();
 ConstructorRegistry.register(JumpPlus);
+*/
 
 function PointlessTrinket() {
 }
@@ -703,8 +709,8 @@ PointlessTrinket.prototype = {
   width: 32,
   height: 32,
   draw: function(ctx) {
-    if (TheWorld.tileSetImg) {
-	ctx.drawImage(TheWorld.tileSetImg, 0, 64, 32, 32, this.left, this.top, 32, 32);
+    if (TheWorld.tilesetImages["trinket-img-url"]) {
+	ctx.drawImage(TheWorld.tilesetImages["trinket-img-url"], this.left, this.top, 32, 32);
     } else {
 	ctx.fillStyle = "yellow";
 	ctx.beginPath();
