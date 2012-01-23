@@ -1,0 +1,11 @@
+.hidden-panel {
+   display: none;
+}
+.fancybutton {
+   float: left;
+}
+.selected {
+    border-color: black;
+    border-style: solid;
+    border-width: 1px;
+}

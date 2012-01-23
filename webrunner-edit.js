@@ -289,6 +289,7 @@ function saveChanges() {
     allData.startY = TheWorld.startY;
     // BG image and other URLs:
     allData.bgUrl = $("#level-bg-url").val();
+                      // TODO don't hard-code this stuff here:
     allData.tilesetUrl = JSON.stringify({ "platform-img-url": $("#platform-img-url").val(),
 					  "trinket-img-url": $("#trinket-img-url").val()
                                         });
@@ -321,27 +322,30 @@ function saveChanges() {
 }
 
 function makeFancyButton(constructorName) {
-  // TODO instead of a radio button, name, and canvas, how about
-  // a single canvas with the image and name both on it, that acts like a button
-  // when you click anywhere
   // TODO instead of using constructorName as the name, use a localized description
   // TODO images for the scroll, startloc, and eraser tools?
-  var button = $("<input></input>");
-  button.attr("type", "radio");
-  button.attr("name", "tools");
-  button.attr("value", constructorName);
-  button.attr("id", constructorName);
-  var label = $("<label></label>");
-  label.attr("for", constructorName);
-  label.html(constructorName + " tool");
   var cons = ConstructorRegistry.getConstructor(constructorName);
   var proto = cons.prototype;
   var minicanvas = $("<canvas></canvas>");
   var width = proto.width ? proto.width: 64;
   var height = proto.height ? proto.height: 64;
   minicanvas.attr("width", width);
-  minicanvas.attr("height", height);
+  minicanvas.attr("height", height + 20);
+  minicanvas.attr("class", "fancybutton");
 
+  // Create a tool that creates instances using the constructor:
+  // if the prototype specifies a default width and height,
+  // then use a fixed-size placement tool; if its width and height
+  // are variable, use a rectangle tool.
+  var myTool = cons.prototype.hasOwnProperty("width") ?
+    new GenericPlacementTool(cons) : new GenericRectangleTool(cons);
+
+  // TODO draw the selected minicanvas differently!
+  minicanvas.click(function() {
+    g_selectedTool = myTool;
+    $(".fancybutton").removeClass("selected");
+    minicanvas.addClass("selected");
+  });
   // Put the tool into either the monster, obstacle, or powerup category, according to its
   // classification
   var container;
@@ -359,9 +363,6 @@ function makeFancyButton(constructorName) {
     container = $("#more-tools");
     break;
   }
-
-  container.append(button);
-  container.append(label);
   container.append(minicanvas);
   // let's try drawing that sucker
   var loader = new AssetLoader();
@@ -370,8 +371,8 @@ function makeFancyButton(constructorName) {
   loader.loadThemAll( function() {
     obj.boxInit(0, 0, width, height);
     obj.draw(ctx);
+    ctx.strokeText(constructorName, 0, height + 16);
   });
-  container.append("<br/>");
 }
 
 $(document).ready(function() {
@@ -413,21 +414,6 @@ $(document).ready(function() {
       break;
     case "goal-tool":
       g_selectedTool = GoalTool;
-      break;
-    default:
-	// Create a tool that creates instances using the constructor
-	// matching the id of the selected radio button:
-	var constructor = ConstructorRegistry.getConstructor(id);
-	if (constructor) {
-	    // if the prototype specifies a default width and height,
-	    // then use a fixed-size placement tool; if its width and height
-	    // are variable, use a rectangle tool.
-	    if (constructor.prototype.hasOwnProperty("width")) {
-		g_selectedTool = new GenericPlacementTool(constructor);
-	    } else {
-		g_selectedTool = new GenericRectangleTool(constructor);
-	    }
-	}
       break;
     }
   });
