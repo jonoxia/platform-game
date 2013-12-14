@@ -139,6 +139,22 @@ Mob.prototype = {
         var vector = TheWorld.touchingForceFields(this);
         this.vx += vector.x;
         this.vy += vector.y;
+
+        // friction:
+        var friction = (this.onGround() ? PhysicsConstants.groundFriction : PhysicsConstants.airFriction);
+        // TODO make coefficient of friction depend on surface I'm standing on
+        if (this.vx > 0) {
+            this.vx -= friction * this.vx * elapsedTime / 1000;
+            if (this.vx < 0.1) {
+                this.vx = 0;
+            }
+        }
+        if (this.vx < 0) {
+            this.vx -= friction * this.vx * elapsedTime / 1000;
+            if (this.vx > -0.1) {
+                this.vx = 0;
+            }
+        }
     }
 
     var xDist = this.vx * elapsedTime / 100;
@@ -193,19 +209,6 @@ Mob.prototype = {
     // TODO because this is in idle(), it's only applied to player
     // let's apply to all mobs
     // TODO real friction is nonlinear
-    var friction = (this.onGround() ? PhysicsConstants.groundFriction : PhysicsConstants.airFriction);
-    if (this.vx > 0) {
-      this.vx -= friction * this.vx * elapsed / 500;
-      if (this.vx < 0.1) {
-        this.vx = 0;
-      }
-    }
-    if (this.vx < 0) {
-      this.vx -= friction * this.vx * elapsed / 500;
-      if (this.vx > -0.1) {
-        this.vx = 0;
-      }
-    }
 
     // Also stop climbing velocity:
     this.climbSpeed = 0;
@@ -232,9 +235,14 @@ Mob.prototype = {
   goLeft: function(elapsed) {
     if (! TheWorld.touchingPlatform(this, "left")) {
       this.vx -= this._getAcceleration("left") * elapsed / 100;
-      if (this.vx < 0 - PhysicsConstants.topSpeed) {
+      /*if (this.vx < 0 - PhysicsConstants.topSpeed) {
         this.vx = 0 - PhysicsConstants.topSpeed;
-      }
+      }*/
+        // Top speed doesn't need to be applied explicitly if 
+        // top speed is determined by balance between running
+        // force and friction. However, what's to stop you from
+        // accelerating indefinitely in midair?
+        // Maybe we should keep top speed a
     }
     this.lastMoved = GOING_LEFT;
   },
@@ -242,9 +250,9 @@ Mob.prototype = {
   goRight: function(elapsed) {
     if (! TheWorld.touchingPlatform(this, "right")) {
       this.vx += this._getAcceleration("right") * elapsed / 100;
-      if (this.vx > PhysicsConstants.topSpeed) {
+      /*if (this.vx > PhysicsConstants.topSpeed) {
         this.vx = PhysicsConstants.topSpeed;
-      }
+      }*/
     }
     this.lastMoved = GOING_RIGHT;
   },

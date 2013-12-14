@@ -28,12 +28,12 @@ var PhysicsConstants = {
   topSpeed: 122,
   gravity: 7,
   jumpPower: 40,
-  groundAcceleration: 4,
+  groundAcceleration: 8,
   groundDeceleration: 6,
-  groundFriction: 4,
-  airAcceleration: 2,
+  groundFriction: 3,
+  airAcceleration: 4,
   airDeceleration: 3,
-  airFriction: 2
+  airFriction: 1
 };
 
 
