@@ -15,6 +15,7 @@ Mob.prototype = {
   hitPoints: 1,
   jumping: false,
   img: null,
+  climbSpeed: 0,
 
   mobInit: function(loader, filename, animate) {
     var self = this;
@@ -79,7 +80,7 @@ Mob.prototype = {
 
   onGround: function() {
     // is something under my feet?
-    return (TheWorld.touchingPlatform(this, "bottom") != null);
+      return (TheWorld.touchingPlatform(this, "bottom") != null);
   },
 
   stopAt: function(intercept) {
@@ -118,6 +119,16 @@ Mob.prototype = {
     // Gravity:
     if (!this.onGround()) {
 	this.vy += PhysicsConstants.gravity * elapsedTime / 100;
+    }
+
+    if (this.motionMode == "climb") {
+        // check for falling off ladder:
+        if (!TheWorld.touchingClimbableArea(this)) {
+            this.motionMode = "free";
+        } else {
+            // climbing ladder = constant vertical speed, ignore gravity:
+            this.vy = this.climbSpeed;
+        }
     }
 
     var xDist = this.vx * elapsedTime / 100;
@@ -181,6 +192,9 @@ Mob.prototype = {
         this.vx = 0;
       }
     }
+
+    // Also stop climbing velocity:
+    this.climbSpeed = 0;
   },
 
   _getAcceleration: function(direction) {
@@ -216,6 +230,20 @@ Mob.prototype = {
       if (this.vx > PhysicsConstants.topSpeed) {
         this.vx = PhysicsConstants.topSpeed;
       }
+    }
+  },
+
+  ascend: function(elapsed) {
+    if (TheWorld.touchingClimbableArea(this)) {
+      this.motionMode = "climb";
+      this.climbSpeed = - 10;
+    }
+  },
+
+  descend: function(elapsed) {
+    if (TheWorld.touchingClimbableArea(this)) {
+      this.motionMode = "climb";
+      this.climbSpeed = 10;
     }
   },
 

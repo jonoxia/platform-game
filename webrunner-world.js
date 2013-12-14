@@ -282,6 +282,23 @@ var TheWorld = {
     return false;
   },
 
+  touchingClimbableArea: function(mob) {
+    for (var i = 0; i < this.foregroundObjects.length; i++) {
+      var platform = this.foregroundObjects[i];
+      if (platform === mob) {
+        // don't attempt collision with self!
+        continue;
+      }
+
+      if (mob.intersecting(platform)) {
+          if (platform.climbable()) {
+              return true;
+          }
+      }
+    }
+    return false;
+  },
+
   touchingPlatform: function(mob, direction) {
     // Run through all platforms in the foregroundObjects list
     // and see whether mob is currently touching any of them
@@ -537,6 +554,10 @@ Box.prototype = {
   },
 
   substantial: function(edge) {
+      return false;
+  },
+
+  climbable: function() {
       return false;
   },
 
@@ -964,6 +985,43 @@ RubberBlock.prototype = {
 };
 RubberBlock.prototype.__proto__ = new Box();
 ConstructorRegistry.register(RubberBlock);
+
+function Ladder() {
+}
+Ladder.prototype = {
+    type: "ladder",
+    classification: "obstacle",
+
+    draw: function(ctx) {
+        ctx.strokeStyle = "black";
+        ctx.beginPath();
+        ctx.moveTo(this.left, this.top);
+        ctx.lineTo(this.left, this.bottom);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(this.right, this.top);
+        ctx.lineTo(this.right, this.bottom);
+        ctx.stroke();
+        
+        for (y = this.bottom - 32; y > this.top; y -= 32) {
+            ctx.beginPath();
+            ctx.moveTo(this.left, y);
+            ctx.lineTo(this.right, y);
+            ctx.stroke();
+        }
+    },
+
+    climbable: function() {
+        return true;
+    },
+
+    substantial: function(edge) {
+        return (true);
+    }
+};
+Ladder.prototype.__proto__ = new Box();
+ConstructorRegistry.register(Ladder);
+
 
 // more: ladders, springboards, moving platforms, etc
 // need some uI to set parameters for these -- the movement range of

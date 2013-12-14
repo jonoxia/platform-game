@@ -1,7 +1,7 @@
 const LEFT_ARROW = 37;
 const RIGHT_ARROW = 39;
-const UP_ARROW =38;
-const SPACEBAR =32;
+const UP_ARROW = 38;
+const SPACEBAR = 32;
 
 function adjustToScreen() {
     var screenWidth = window.innerWidth;
