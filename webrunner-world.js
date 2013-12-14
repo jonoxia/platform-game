@@ -124,6 +124,10 @@ var TheWorld = {
   backgroundObjects: [],
   foregroundObjects: [],
 
+  // Forces besides gravity (long-term todo: make gravity just an 
+  // omnipresent one of these forces?)
+  forceFields: [],
+
   addBackgroundObject: function(obj) {
     this.backgroundObjects.push(obj);
   },
@@ -134,7 +138,20 @@ var TheWorld = {
 
   removeForegroundObject: function(obj) {
       var index = this.foregroundObjects.indexOf(obj);
-      this.foregroundObjects.splice(index, 1);
+      if (index != -1) {
+          this.foregroundObjects.splice(index, 1);
+      }
+  },
+
+  addForceField: function(obj) {
+      this.forceFields.push(obj);
+  },
+
+  removeForceField: function(obj) {
+      var index = this.forceFields.indexOf(obj);
+      if (index != -1) {
+          this.forceFields.splice(index, 1);
+      }
   },
 
   worldXToScreenX: function(worldX) {
@@ -243,6 +260,11 @@ var TheWorld = {
     for (i = 0; i < this.foregroundObjects.length; i++) {
       this.drawIfOnScreen(this.foregroundObjects[i], ctx);
     }
+
+    for (i = 0; i < this.forceFields.length; i++) {
+      this.drawIfOnScreen(this.forceFields[i], ctx);
+    }
+
     ctx.restore();
   },
 
@@ -283,6 +305,8 @@ var TheWorld = {
   },
 
   touchingClimbableArea: function(mob) {
+      // returns true if mob is interesecting with an object
+      // that has climbable() return true, e.g. a ladder
     for (var i = 0; i < this.foregroundObjects.length; i++) {
       var platform = this.foregroundObjects[i];
       if (platform === mob) {
@@ -291,12 +315,26 @@ var TheWorld = {
       }
 
       if (mob.intersecting(platform)) {
-          if (platform.climbable()) {
+          if (platform.climbable(mob)) {
               return true;
           }
       }
     }
     return false;
+  },
+
+  touchingForceFields: function(mob) {
+    var netForce = {x: 0, y: 0};
+    for (var i = 0; i < this.forceFields.length; i++) {
+      var field = this.forceFields[i];
+
+      if (mob.intersecting(field)) {
+          var fieldForce = field.calculateForce(mob);
+          netForce.x += fieldForce.x;
+          netForce.y += fieldForce.y;
+      }
+    }
+    return netForce;
   },
 
   touchingPlatform: function(mob, direction) {
@@ -557,7 +595,8 @@ Box.prototype = {
       return false;
   },
 
-  climbable: function() {
+  climbable: function(mob) {
+      // is this climbable by given mob?
       return false;
   },
 
@@ -584,6 +623,36 @@ Box.prototype = {
       }
   }
 };
+
+function ForceField() {
+}
+ForceField.prototype = {
+    type: "forcefield",
+    classification: "forcefield",
+    vectorX: 0,
+    vectorY: 0,
+
+    draw: function(ctx) {
+        // generally invisible, but we'll draw box for debugging
+        ctx.strokeStyle = "red";
+        ctx.strokeRect(this.left, this.top, this.width, this.height);
+    },
+
+    setVector: function(x, y) {
+        this.vectorX = x;
+        this.vectorY = y;
+    },
+
+    calculateForce: function(mob) {
+        // exerts force on any mobs passing through it
+        // this function allows us to calculate force that varies
+        // by position or velocity or type of mob
+        // Should mobs have weight?
+        return {x: this.vectorX, y: this.vectorY};
+    }
+}
+ForceField.prototype.__proto__ = new Box();
+ConstructorRegistry.register(ForceField);
 
 
 function Platform() {
@@ -1011,7 +1080,8 @@ Ladder.prototype = {
         }
     },
 
-    climbable: function() {
+    climbable: function(mob) {
+        // always climbable!
         return true;
     },
 

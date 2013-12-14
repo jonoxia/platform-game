@@ -16,6 +16,7 @@ Mob.prototype = {
   jumping: false,
   img: null,
   climbSpeed: 0,
+  lastMoved: STAND_STILL,
 
   mobInit: function(loader, filename, animate) {
     var self = this;
@@ -116,10 +117,6 @@ Mob.prototype = {
   },
 
   update: function(elapsedTime) {
-    // Gravity:
-    if (!this.onGround()) {
-	this.vy += PhysicsConstants.gravity * elapsedTime / 100;
-    }
 
     if (this.motionMode == "climb") {
         // check for falling off ladder:
@@ -129,6 +126,17 @@ Mob.prototype = {
             // climbing ladder = constant vertical speed, ignore gravity:
             this.vy = this.climbSpeed;
         }
+    } else {
+        // When i'm not grabbed onto a ladder, i am affected by
+        // forces. starting with gravity:
+        if (!this.onGround()) {
+	    this.vy += PhysicsConstants.gravity * elapsedTime / 100;
+        }
+
+        // other forces:
+        var vector = TheWorld.touchingForceFields(this);
+        this.vx += vector.x;
+        this.vy += vector.y;
     }
 
     var xDist = this.vx * elapsedTime / 100;
@@ -136,6 +144,8 @@ Mob.prototype = {
 
     var platform = TheWorld.touchingPlatform(this, "bottom");
     if (platform && platform.vx) {
+        // if i'm on a horizontally moving platform, scoot me along
+        // with it:
       xDist += platform.vx * elapsedTime / 100;
     }
 
@@ -222,6 +232,7 @@ Mob.prototype = {
         this.vx = 0 - PhysicsConstants.topSpeed;
       }
     }
+    this.lastMoved = GOING_LEFT;
   },
 
   goRight: function(elapsed) {
@@ -231,12 +242,14 @@ Mob.prototype = {
         this.vx = PhysicsConstants.topSpeed;
       }
     }
+    this.lastMoved = GOING_RIGHT;
   },
 
   ascend: function(elapsed) {
     if (TheWorld.touchingClimbableArea(this)) {
       this.motionMode = "climb";
       this.climbSpeed = - 10;
+      this.vx = 0;
     }
   },
 
@@ -244,6 +257,7 @@ Mob.prototype = {
     if (TheWorld.touchingClimbableArea(this)) {
       this.motionMode = "climb";
       this.climbSpeed = 10;
+      this.vx = 0;
     }
   },
 
