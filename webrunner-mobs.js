@@ -117,6 +117,8 @@ Mob.prototype = {
   },
 
   update: function(elapsedTime) {
+    // here's where we apply all physics to mobile objects
+    var platform = TheWorld.touchingPlatform(this, "bottom");
 
     if (this.motionMode == "climb") {
         // check for falling off ladder:
@@ -142,7 +144,6 @@ Mob.prototype = {
     var xDist = this.vx * elapsedTime / 100;
     var yDist = this.vy * elapsedTime / 100;
 
-    var platform = TheWorld.touchingPlatform(this, "bottom");
     if (platform && platform.vx) {
         // if i'm on a horizontally moving platform, scoot me along
         // with it:
@@ -189,16 +190,19 @@ Mob.prototype = {
 
   idle: function(elapsed) {
     // slow down when not pushing any direction
+    // TODO because this is in idle(), it's only applied to player
+    // let's apply to all mobs
+    // TODO real friction is nonlinear
     var friction = (this.onGround() ? PhysicsConstants.groundFriction : PhysicsConstants.airFriction);
     if (this.vx > 0) {
-      this.vx -= friction * elapsed / 100;
-      if (this.vx < 0) {
+      this.vx -= friction * this.vx * elapsed / 500;
+      if (this.vx < 0.1) {
         this.vx = 0;
       }
     }
     if (this.vx < 0) {
-      this.vx += friction * elapsed / 100;
-      if (this.vx > 0) {
+      this.vx -= friction * this.vx * elapsed / 500;
+      if (this.vx > -0.1) {
         this.vx = 0;
       }
     }
