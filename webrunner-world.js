@@ -516,6 +516,16 @@ var TheWorld = {
     $.get(url, {levelName: levelName}, function(data, textStatus, jqXHR) {
 	    self.loadFromString(data, loader, callback);
 	}, "html");
+  },
+
+  getObjectsOfType: function(type) {
+      var results = [];
+      for (var i = 0; i < this.foregroundObjects.length; i++) {
+          if (this.foregroundObjects[i].type == type) {
+              results.push(this.foregroundObjects[i]);
+          }
+      }
+      return results;
   }
 };
 
