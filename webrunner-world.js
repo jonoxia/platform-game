@@ -709,6 +709,10 @@ SemiPermiablePlatform.prototype = {
       return PhysicsConstants.groundFriction;
   },
 
+  getAccelerationCoefficient: function() {
+      return PhysicsConstants.groundAcceleration;
+  },
+
   draw: function(ctx) {
     if (TheWorld.tilesetImages["semiplatform-img-url"]) {
 	this.fillTiled(ctx, TheWorld.tilesetImages["semiplatform-img-url"], 0, 0, 64, 64);
