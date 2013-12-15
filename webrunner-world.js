@@ -1136,6 +1136,52 @@ IceBlock.prototype = {
 IceBlock.prototype.__proto__ = new Platform();
 ConstructorRegistry.register(IceBlock);
 
+function SliceableBlock() {
+}
+SliceableBlock.prototype = {
+  type: "sliceable_block",
+  classification: "obstacle",
+
+  draw: function(ctx) {
+    ctx.fillStyle = GROUND_COLOR;
+    ctx.fillRect(this.left, this.top, this.width, this.height);
+      ctx.strokeStyle = "black";
+
+      var gridSize = 32;
+      for (var x = this.left; x <= this.right; x+= gridSize) {
+          ctx.beginPath();
+          ctx.moveTo(x, this.top);
+          ctx.lineTo(x, this.bottom);
+          ctx.stroke();
+      }
+      for (var y = this.top; y <= this.bottom; y+= gridSize) {
+          ctx.beginPath();
+          ctx.moveTo(this.left, y);
+          ctx.lineTo(this.right, y);
+          ctx.stroke();
+      }
+    ctx.strokeRect(this.left, this.top, this.width, this.height);
+  }
+};
+SliceableBlock.prototype.__proto__ = new Platform();
+ConstructorRegistry.register(SliceableBlock);
+
+function PushableBlock() {
+}
+PushableBlock.prototype = {
+  type: "pushable_block",
+  classification: "obstacle",
+
+  draw: function(ctx) {
+    ctx.fillStyle = "lightblue";
+    ctx.fillRect(this.left, this.top, this.width, this.height);
+      ctx.strokeStyle = "black";
+    ctx.strokeRect(this.left, this.top, this.width, this.height);
+  }
+};
+PushableBlock.prototype.__proto__ = new Platform();
+ConstructorRegistry.register(PushableBlock);
+
 // more: ladders, springboards, moving platforms, etc
 // need some uI to set parameters for these -- the movement range of
 // moving platforms, the timing of disappearing blocks, etc.
