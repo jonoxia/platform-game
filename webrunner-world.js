@@ -465,6 +465,8 @@ var TheWorld = {
       self.bgUrl = parsedData.bgUrl;
       if (self.bgUrl && self.bgUrl!= "") {
 	  self.bgImg = loader.add(self.bgUrl);
+      } else {
+          self.bgImg = null;
       }
       // tileset images
       self.tileset = parsedData.tilesetUrl;
