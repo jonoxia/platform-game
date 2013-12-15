@@ -58,12 +58,25 @@ function AssetLoader() {
     this._thingsLoaded = 0;
 }
 AssetLoader.prototype = {
+
+    getImgFor: function(url) {
+        for (var i = 0; i < this._things.length; i++) {
+            if (this._things[i].url == url) {
+                return this._things[i].tag;
+            }
+        }
+        return null;
+    },
+
     add: function(url, type) {
-	this._thingsToLoad++;
-	var tag = new Image();
-	var thing = { url: url,
-	              tag: tag };
-	this._things.push(thing);
+        var tag = this.getImgFor(url);
+        if (!tag) {
+	    this._thingsToLoad++;
+	    var tag = new Image();
+	    var thing = { url: url,
+	                  tag: tag };
+	    this._things.push(thing);
+        }
 	return tag;
     },
 
