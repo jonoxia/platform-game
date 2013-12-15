@@ -1166,6 +1166,74 @@ SliceableBlock.prototype = {
 SliceableBlock.prototype.__proto__ = new Platform();
 ConstructorRegistry.register(SliceableBlock);
 
+function TippyBlock() {
+}
+TippyBlock.prototype = {
+    type: "tippy_block",
+    classification: "obstacle",
+    theta: 0,
+    angularMomentum: 0,
+    tipped: false,
+
+    update: function(elapsedTime) {
+        if (this.angularMomentum != 0) {
+            // tip over in bumped direction
+            this.theta += this.angularMomentum * elapsedTime /100;
+            this.angularMomentum *= 1.05; // acceleration
+            // stop once we get horizontal:
+            if (this.theta > Math.PI/2) {
+                this.theta = 0;
+                this.angularMomentum = 0;
+                // change bounding box to match:
+                this.boxInit((this.left + this.right)/2,
+                             this.bottom - this.width/2,
+                             this.height,
+                             this.width);
+            }
+
+            if (this.theta < (-1)*Math.PI/2) {
+                this.theta = 0;
+                this.angularMomentum = 0;
+                this.boxInit((this.left + this.right)/2 - this.height,
+                             this.bottom - this.width/2,
+                             this.height,
+                             this.width);
+            }
+        }
+    },
+
+    draw: function(ctx) {
+        ctx.save();
+        if (this.theta != 0) {
+            var fulcrumX = (this.left + this.right) / 2;
+            var fulcrumY = this.bottom;
+            ctx.translate(fulcrumX, fulcrumY);
+            ctx.rotate(this.theta);
+            ctx.translate((-1)*fulcrumX, (-1)*fulcrumY);
+        }
+        SliceableBlock.prototype.draw.call(this, ctx);
+        ctx.restore();
+    },
+    
+    onMobTouch: function(mob, intercept) {
+        mob.stopAt(intercept);
+        if (!this.tipped) {
+            // bump me to either side
+            if (intercept.side == "left") {
+                this.angularMomentum = Math.PI/60;
+                this.tipped = true;
+            }
+            if (intercept.side == "right") {
+                this.angularMomentum = (-1) * Math.PI/60;
+                this.tipped = true;
+            }
+        }
+        return true;
+    }
+}
+TippyBlock.prototype.__proto__ = new Platform();
+ConstructorRegistry.register(TippyBlock);
+
 function PushableBlock() {
 }
 PushableBlock.prototype = {
