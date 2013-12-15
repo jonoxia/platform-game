@@ -46,13 +46,18 @@ Mob.prototype = {
 	this.hackImg.css("left", TheWorld.worldXToScreenX(this.left) + $("#game-canvas").offset().left); // if using this method, we have to do wold transform
 	this.hackImg.css("top", TheWorld.worldYToScreenY(this.top) + $("#game-canvas").offset().top);
     } else if (this.isAnimated) {
-      var spriteOffsetX = this.width * this.animationFrame;
-      var spriteOffsetY = this.height * this.movementDirection;
+        var offsets = this.selectSprite();
+        var spriteOffsetX = this.width * offsets.x;
+        var spriteOffsetY = this.height * offsets.y;
       ctx.drawImage(this.img, spriteOffsetX, spriteOffsetY, this.width, this.height,
 		    this.left, this.top, this.width, this.height);
     } else {
       ctx.drawImage(this.img, this.left, this.top);
     }
+  },
+
+  selectSprite: function() {
+    return {x: this.animationFrame, y: this.movementDirection};
   },
 
   erase: function(ctx) {
@@ -61,7 +66,6 @@ Mob.prototype = {
 
   move: function(dx, dy) {
 	// advancing 12 pixels = 1 frame
-    this._pixelsTraveled += Math.abs(dx);
     if (dx == 0 && dy == 0 ) {
       this.animationFrame = 0;
       this._pixelsTraveled = 0;
@@ -81,6 +85,8 @@ Mob.prototype = {
 
   onGround: function() {
     // is something under my feet?
+      // TODO - expensive operation, frequently checked. cache the result 
+      // utnil it changes.
       return (TheWorld.touchingPlatform(this, "bottom") != null);
   },
 
@@ -239,6 +245,7 @@ Mob.prototype = {
   goLeft: function(elapsed) {
     if (! TheWorld.touchingPlatform(this, "left")) {
       this.vx -= this._getAcceleration("left") * elapsed / 100;
+      this._pixelsTraveled += elapsed;
       /*if (this.vx < 0 - PhysicsConstants.topSpeed) {
         this.vx = 0 - PhysicsConstants.topSpeed;
       }*/
@@ -253,6 +260,7 @@ Mob.prototype = {
 
   goRight: function(elapsed) {
     if (! TheWorld.touchingPlatform(this, "right")) {
+      this._pixelsTraveled += elapsed;
       this.vx += this._getAcceleration("right") * elapsed / 100;
       /*if (this.vx > PhysicsConstants.topSpeed) {
         this.vx = PhysicsConstants.topSpeed;
