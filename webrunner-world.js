@@ -451,6 +451,11 @@ var TheWorld = {
   },
 
   loadFromString: function(data, loader, callback) {
+      // If there were objects already? wipe them all!
+      this.backgroundObjects = [];
+      this.foregroundObjects = [];
+      this.forceFields = [];
+
       var self = this;
       //$("#debug").html("In callback, parsing json: " + data );
       var parsedData = JSON.parse(data);
