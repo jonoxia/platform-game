@@ -661,6 +661,14 @@ Platform.prototype = {
   type: "platform",
   classification: "obstacle",
 
+  getFrictionCoefficient: function() {
+      return PhysicsConstants.groundFriction;
+  },
+
+  getAccelerationCoefficient: function() {
+      return PhysicsConstants.groundAcceleration;
+  },
+
   draw: function(ctx) {
     if (TheWorld.tilesetImages["platform-img-url"]) {
 	this.fillTiled(ctx, TheWorld.tilesetImages["platform-img-url"], 0, 0, 64, 64);
@@ -673,6 +681,7 @@ Platform.prototype = {
   },
 
   onMobTouch: function(mob, intercept) {
+      console.log("Touching platform - intercept side is " + intercept.side);
     // fudge factor to allow walking up steps, added by Slifty
     if ((intercept.side == "left" || intercept.side == "right") &&
 	mob.bottom > this.top && mob.bottom < this.top + 5) { // Are you walking up steps?
@@ -695,6 +704,10 @@ function SemiPermiablePlatform() {
 SemiPermiablePlatform.prototype = {
   type: "semiplatform",
   classification: "obstacle",
+
+  getFrictionCoefficient: function() {
+      return PhysicsConstants.groundFriction;
+  },
 
   draw: function(ctx) {
     if (TheWorld.tilesetImages["semiplatform-img-url"]) {
@@ -1092,6 +1105,30 @@ Ladder.prototype = {
 Ladder.prototype.__proto__ = new Box();
 ConstructorRegistry.register(Ladder);
 
+
+function IceBlock() {
+}
+IceBlock.prototype = {
+  type: "ice_block",
+  classification: "obstacle",
+
+  getFrictionCoefficient: function() {
+      return 0.2;
+  },
+
+  getAccelerationCoefficient: function() {
+      return 1.0;
+  },
+
+  draw: function(ctx) {
+    ctx.fillStyle = "lightblue";
+    ctx.fillRect(this.left, this.top, this.width, this.height);
+      ctx.strokeStyle = "black";
+    ctx.strokeRect(this.left, this.top, this.width, this.height);
+  }
+};
+IceBlock.prototype.__proto__ = new Platform();
+ConstructorRegistry.register(IceBlock);
 
 // more: ladders, springboards, moving platforms, etc
 // need some uI to set parameters for these -- the movement range of

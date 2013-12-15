@@ -141,8 +141,7 @@ Mob.prototype = {
         this.vy += vector.y;
 
         // friction:
-        var friction = (this.onGround() ? PhysicsConstants.groundFriction : PhysicsConstants.airFriction);
-        // TODO make coefficient of friction depend on surface I'm standing on
+        var friction = (this.onGround() ? platform.getFrictionCoefficient() : PhysicsConstants.airFriction);
         if (this.vx > 0) {
             this.vx -= friction * this.vx * elapsedTime / 1000;
             if (this.vx < 0.1) {
@@ -216,13 +215,18 @@ Mob.prototype = {
 
   _getAcceleration: function(direction) {
      var decelerating = (direction == "left" && this.vx > 0) ||
-	(direction == "right" && this.vx < 0);
+	(direction == "right" && this.vx < 0);  
      if (this.onGround()) {
-	 if (decelerating) {
+         var platform = TheWorld.touchingPlatform(this, "bottom");
+         // TODO probably running touchingPlatform way moret times per
+         // frame than we need to!!!
+
+         return platform.getAccelerationCoefficient();
+	 /*if (decelerating) {
 	     return PhysicsConstants.groundDeceleration;
 	 } else {
 	     return PhysicsConstants.groundAcceleration;
-	 }
+	 }*/
      } else {
 	 if (decelerating) {
 	     return PhysicsConstants.airDeceleration;
