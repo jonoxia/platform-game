@@ -272,6 +272,7 @@ Mob.prototype = {
   ascend: function(elapsed) {
     if (TheWorld.touchingClimbableArea(this)) {
       this.motionMode = "climb";
+      this._pixelsTraveled += elapsed;
       this.climbSpeed = - 10;
       this.vx = 0;
     }
@@ -280,6 +281,7 @@ Mob.prototype = {
   descend: function(elapsed) {
     if (TheWorld.touchingClimbableArea(this)) {
       this.motionMode = "climb";
+      this._pixelsTraveled += elapsed;
       this.climbSpeed = 10;
       this.vx = 0;
     }

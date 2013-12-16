@@ -177,6 +177,12 @@ var TheWorld = {
     var screenTop = this.worldYToScreenY(player.top);
     var screenBottom = this.worldYToScreenY(player.bottom);
 
+      if (this.worldBounds) {
+          this.xOffset = 0;
+          this.yOffset = 0;
+          return;
+      }
+
     // if player's left is left of left scroll margin, scroll left
     if (screenLeft < this.leftScrollMargin) {
         // scroll by just enough to get player's left lined up with
@@ -253,7 +259,7 @@ var TheWorld = {
     }
 
     // Draw goal area:
-    this.drawIfOnScreen(this.goalArea, ctx);
+      //this.drawIfOnScreen(this.goalArea, ctx);
 
     // Draw foreground objects after background objects so they
     // appear in front
@@ -461,6 +467,12 @@ var TheWorld = {
       var parsedData = JSON.parse(data);
       self.startX = parsedData.startX;
       self.startY = parsedData.startY;
+
+      if (parsedData.worldBounds) {
+          this.worldBounds = parsedData.worldBounds;
+      } else {
+          this.worldBounds = null;
+      }
       // background img
       self.bgUrl = parsedData.bgUrl;
       if (self.bgUrl && self.bgUrl!= "") {
@@ -1122,7 +1134,7 @@ Ladder.prototype = {
     },
 
     substantial: function(edge) {
-        return (true);
+        return false;
     }
 };
 Ladder.prototype.__proto__ = new Box();
